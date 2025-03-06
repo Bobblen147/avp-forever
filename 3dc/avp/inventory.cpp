@@ -21,6 +21,7 @@ rounds fired etc etc etc*/
 #include "pldnet.h"
 #include "pldghost.h"
 #include "user_profile.h"
+#include "ConfigFile.h"
 #define UseLocalAssert TRUE
 #include "ourasert.h"
 #include <assert.h>
@@ -38,6 +39,7 @@ static int AbleToPickupMTrackerUpgrade(int mtrackerID);
 void RemovePickedUpObject(STRATEGYBLOCK *objectPtr);
 static int AbleToPickupFieldCharge(int chargeID);
 int AutoWeaponChangeOn = TRUE;
+static bool MarinePistolStart = false;
 
 PLAYER_STARTING_EQUIPMENT StartingEquipment;
 
@@ -532,23 +534,42 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				
 			}
 			else
+			//Marine single player start options, first check if pistol start is enabled in the config
 			{
-				a=SlotForThisWeapon(WEAPON_PULSERIFLE);
-				assert(a != -1);
-				if (GRENADE_MODE) {
-	            	playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining=0;
-	            	playerStatusPtr->WeaponSlot[a].SecondaryRoundsRemaining=(ONE_FIXED*99);
-    	        	playerStatusPtr->WeaponSlot[a].SecondaryMagazinesRemaining=0;
-				} else {
-	            	playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining=5;
-	            	playerStatusPtr->WeaponSlot[a].SecondaryRoundsRemaining=(ONE_FIXED*5);
-    	        	playerStatusPtr->WeaponSlot[a].SecondaryMagazinesRemaining=0;
-				}
-            	playerStatusPtr->WeaponSlot[a].Possessed=1;
-				/* Conditional cudgel! */
-				a=SlotForThisWeapon(WEAPON_CUDGEL);
-				if (a!=-1) {
-           			playerStatusPtr->WeaponSlot[a].Possessed=1;
+				MarinePistolStart = Config_GetBool("[Gameplay]", "MarinePistolStart", false);
+				if (MarinePistolStart) {
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+						}
+					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 10;
+						}
+
+					playerStatusPtr->PreviouslySelectedWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
+					playerStatusPtr->SwapToWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
+					}
+				// Otherwise standard pulse rifle start
+				else {
+					a=SlotForThisWeapon(WEAPON_PULSERIFLE);
+					assert(a != -1);
+					if (GRENADE_MODE) {
+	            		playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining=0;
+	            		playerStatusPtr->WeaponSlot[a].SecondaryRoundsRemaining=(ONE_FIXED*99);
+    	        		playerStatusPtr->WeaponSlot[a].SecondaryMagazinesRemaining=0;
+					} else {
+	            		playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining=5;
+	            		playerStatusPtr->WeaponSlot[a].SecondaryRoundsRemaining=(ONE_FIXED*5);
+    	        		playerStatusPtr->WeaponSlot[a].SecondaryMagazinesRemaining=0;
+					}
+            		playerStatusPtr->WeaponSlot[a].Possessed=1;
+					/* Conditional cudgel! */
+					a=SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
 				}
 			}
 			#if 0
