@@ -20,12 +20,13 @@
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -74,7 +75,7 @@
     <ClCompile>
       <AdditionalOptions>/MP /J %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\3dc;..\..\3dc\avp;..\..\3dc\video;..\;..\..\3dc\avp\support;..\..\3dc\avp\win95;..\..\3dc\avp\win95\frontend;..\..\3dc\avp\win95\gadgets;..\..\3dc\include;..\..\3dc\win95;..\..\win32;..\..\enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\3dc;..\..\3dc\avp;..\..\3dc\video;..\;..\..\3dc\avp\support;..\..\3dc\avp\win95;..\..\3dc\avp\win95\frontend;..\..\3dc\avp\win95\gadgets;..\..\3dc\include;..\..\3dc\win95;..\..\win32;..\..\enet\include;$(DXSDK_DIR)Include;..\..\..\openal-soft-1.24.2-bin\include;..\..\..\pthreads-w32-2-9-1-release\Pre-built.2\include;..\..\..\libogg\include\;..\..\..\libvorbis\include\;..\..\..\libbinkdec\include;..\..\..\libsmackerdec\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;D3D_DEBUG_INFO;USE_D3D9;USE_OPENAL;_DEBUG;AVP_DEBUG_VERSION;_CRT_SECURE_NO_WARNINGS;_WIN32_WINNT=0x0501;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -88,7 +89,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <ExpandAttributedSource>true</ExpandAttributedSource>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
       <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
@@ -104,10 +105,10 @@
       <Culture>0x0000</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;libbinkdec.lib;libsmackerdec.lib;shell32.lib;shlwapi.lib;d3d9.lib;d3dx9d.lib;dxerr.lib;dxguid.lib;ws2_32.lib;ole32.lib;../../enet/lib/enet.lib;../../enet/lib/enet.exp;libvorbisfile.lib;libvorbis.lib;libogg.lib;user32.lib;xinput.lib;OpenAL32.lib;pthreadVC2.lib</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;libbinkdec.lib;libsmackerdec.lib;shell32.lib;shlwapi.lib;d3d9.lib;d3dx9d.lib;dxerr.lib;dxguid.lib;ws2_32.lib;ole32.lib;../../enet/lib/enet.lib;../../enet/lib/enet.exp;libvorbisfile.lib;libvorbis.lib;libogg.lib;user32.lib;xinput.lib;OpenAL32.lib;pthreadVC2.lib;legacy_stdio_definitions.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>3dc; enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>3dc;enet;..\..\..\openal-soft-1.24.2-bin\libs\Win32;..\..\..\pthreads-w32-2-9-1-release\Pre-built.2\lib\x86;..\..\..\libbinkdec\lib;..\..\..\libsmackerdec\lib;..\..\..\libogg\win32\VS2010\Win32\Release;..\..\..\libvorbis\win32\VS2010\Win32\Release;$(DXSDK_DIR)Lib\x86</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AssemblyDebug>true</AssemblyDebug>
@@ -123,6 +124,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -150,7 +152,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\3dc;..\..\3dc\video;..\..\3dc\avp;..\..\3dc\avp\support;..\..\3dc\avp\win95;..\..\3dc\avp\win95\frontend;..\..\3dc\avp\win95\gadgets;..\..\3dc\include;..\..\3dc\win95;..\..\win32;..\..\enet\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\3dc;..\..\3dc\video;..\..\3dc\avp;..\..\3dc\avp\support;..\..\3dc\avp\win95;..\..\3dc\avp\win95\frontend;..\..\3dc\avp\win95\gadgets;..\..\3dc\include;..\..\3dc\win95;..\..\win32;..\..\enet\include;..\..\..\libbinkdec\include;..\..\..\libsmackerdec\include;..\..\..\libogg\include;..\..\..\libvorbis\include;..\..\..\openal-soft-1.24.2-bin\include;..\..\..\pthreads-w32-2-9-1-release\Pre-built.2\include;$(DXSDK_DIR)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;USE_D3D9;_WINDOWS;USE_OPENAL;NDEBUG;_CRT_SECURE_NO_DEPRECATE;_WIN32_WINNT=0x0501;_SECURE_SCL=0;_HAS_ITERATOR_DEBUGGING=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -179,10 +181,10 @@
       <Culture>0x0809</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;libbinkdec.lib;libsmackerdec.lib;shell32.lib;shlwapi.lib;d3d9.lib;d3dx9.lib;dxerr.lib;dxguid.lib;ws2_32.lib;ole32.lib;../../enet/lib/enet.lib;../../enet/lib/enet.exp;libvorbisfile.lib;libvorbis.lib;libogg.lib;user32.lib;xinput.lib;OpenAL32.lib;pthreadVC2.lib</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;libbinkdec.lib;libsmackerdec.lib;shell32.lib;shlwapi.lib;d3d9.lib;d3dx9.lib;dxerr.lib;dxguid.lib;ws2_32.lib;ole32.lib;../../enet/lib/enet.lib;../../enet/lib/enet.exp;libvorbisfile.lib;libvorbis.lib;libogg.lib;user32.lib;xinput.lib;OpenAL32.lib;pthreadVC2.lib;legacy_stdio_definitions.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)\$(TargetName)$(TargetExt)</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>3dc; enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>3dc;enet\lib;..\..\..\openal-soft-1.24.2-bin\libs\Win32;..\..\..\pthreads-w32-2-9-1-release\Pre-built.2\lib\x86;..\..\..\libbinkdec\lib;..\..\..\libsmackerdec\lib;..\..\..\libogg\win32\VS2010\Win32\Release;..\..\..\libvorbis\win32\VS2010\Win32\Release;$(DXSDK_DIR)Lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AssemblyDebug>false</AssemblyDebug>
@@ -196,6 +198,7 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

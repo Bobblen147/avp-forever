@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C++ Express 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AvP", "AvP.vcxproj", "{4BE3644E-61B5-4F5E-ACE0-F8A0844AB003}"
 	ProjectSection(ProjectDependencies) = postProject
 		{B26A86ED-F166-4955-A171-20B9E1796B8F} = {B26A86ED-F166-4955-A171-20B9E1796B8F}
@@ -27,5 +29,6 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		AMDCaProjectFile = D:\Development\AvP-Branch\trunk\CodeAnalyst\AvP.caw
+		SolutionGuid = {D06DDA06-578A-4502-989B-74C855E0186F}
 	EndGlobalSection
 EndGlobal

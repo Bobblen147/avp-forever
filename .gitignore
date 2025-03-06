@@ -1,3 +1,5 @@
 win32/VS2022/Win32/
 win32/VS2022/.vs/
 enet/win32/VS2010/Win32/
+enet/lib/
+win32/VS2022/AvP.vcxproj.user
