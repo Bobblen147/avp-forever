@@ -28,6 +28,7 @@
 extern int InGameMenusAreRunning(void);
 extern void AvP_TriggerInGameMenus(void);
 extern void Recall_Disc(void);
+extern void Reload_Weapon(void);
 extern void ShowMultiplayerScores(void);
 extern void BringDownConsoleWithSayTypedIn();
 void BringDownConsoleWithSaySpeciesTypedIn();
@@ -144,7 +145,7 @@ PLAYER_INPUT_CONFIGURATION DefaultMarineInputPrimaryConfig =
 
 	KEY_RBRACKET,  		// NextWeapon;
 	KEY_LBRACKET,  		// PreviousWeapon;
-	KEY_BACKSPACE,		// FlashbackWeapon;
+	KEY_R,		// FlashbackWeapon;
 
 	KEY_SLASH,	  		// ImageIntensifier;
 	KEY_FSTOP,    		// ThrowFlare;
@@ -1163,6 +1164,10 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 				 ||KeyboardInput[secondaryInput->ImageIntensifier])
 					playerStatusPtr->Mvt_InputRequests.Flags.Rqst_ChangeVision = 1;
 
+				if (DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
+					|| DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
+					Reload_Weapon();
+
 				if (DebouncedKeyboardInput[primaryInput->ThrowFlare]
 				 ||DebouncedKeyboardInput[secondaryInput->ThrowFlare])
 					ThrowAFlare();
@@ -1317,14 +1322,9 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 			 ||KeyboardInput[secondaryInput->PreviousWeapon])
 				playerStatusPtr->Mvt_InputRequests.Flags.Rqst_PreviousWeapon = 1;
 
-			if(DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
-			 ||DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
-			{
-				if (playerStatusPtr->PreviouslySelectedWeaponSlot!=playerStatusPtr->SelectedWeaponSlot)
-				{
-					playerStatusPtr->Mvt_InputRequests.Flags.Rqst_WeaponNo = playerStatusPtr->PreviouslySelectedWeaponSlot+1;
-				}
-			}
+			if (DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
+				|| DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
+				Reload_Weapon();
 			
 			if(KeyboardInput[primaryInput->FireSecondaryWeapon]
 			 ||KeyboardInput[secondaryInput->FireSecondaryWeapon])

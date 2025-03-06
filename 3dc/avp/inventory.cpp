@@ -1936,3 +1936,50 @@ void RemoveAllThisPlayersDiscs(void) {
 		}
 	}
 }
+
+//enhanced version of Cancer Black reload code (includes check for max ammo)
+void Reload_Weapon(void)
+{
+	PLAYER_WEAPON_DATA* weaponPtr;
+	PLAYER_STATUS* playerStatusPtr = (PLAYER_STATUS*)(Player->ObStrategyBlock->SBdataptr);
+	TEMPLATE_WEAPON_DATA* twPtr;
+	TEMPLATE_AMMO_DATA* templateAmmoPtr;
+
+	/* Only Marines can reload their weapons */
+	if (AvP.PlayerType == I_Alien) return;
+
+	/* Predators  */
+	if (AvP.PlayerType == I_Predator) return;
+	
+	/* Player is dead... no reload */
+	if (!playerStatusPtr->IsAlive) return;
+
+	/* Initialize pointer to player's weapon and ammo */
+	weaponPtr = &(playerStatusPtr->WeaponSlot[playerStatusPtr->SelectedWeaponSlot]);
+	twPtr = &TemplateWeapon[weaponPtr->WeaponIDNumber];
+	templateAmmoPtr = &TemplateAmmo[twPtr->PrimaryAmmoID];
+
+	/* No weapon, no reload */
+	if (weaponPtr->WeaponIDNumber == NULL_WEAPON) return;
+
+	/* Max ammo, no reload */
+	if (weaponPtr->PrimaryRoundsRemaining == templateAmmoPtr->AmmoPerMagazine) return;
+
+	/* Already in reload state? */
+	if (weaponPtr->CurrentState == WEAPONSTATE_RELOAD_PRIMARY) return;
+
+	if (weaponPtr->PrimaryMagazinesRemaining)
+	{
+		if (weaponPtr->WeaponIDNumber != WEAPON_GRENADELAUNCHER)
+		{
+			weaponPtr->PrimaryRoundsRemaining = 0;
+		}
+
+		//playerStatusPtr->Mvt_InputRequests.Flags.Rqst_FirePrimaryWeapon = 1;
+		weaponPtr->CurrentState = WEAPONSTATE_RELOAD_PRIMARY;
+		weaponPtr->StateTimeOutCounter = WEAPONSTATE_INITIALTIMEOUTCOUNT;
+
+
+		(*twPtr->WeaponStateFunction[weaponPtr->CurrentState])((void*)playerStatusPtr, weaponPtr);
+	}
+}

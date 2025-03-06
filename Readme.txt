@@ -9,11 +9,10 @@ The project has been updated to compile with Visual Studio Community 2022.
 Note that this is a learning project for a novice c++ developer. As such pull requests that add amazing/complicated new features can't be merged as I cannot review them. I suggest making your own fork if you wish to work with the codebase.
 
 
-New features working locally (not yet committed)
+New features
 
-EAX enable / disable toggle
 Optionally start Marine levels with pistol
-Optionally enable the Marine cudgel at all times (select with key 0)
+Reload key (currently replaces Flashback Weapon key, mapped to R) (enhanced version of implementation from Cancer Black mod https://github.com/shole/AvP-CancerBlack/tree/df80b44ca7d1e97c6c310d847b1a10172bac0533)
 
 
 The project has the following prerequisites:
