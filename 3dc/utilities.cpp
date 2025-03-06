@@ -353,8 +353,8 @@ void avp_exit(int code)
 #endif
 }
 
-static const char *date = __DATE__;
-static const char *time = __TIME__;
+static const char *builddate = __DATE__;
+static const char *buildtime = __TIME__;
 
 char windowTitle[256];
 
@@ -367,7 +367,7 @@ char *GetWindowTitle()
 void SetWindowTitle()
 {
 	strcpy(windowTitle, "AvPx - Build Date: ");
-	strcat(windowTitle, date);
+	strcat(windowTitle, builddate);
 	strcat(windowTitle, " at ");
-	strcat(windowTitle, time);
+	strcat(windowTitle, buildtime);
 }
