@@ -39,8 +39,16 @@ static int AbleToPickupMTrackerUpgrade(int mtrackerID);
 void RemovePickedUpObject(STRATEGYBLOCK *objectPtr);
 static int AbleToPickupFieldCharge(int chargeID);
 int AutoWeaponChangeOn = TRUE;
+//marine starting weapons
 static bool MarinePulseRifleStart = true;
+static bool MarineSmartgunStart = false;
+static bool MarineFlamethrowerStart = false;
+static bool MarineSADARStart = false;
+static bool MarineGrenadeLauncherStart = false;
+static bool MarineMinigunStart = false;
+static bool MarineSkeeterStart = false;
 static bool MarinePistolStart = false;
+static bool MarineDualPistolsStart = false;
 
 PLAYER_STARTING_EQUIPMENT StartingEquipment;
 
@@ -535,24 +543,126 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				
 			}
 			else
-			//Marine single player start options
+			//Marine single player - custom starting weapons
 			{
-				//always have Cudgel
-				a = SlotForThisWeapon(WEAPON_CUDGEL);
-				if (a != -1) {
-					playerStatusPtr->WeaponSlot[a].Possessed = 1;
-				}
 				
-				//now do the custom weapon options
+			    //now do the weapon options from config
 				MarinePulseRifleStart = Config_GetBool("[Gameplay]", "MarinePulseRifleStart", true);
+				MarineSmartgunStart = Config_GetBool("[Gameplay]", "MarineSmartgunStart", false);
+				MarineFlamethrowerStart = Config_GetBool("[Gameplay]", "MarineFlamethrowerStart", false);
+				MarineSADARStart = Config_GetBool("[Gameplay]", "MarineSADARStart", false);
+				MarineGrenadeLauncherStart = Config_GetBool("[Gameplay]", "MarineGrenadeLauncherStart", false);
+				MarineMinigunStart = Config_GetBool("[Gameplay]", "MarineMinigunStart", false);
+				MarineSkeeterStart = Config_GetBool("[Gameplay]", "MarineSkeeterStart", false);
 				MarinePistolStart = Config_GetBool("[Gameplay]", "MarinePistolStart", false);
+				MarineDualPistolsStart = Config_GetBool("[Gameplay]", "MarineDualPistolsStart", false);
+
+				if (MarineSmartgunStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+					a = SlotForThisWeapon(WEAPON_SMARTGUN);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 2;
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+				}
+				if (MarineFlamethrowerStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+					a = SlotForThisWeapon(WEAPON_FLAMETHROWER);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 2;
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+				}
+				if (MarineSADARStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+					a = SlotForThisWeapon(WEAPON_SADAR);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+				}
+				if (MarineGrenadeLauncherStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+					a = SlotForThisWeapon(WEAPON_GRENADELAUNCHER);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 1;
+						GrenadeLauncherData.StandardMagazinesRemaining = 1;
+						GrenadeLauncherData.FlareMagazinesRemaining = 1;
+						GrenadeLauncherData.ProximityMagazinesRemaining = 1;
+						GrenadeLauncherData.FragmentationMagazinesRemaining = 1;
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+				}
+				if (MarineMinigunStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+					a = SlotForThisWeapon(WEAPON_MINIGUN);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 2;
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+				}
+				if (MarineSkeeterStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+					a = SlotForThisWeapon(WEAPON_FRISBEE_LAUNCHER);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+				}
 				if (MarinePistolStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+				}
+				if (MarineDualPistolsStart) {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
 					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 10;
-						}
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
 					}
+					a = SlotForThisWeapon(WEAPON_TWO_PISTOLS);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
+						playerStatusPtr->WeaponSlot[a].SecondaryMagazinesRemaining = 4;
+					}
+				}
 				// make sure you restart with alternate weapon if no pulse rifle
 				if (!MarinePulseRifleStart) {
 					playerStatusPtr->PreviouslySelectedWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
@@ -560,6 +670,11 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				}
 				// Otherwise standard pulse rifle start
 				else {
+					//always have Cudgel
+					a = SlotForThisWeapon(WEAPON_CUDGEL);
+					if (a != -1) {
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
 					a=SlotForThisWeapon(WEAPON_PULSERIFLE);
 					assert(a != -1);
 					if (GRENADE_MODE) {
