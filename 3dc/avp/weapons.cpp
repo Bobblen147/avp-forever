@@ -51,6 +51,7 @@
 #include "extents.h"
 #include "scream.h"
 #include "user_profile.h"
+#include "ConfigFile.h"
 
 #define BITE_HEALTH_RECOVERY	(50)
 #define BITE_ARMOUR_RECOVERY	(30)
@@ -153,6 +154,7 @@ int PrintDebuggingText(const char* t, ...);
 int FriendlyFireDamageFilter(DAMAGE_PROFILE *damage);
 static void MarineZeroAmmoFunctionality(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *weaponPtr);
 static void PredatorZeroAmmoFunctionality(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *weaponPtr);
+static bool MarineCudgelSelectable = false;
 
 SECTION * GetNamedHierarchyFromLibrary(const char * rif_name, const char * hier_name);
 
@@ -1696,12 +1698,15 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
 					slotValidity=0;
 				}
 			}
+			MarineCudgelSelectable = Config_GetBool("[Gameplay]", "MarineCudgelSelectable", false);
 			/* And not if you're the cudgel. */
-			if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber==WEAPON_CUDGEL) 
-			{
-				if (playerStatusPtr->SelectedWeaponSlot != newSlotInt) 
+			if (!MarineCudgelSelectable) {
+				if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL)
 				{
-					slotValidity=0;
+					if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
+					{
+						slotValidity = 0;
+					}
 				}
 			}
 			/* But, if you are the cudgel, ignore the pulserifle unless it has ammo. */
@@ -1792,9 +1797,11 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
 					return 0;
 				}
 			}
-			/* Look, I said you can't select the cudgel! */
-			if (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_CUDGEL) {
-				return 0;
+			if (!MarineCudgelSelectable) {
+				/* Look, I said you can't select the cudgel! */
+				if (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber == WEAPON_CUDGEL) {
+					return 0;
+				}
 			}
 	    	/* Of course, if you are the cudgel and the the pulserifle has no ammo... */
 			if (playerStatusPtr->WeaponSlot[playerStatusPtr->SelectedWeaponSlot].WeaponIDNumber==WEAPON_CUDGEL) 
@@ -1894,12 +1901,14 @@ static int RequestChangeOfWeaponWhilstSwapping(PLAYER_STATUS *playerStatusPtr,PL
 					slotValidity=0;
 				}
 			}
-			/* And not if you're the cudgel. */
-			if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber==WEAPON_CUDGEL) 
-			{
-				if (playerStatusPtr->SelectedWeaponSlot != newSlotInt) 
+			if (!MarineCudgelSelectable) {
+				/* And not if you're the cudgel. */
+				if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL)
 				{
-					slotValidity=0;
+					if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
+					{
+						slotValidity = 0;
+					}
 				}
 			}
 			/* But, if you are the cudgel, ignore the pulserifle unless it has ammo. */
@@ -1985,12 +1994,14 @@ static int RequestChangeOfWeaponWhilstSwapping(PLAYER_STATUS *playerStatusPtr,PL
 					slotValidity=0;
 				}
 			}
-			/* And not if you're the cudgel. */
-			if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber==WEAPON_CUDGEL) 
-			{
-				if (playerStatusPtr->SelectedWeaponSlot != newSlotInt) 
+			if (!MarineCudgelSelectable) {
+				/* And not if you're the cudgel. */
+				if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL)
 				{
-					slotValidity=0;
+					if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
+					{
+						slotValidity = 0;
+					}
 				}
 			}
 			/* But, if you are the cudgel, ignore the pulserifle unless it has ammo. */
@@ -11821,16 +11832,23 @@ void MarineTwoPistols_Reload(void *playerStatus, PLAYER_WEAPON_DATA *weaponPtr) 
 	StaffAttack=-1;
 }
 
-static void MarineZeroAmmoFunctionality(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *weaponPtr) {
+static void MarineZeroAmmoFunctionality(PLAYER_STATUS* playerStatusPtr, PLAYER_WEAPON_DATA* weaponPtr) {
 
 	int weaponNum;
 	int slot;
 
 	/* Let's cut this into a function. */
 
-	if (AvP.PlayerType!=I_Marine) {
+	if (AvP.PlayerType != I_Marine) {
 		/* For now. */
 		return;
+	}
+
+	if (MarineCudgelSelectable) {
+		if (weaponPtr->WeaponIDNumber == WEAPON_CUDGEL) {
+			/* Don't do the zero ammo check if we're selecting the cudgel */
+			return;
+		}
 	}
 
 	if ((weaponPtr->WeaponIDNumber==WEAPON_GRENADELAUNCHER)

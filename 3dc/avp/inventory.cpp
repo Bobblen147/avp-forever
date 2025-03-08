@@ -39,6 +39,7 @@ static int AbleToPickupMTrackerUpgrade(int mtrackerID);
 void RemovePickedUpObject(STRATEGYBLOCK *objectPtr);
 static int AbleToPickupFieldCharge(int chargeID);
 int AutoWeaponChangeOn = TRUE;
+static bool MarinePulseRifleStart = true;
 static bool MarinePistolStart = false;
 
 PLAYER_STARTING_EQUIPMENT StartingEquipment;
@@ -534,23 +535,29 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				
 			}
 			else
-			//Marine single player start options, first check if pistol start is enabled in the config
+			//Marine single player start options
 			{
+				//always have Cudgel
+				a = SlotForThisWeapon(WEAPON_CUDGEL);
+				if (a != -1) {
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				
+				//now do the custom weapon options
+				MarinePulseRifleStart = Config_GetBool("[Gameplay]", "MarinePulseRifleStart", true);
 				MarinePistolStart = Config_GetBool("[Gameplay]", "MarinePistolStart", false);
 				if (MarinePistolStart) {
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-						}
 					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 10;
 						}
-
+					}
+				// make sure you restart with alternate weapon if no pulse rifle
+				if (!MarinePulseRifleStart) {
 					playerStatusPtr->PreviouslySelectedWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
 					playerStatusPtr->SwapToWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
-					}
+				}
 				// Otherwise standard pulse rifle start
 				else {
 					a=SlotForThisWeapon(WEAPON_PULSERIFLE);
@@ -565,11 +572,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
     	        		playerStatusPtr->WeaponSlot[a].SecondaryMagazinesRemaining=0;
 					}
             		playerStatusPtr->WeaponSlot[a].Possessed=1;
-					/* Conditional cudgel! */
-					a=SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 				}
 			}
 			#if 0
