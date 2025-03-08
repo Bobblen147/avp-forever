@@ -1950,8 +1950,11 @@ void Reload_Weapon(void)
 	/* Only Marines can reload their weapons */
 	if (AvP.PlayerType == I_Alien) return;
 
-	/* Predators  */
-	if (AvP.PlayerType == I_Predator) return;
+	/* Predator reverse cycle vision mode logic*/
+	if (AvP.PlayerType == I_Predator) {
+		playerStatusPtr->Mvt_InputRequests.Flags.Rqst_ReverseCycleVisionMode = 1;
+		return;
+	}
 	
 	/* Player is dead... no reload */
 	if (!playerStatusPtr->IsAlive) return;

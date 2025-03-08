@@ -316,6 +316,10 @@ void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr)
 			{
 				ChangePredatorVisionMode();
 			}
+			if (playerStatusPtr->Mvt_InputRequests.Flags.Rqst_ReverseCycleVisionMode)
+			{
+				ReverseChangePredatorVisionMode();
+			}
 			if (playerStatusPtr->Mvt_InputRequests.Flags.Rqst_GrapplingHook && 
 				playerStatusPtr->GrapplingHookEnabled)
 			{

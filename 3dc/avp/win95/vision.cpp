@@ -224,6 +224,33 @@ extern void ChangePredatorVisionMode(void)
 	PredatorVisionChangeCounter=ONE_FIXED;
 }
 
+extern void ReverseChangePredatorVisionMode(void)
+{
+	switch (CurrentVisionMode) {
+	case VISION_MODE_NORMAL:
+	{
+		CurrentVisionMode = VISION_MODE_PRED_SEEPREDTECH;
+		break;
+	}
+	case VISION_MODE_PRED_THERMAL:
+	{
+		CurrentVisionMode = VISION_MODE_NORMAL;
+		break;
+	}
+	case VISION_MODE_PRED_SEEALIENS:
+	{
+		CurrentVisionMode = VISION_MODE_PRED_THERMAL;
+		break;
+	}
+	case VISION_MODE_PRED_SEEPREDTECH:
+	{
+		CurrentVisionMode = VISION_MODE_PRED_SEEALIENS;
+		break;
+	}
+	}
+	Sound_Play(SID_VISION_ON, "h");
+	PredatorVisionChangeCounter = ONE_FIXED;
+}
 
 /* Marine-O-Vision */
 
