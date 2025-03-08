@@ -14,6 +14,7 @@
 #include "gamedef.h"
 #include "dynamics.h"
 #include "psndplat.h"
+#include "ConfigFile.h"
 #define UseLocalAssert TRUE
 #include "ourasert.h"
 #include <math.h>
@@ -42,6 +43,7 @@ static ALCdevice  *device = 0;
 static ALCcontext *context = 0;
 //static bool eaxAvailable = false;
 static bool efxAvailable = false;
+static bool EAXSoundEnabled = true;
 
 
 struct ALvector
@@ -568,9 +570,12 @@ int PlatStartSoundSys()
 	AlCheckError();
 
 	// check for effects support
-	if (alcIsExtensionPresent(device, "ALC_EXT_EFX")) {
-		Con_PrintMessage("ALC_EXT_EFX is supported for OpenAL");
-		efxAvailable = true;
+	EAXSoundEnabled = Config_GetBool("[Audio]", "EAXEnabled", true);
+	if (EAXSoundEnabled) {
+		if (alcIsExtensionPresent(device, "ALC_EXT_EFX")) {
+			Con_PrintMessage("ALC_EXT_EFX is supported for OpenAL");
+			efxAvailable = true;
+		}
 	}
 	else {
 		Con_PrintMessage("ALC_EXT_EFX not supported for OpenAL");
