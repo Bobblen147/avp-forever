@@ -557,12 +557,13 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				MarinePistolStart = Config_GetBool("[Gameplay]", "MarinePistolStart", false);
 				MarineDualPistolsStart = Config_GetBool("[Gameplay]", "MarineDualPistolsStart", false);
 
+				//always have Cudgel
+				a = SlotForThisWeapon(WEAPON_CUDGEL);
+				if (a != -1) {
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+
 				if (MarineSmartgunStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_SMARTGUN);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 2;
@@ -570,11 +571,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					}
 				}
 				if (MarineFlamethrowerStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_FLAMETHROWER);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 2;
@@ -582,11 +578,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					}
 				}
 				if (MarineSADARStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_SADAR);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
@@ -594,11 +585,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					}
 				}
 				if (MarineGrenadeLauncherStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_GRENADELAUNCHER);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 1;
@@ -610,11 +596,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					}
 				}
 				if (MarineMinigunStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_MINIGUN);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 2;
@@ -634,11 +615,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					}
 				}
 				if (MarinePistolStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
@@ -646,11 +622,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					}
 				}
 				if (MarineDualPistolsStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
@@ -670,11 +641,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				}
 				// Otherwise standard pulse rifle start
 				else {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a=SlotForThisWeapon(WEAPON_PULSERIFLE);
 					assert(a != -1);
 					if (GRENADE_MODE) {
