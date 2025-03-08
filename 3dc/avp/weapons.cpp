@@ -155,6 +155,7 @@ int FriendlyFireDamageFilter(DAMAGE_PROFILE *damage);
 static void MarineZeroAmmoFunctionality(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *weaponPtr);
 static void PredatorZeroAmmoFunctionality(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *weaponPtr);
 static bool MarineCudgelSelectable = false;
+static bool WeaponJammingEnabled = false;
 
 SECTION * GetNamedHierarchyFromLibrary(const char * rif_name, const char * hier_name);
 
@@ -1191,7 +1192,8 @@ static void WeaponStateIdle(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *w
 				||( (weaponPtr->WeaponIDNumber==WEAPON_TWO_PISTOLS)&&(weaponPtr->SecondaryRoundsRemaining) )) {
 			
        			/* consider probability of jamming */
-   	  		   	if (twPtr->ProbabilityOfJamming > Random16BitNumber) {
+				WeaponJammingEnabled = Config_GetBool("[Gameplay]", "WeaponJammingEnabled", true);
+   	  		   	if (twPtr->ProbabilityOfJamming > Random16BitNumber && WeaponJammingEnabled)  {
 					weaponPtr->CurrentState = WEAPONSTATE_JAMMED;
 					weaponPtr->StateTimeOutCounter = WEAPONSTATE_INITIALTIMEOUTCOUNT;
        		  	} else { /* okay, the weapon is able to fire */
@@ -1278,7 +1280,7 @@ static void WeaponStateIdle(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *w
 				||( (weaponPtr->WeaponIDNumber==WEAPON_MARINE_PISTOL)&&(weaponPtr->PrimaryRoundsRemaining) )
 				||( (weaponPtr->WeaponIDNumber==WEAPON_TWO_PISTOLS)&&(weaponPtr->PrimaryRoundsRemaining) )) {
            		/* consider probability of jamming */
-       	  	   	if (twPtr->ProbabilityOfJamming > Random16BitNumber) {
+       	  	   	if (twPtr->ProbabilityOfJamming > Random16BitNumber && WeaponJammingEnabled) {
 					weaponPtr->CurrentState = WEAPONSTATE_JAMMED;
 					weaponPtr->StateTimeOutCounter = WEAPONSTATE_INITIALTIMEOUTCOUNT;
        	  	   	} else {
