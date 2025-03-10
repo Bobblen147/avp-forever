@@ -968,8 +968,13 @@ extern void MakePredatorKeyConfigMenu(void)
 		AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
 		AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 	}
+	//add Previous Vison Mode entry
+	AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_KEYCONFIG;
+	AvPMenu_KeyConfig[i+j].TextDescription = TEXTSTRING_PREDATOR_KEY_PREVIOUS_VISION;
+	AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
+	AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 
-	AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
+	AvPMenu_KeyConfig[i+j+1].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
 }
 
 extern int AutoWeaponChangeOn;
@@ -997,19 +1002,24 @@ extern void MakeMarineKeyConfigMenu(void)
 		AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
 		AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 	}
+	//add Reload Weapon entry
+	AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_KEYCONFIG;
+	AvPMenu_KeyConfig[i+j].TextDescription = TEXTSTRING_MARINE_KEY_RELOAD;
+	AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
+	AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 
 	//store the value of AutoWeaponChange in a seperate variable , so we can restore the value
 	//if the user decides to cancel
 	AutoWeaponChangeOn_Temp = AutoWeaponChangeOn;
 	//add autoweapon change option , for lack of anywhere better to put it
-	AvPMenu_KeyConfig[i+j].ElementID = AVPMENU_ELEMENT_TEXTSLIDER;
-	AvPMenu_KeyConfig[i+j].TextDescription = TEXTSTRING_AUTOWEAPONCHANGE;
-	AvPMenu_KeyConfig[i+j].MaxSliderValue = 1;
-	AvPMenu_KeyConfig[i+j].SliderValuePtr = &AutoWeaponChangeOn_Temp;
-	AvPMenu_KeyConfig[i+j].FirstTextSliderString = TEXTSTRING_NO;
-	AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_AUTOWEAPONCHANGE_HELP;
+	AvPMenu_KeyConfig[i+j+1].ElementID = AVPMENU_ELEMENT_TEXTSLIDER;
+	AvPMenu_KeyConfig[i+j+1].TextDescription = TEXTSTRING_AUTOWEAPONCHANGE;
+	AvPMenu_KeyConfig[i+j+1].MaxSliderValue = 1;
+	AvPMenu_KeyConfig[i+j+1].SliderValuePtr = &AutoWeaponChangeOn_Temp;
+	AvPMenu_KeyConfig[i+j+1].FirstTextSliderString = TEXTSTRING_NO;
+	AvPMenu_KeyConfig[i+j+1].HelpString = TEXTSTRING_AUTOWEAPONCHANGE_HELP;
 
-	AvPMenu_KeyConfig[i+j+1].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
+	AvPMenu_KeyConfig[i+j+2].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
 }
 
 extern void MakeAlienKeyConfigMenu(void)

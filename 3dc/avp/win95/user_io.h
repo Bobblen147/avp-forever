@@ -180,11 +180,15 @@ typedef struct
 		unsigned char Predator_MessageHistory; // Predator
 		unsigned char Marine_ShowScores; // Marine
 	};
-	unsigned char Predator_Say;
-	unsigned char Predator_SpeciesSay;
-	unsigned char Predator_ShowScores;
-	unsigned char ExpansionSpace7;
-	unsigned char ExpansionSpace8;
+	union
+	{
+		unsigned char Predator_Say; // Predator
+		unsigned char Marine_ReloadWeapon; // Marine
+	};
+	unsigned char Predator_SpeciesSay; // Predator
+	unsigned char Predator_ShowScores; // Predator
+	unsigned char Predator_PreviousVisionMode; //Predator
+	unsigned char Predator_DisableTracking;
 
 } PLAYER_INPUT_CONFIGURATION;
 

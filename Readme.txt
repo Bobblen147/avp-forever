@@ -9,19 +9,17 @@ The project has been updated to compile with Visual Studio Community 2022.
 Note that this is a learning project for a novice c++ developer. As such pull requests that add amazing/complicated new features can't be merged as I cannot review them. I suggest making your own fork if you wish to work with the codebase.
 
 
-New optional features can be toggled from the config file found here:
+Most new features can be toggled from the config file found here:
 documents\My Games\Aliens versus Predator\AliensVsPredator.cfg
 
-Start marine levels with any combination of weapons (including none at all)
-Make cudgel selectable with key 0 even if you have ammo for other weapons
-Enable/disable weapon jamming
-Enable/disable EAX reverb
-Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest release)
-
-New mandatory features (cannot currently be toggled)
-
-Weapon reload key for marine (replaces Flashback Weapon key)
-Previous vision mode key for predator (replaces Flashback Weapon key)
+-Start marine levels with any combination of weapons (including none at all)
+-Make marine cudgel selectable with key 0 even if you have ammo for other weapons
+-Marine weapon reload any time (default key R)
+-Override map specific predator inventory and start with any combination of weapons
+-Predator weapons can now be collected as pickups (use key cards 11,12,13,14,15,16 in the editor to place them)
+-Predator previous vision mode key (default R)
+-Enable/disable EAX reverb effects
+-Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest release)
 
 The implementation for the reload and prev vision mode keys are heavily based on the implementation from the Cancer Black mod.
 https://github.com/shole/AvP-CancerBlack/tree/df80b44ca7d1e97c6c310d847b1a10172bac0533)
@@ -67,6 +65,7 @@ enet.dll
 libogg.dll
 libvorbis.dll
 libvorbisfile.dll
+language.txt (overwriting the existing file)
 
 you can continue using the existing OpenAL32.dll, pthreadVC2.dll, libbinkdec.dll and libsmackerdec.dll from the automatic installer without issue.
 
