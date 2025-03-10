@@ -4793,7 +4793,7 @@ int SmartgunSecondaryFire(PLAYER_WEAPON_DATA *weaponPtr)
 	return 0;
 }
 
-int PredDiscChangeMode(PLAYER_WEAPON_DATA *weaponPtr) 
+int PredDiscChangeMode(PLAYER_WEAPON_DATA *weaponPtr)
 {
 	#if 0
 	switch (ThisDiscMode) {

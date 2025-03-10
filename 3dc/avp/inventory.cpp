@@ -2200,3 +2200,27 @@ void Reload_Weapon(void)
 		(*twPtr->WeaponStateFunction[weaponPtr->CurrentState])((void*)playerStatusPtr, weaponPtr);
 	}
 }
+
+void Switch_Tracking_Mode(void)
+{
+	PLAYER_WEAPON_DATA* weaponPtr;
+	PLAYER_STATUS* playerStatusPtr = (PLAYER_STATUS*)(Player->ObStrategyBlock->SBdataptr);
+	weaponPtr = &(playerStatusPtr->WeaponSlot[playerStatusPtr->SelectedWeaponSlot]);
+
+	if (AvP.PlayerType == I_Predator) {
+		if (weaponPtr->WeaponIDNumber == WEAPON_PRED_SHOULDERCANNON || weaponPtr->WeaponIDNumber == WEAPON_PRED_DISC) {
+			switch (SmartgunMode) {
+			case I_Track:
+				NewOnScreenMessage(GetTextString(TEXTSTRING_INGAME_FREEMODE));
+				SmartgunMode = I_Free;
+				break;
+			case I_Free:
+				NewOnScreenMessage(GetTextString(TEXTSTRING_INGAME_TRACKMODE));
+				SmartgunMode = I_Track;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+}

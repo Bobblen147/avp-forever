@@ -29,6 +29,7 @@ extern int InGameMenusAreRunning(void);
 extern void AvP_TriggerInGameMenus(void);
 extern void Recall_Disc(void);
 extern void Reload_Weapon(void);
+extern void Switch_Tracking_Mode(void);
 extern void ShowMultiplayerScores(void);
 extern void BringDownConsoleWithSayTypedIn();
 void BringDownConsoleWithSaySpeciesTypedIn();
@@ -1273,9 +1274,9 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 					|| DebouncedKeyboardInput[secondaryInput->Predator_PreviousVisionMode])
 					Reload_Weapon(); //shared with marine reload weapon
 
-				//if (KeyboardInput[primaryInput->Predator_DisableTracking]
-				//	|| KeyboardInput[secondaryInput->Predator_DisableTracking])
-				//	break;
+				if (DebouncedKeyboardInput[primaryInput->Predator_DisableTracking]
+					|| DebouncedKeyboardInput[secondaryInput->Predator_DisableTracking])
+					Switch_Tracking_Mode(); 
 				break;
 
 				break;
