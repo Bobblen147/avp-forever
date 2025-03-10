@@ -49,6 +49,13 @@ static bool MarineMinigunStart = false;
 static bool MarineSkeeterStart = false;
 static bool MarinePistolStart = false;
 static bool MarineDualPistolsStart = false;
+static bool PredatorWeaponsOverride = false;
+static bool PredatorWristBladesStart = true;
+static bool PredatorSpearGunStart = false;
+static bool PredatorShoulderCannonStart = false;
+static bool PredatorMedicompStart = false;
+static bool PredatorPistolStart = false;
+static bool PredatorDiscStart = false;
 
 PLAYER_STARTING_EQUIPMENT StartingEquipment;
 
@@ -119,8 +126,12 @@ void MaintainPlayersInventory(void)
 					}
 					case(IOT_Key):
 					{
-//						SetPlayerSecurityClearance(Player->ObStrategyBlock,objStatPtr->subType);						
-						RemovePickedUpObject(collidedWith);
+						if (AvP.PlayerType==I_Predator && AbleToPickupWeapon(static_cast<enum WEAPON_ID>(objStatPtr->subType)))
+						{
+							RemovePickedUpObject(collidedWith);
+							/*Message now done in able to pickup function*/
+						 //	NewOnScreenMessage(GetTextString(TemplateWeapon[objStatPtr->subType].Name));
+						}
 						break;
 					}
 					case(IOT_BoxedSentryGun):
@@ -543,10 +554,10 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				
 			}
 			else
-			//Marine single player - custom starting weapons
+			//Marine & Predator single player - custom starting weapons
 			{
 				
-			    //now do the weapon options from config
+			    //now do the Marine weapon options from config
 				MarinePulseRifleStart = Config_GetBool("[Gameplay]", "MarinePulseRifleStart", true);
 				MarineSmartgunStart = Config_GetBool("[Gameplay]", "MarineSmartgunStart", false);
 				MarineFlamethrowerStart = Config_GetBool("[Gameplay]", "MarineFlamethrowerStart", false);
@@ -556,7 +567,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				MarineSkeeterStart = Config_GetBool("[Gameplay]", "MarineSkeeterStart", false);
 				MarinePistolStart = Config_GetBool("[Gameplay]", "MarinePistolStart", false);
 				MarineDualPistolsStart = Config_GetBool("[Gameplay]", "MarineDualPistolsStart", false);
-
+				
 				//always have Cudgel
 				a = SlotForThisWeapon(WEAPON_CUDGEL);
 				if (a != -1) {
@@ -677,15 +688,84 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
     	}
        	case I_Predator:
 		{
-			a=SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
-			playerStatusPtr->WeaponSlot[a].Possessed=1;
+			//Predator weapon options from config
+			PredatorWeaponsOverride = Config_GetBool("[Gameplay]", "PredatorWeaponsOverride", false);
+			PredatorWristBladesStart = Config_GetBool("[Gameplay]", "PredatorWristBladesStart", true);
+			PredatorSpearGunStart = Config_GetBool("[Gameplay]", "PredatorSpearGunStart", false);
+			PredatorShoulderCannonStart = Config_GetBool("[Gameplay]", "PredatorShoulderCannonStart", false);
+			PredatorMedicompStart = Config_GetBool("[Gameplay]", "PredatorMedicompStart", false);
+			PredatorPistolStart = Config_GetBool("[Gameplay]", "PredatorPistolStart", false);
+			PredatorDiscStart = Config_GetBool("[Gameplay]", "PredatorDiscStart", false);
 			
+			//If override is set force the weapons chosen in the config
+			if (PredatorWeaponsOverride) {
+				
+				if (PredatorWristBladesStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				if (PredatorPistolStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_PISTOL);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryRoundsRemaining = ONE_FIXED;
+					playerStatusPtr->WeaponSlot[a].SecondaryRoundsRemaining = ONE_FIXED;
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				if (PredatorSpearGunStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_RIFLE);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryRoundsRemaining = (ONE_FIXED * StartingEquipment.predator_num_spears);
+					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				if (PredatorShoulderCannonStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_SHOULDERCANNON);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 5;
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				if (PredatorDiscStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_DISC);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 1;
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				if (PredatorMedicompStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_MEDICOMP);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
+					playerStatusPtr->WeaponSlot[a].PrimaryRoundsRemaining = MEDICOMP_MAX_AMMO;
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+
+				playerStatusPtr->PreviouslySelectedWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
+				playerStatusPtr->SwapToWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
+				a = SlotForThisWeapon(WEAPON_PRED_STAFF);
+				// bjd - big crash. 08/02/10
+				/* bjd - below line added. MUST break here or else we index WeaponSlot array at index -1! */
+				if (a < 0) break;
+				playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
+				playerStatusPtr->WeaponSlot[a].Possessed = 0;
+
+				break;
+			}
+			else
+			//if override not set, respect the rif file weapon options!
+			a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
+			playerStatusPtr->WeaponSlot[a].Possessed = 1;
+
 			if(StartingEquipment.predator_pistol)
 			{
 				a=SlotForThisWeapon(WEAPON_PRED_PISTOL);
 				assert(a != -1);
             	playerStatusPtr->WeaponSlot[a].PrimaryRoundsRemaining=ONE_FIXED;
-            	playerStatusPtr->WeaponSlot[a].SecondaryRoundsRemaining=ONE_FIXED;
+				playerStatusPtr->WeaponSlot[a].SecondaryRoundsRemaining=ONE_FIXED;
 				playerStatusPtr->WeaponSlot[a].Possessed=1;
 			}
 			if(StartingEquipment.predator_num_spears)
@@ -981,9 +1061,25 @@ static int AbleToPickupAmmo(enum AMMO_ID ammoID)
 		{
 			switch(ammoID)
 			{
+				
+				case AMMO_PRED_WRISTBLADE:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
+					break;
+				}
+				case AMMO_PRED_PISTOL:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_PISTOL);
+					break;
+				}
 				case AMMO_PRED_RIFLE:
 				{
 					weaponSlot = SlotForThisWeapon(WEAPON_PRED_RIFLE);
+					break;
+				}
+				case AMMO_PRED_ENERGY_BOLT:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_SHOULDERCANNON);
 					break;
 				}
 				case AMMO_PRED_DISC:
@@ -1254,14 +1350,49 @@ static int AbleToPickupWeapon(enum WEAPON_ID weaponID)
 					break;
 				}
 				default:
-					weaponSlot = SlotForThisWeapon(weaponID);
+					weaponSlot = SlotForThisWeapon(WEAPON_PULSERIFLE);
 					break;
 			}
 			break;
 		}
        	case I_Predator:
 		{
-			weaponSlot = SlotForThisWeapon(weaponID);
+			switch (weaponID)
+			{
+				case WEAPON_PRED_WRISTBLADE:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
+					break;
+				}
+				case WEAPON_PRED_PISTOL:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_PISTOL);
+					break;
+				}
+				case WEAPON_PRED_RIFLE:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_RIFLE);
+					break;
+				}
+				case WEAPON_PRED_SHOULDERCANNON:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_SHOULDERCANNON);
+					break;
+				}
+				case WEAPON_PRED_DISC:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_DISC);
+					break;
+				}
+				case WEAPON_PRED_MEDICOMP:
+				{
+					weaponSlot = SlotForThisWeapon(WEAPON_PRED_MEDICOMP);
+					break;
+				}
+			default:
+				weaponSlot = SlotForThisWeapon(weaponID);
+				break;
+			}
 			break;
 		}
 		case I_Alien:
