@@ -974,7 +974,13 @@ extern void MakePredatorKeyConfigMenu(void)
 	AvPMenu_KeyConfig[i+j].MenuToGoTo = AVPMENU_MAIN;
 	AvPMenu_KeyConfig[i+j].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
 
-	AvPMenu_KeyConfig[i+j+1].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
+	//add Tracking Toggle entry
+	AvPMenu_KeyConfig[i+j+1].ElementID = AVPMENU_ELEMENT_KEYCONFIG;
+	AvPMenu_KeyConfig[i+j+1].TextDescription = TEXTSTRING_PREDATOR_KEY_DISABLE_TRACKING;
+	AvPMenu_KeyConfig[i+j+1].MenuToGoTo = AVPMENU_MAIN;
+	AvPMenu_KeyConfig[i+j+1].HelpString = TEXTSTRING_KEYCONTROLS_HELP;
+
+	AvPMenu_KeyConfig[i+j+2].ElementID = AVPMENU_ELEMENT_ENDOFMENU;
 }
 
 extern int AutoWeaponChangeOn;

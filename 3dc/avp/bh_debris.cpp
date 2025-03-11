@@ -1332,26 +1332,26 @@ DISPLAYBLOCK *MakeHierarchicalDebris(STRATEGYBLOCK *parent_sbPtr,SECTION_DATA *r
 		((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 		/* Consider the bounce sound, by section name. */
 		if (strcmp(root->sempai->Section_Name,"SADAR")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 			dynPtr->Elasticity=(ONE_FIXED>>3);
 		} else if (strcmp(root->sempai->Section_Name,"gren stock")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 			/* Grenade launchers aren't very bouncy. */
 		} else if (strcmp(root->sempai->Section_Name,"flamer")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 		} else if (strcmp(root->sempai->Section_Name,"spring one")==0) {
 			/* This is a smartgun! */
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 			/* Whilst we're here... */
 			dispPtr->ObMat=*orientation;
 			root->SecMat=Identity_RotMat;
 			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->HModelController.ZeroRootRotation=1;
 			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->HModelController.Playing=0;
 		} else if (strcmp(root->sempai->Section_Name,"mini gun")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 		} else if (strcmp(root->sempai->Section_Name,"flame thrower")==0) {
 			/* Civvie flamer... */
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 		} else if (strcmp(root->sempai->Section_Name,"pulse mag")==0) {
 			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 			/* Don't have a 'tink' yet... */

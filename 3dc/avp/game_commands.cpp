@@ -76,6 +76,7 @@ extern void CastPredoBot(int weapon);
 extern void CastPredAlienBot(void);
 extern void CastPraetorianBot(void);
 extern void CastXenoborg(void);
+extern void CastSentrygun(void);
 
 extern int ShowMultiplayerScoreTimer;
 
@@ -407,7 +408,7 @@ void CreateGameSpecificConsoleCommands(void)
 			IsACheat
 		);
 
-		ConsoleCommand :: Make
+		ConsoleCommand::Make
 		(
 			"XENOBORG",
 			"THEY'RE ALL BOTS ANYWAY...",
@@ -415,7 +416,13 @@ void CreateGameSpecificConsoleCommands(void)
 			IsACheat
 		);
 
-
+		ConsoleCommand::Make
+		(
+			"SENTRYGUN",
+			"CREATES A SENTRY GUN BOT",
+			CastSentrygun,
+			IsACheat
+		);
 	}
 
 	#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
