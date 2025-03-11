@@ -4378,9 +4378,9 @@ void DoCredits(void)
 	// HACK / FIXME: don't run credits when displaying the menu FMV as 
 	// we presently have a bug that means you can't exit early from
 	// the credits roll in a Release build when the video is playing..
-	if (MenuBackgroundFMV) {
-		return;
-	}
+	//if (MenuBackgroundFMV) {
+	//	return;
+	//}
 
 	int position = 300*2048;
 	BOOL FinishedCredits = FALSE;

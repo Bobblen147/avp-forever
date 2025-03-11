@@ -606,6 +606,18 @@ void CreatePredoBot(VECTORCH *position, int weapon)
                 case 1:
                         predatorStatus->PrimaryWeapon=PNPCW_PlasmaCaster;
                         break;
+                case 2:
+                        predatorStatus->PrimaryWeapon = PNPCW_Pistol;
+                        break;
+                case 3:
+                        predatorStatus->PrimaryWeapon = PNPCW_Medicomp;
+                        break;
+                case 4:
+                        predatorStatus->PrimaryWeapon = PNPCW_Speargun;
+                        break;
+                case 5:
+                        predatorStatus->PrimaryWeapon = PNPCW_SeriousPlasmaCaster;
+                        break;
                 }
 
                 predatorStatus->SecondaryWeapon=PNPCW_Staff;

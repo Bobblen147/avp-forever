@@ -2081,7 +2081,7 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 			0,		/* Cloaked Seconds */
 			0,		/* Cloaked Minutes */
 			-1,		/* Cloaked Hours */
-			-1,		/* Health Damage */
+			100,	/* Health Damage */
 			-1,		/* Armour Damage */
 			-1,		/* Average Speed */
 			-1,		/* Field Charge Used */
@@ -2093,7 +2093,7 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0
 			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_TERROR,	/* Cheat to activate */
 	},
 	{
 		{	/* Derelict_A / Medium */
@@ -3302,7 +3302,7 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 			0,		/* Cloaked Seconds */
 			0,		/* Cloaked Minutes */
 			-1,		/* Cloaked Hours */
-			-1,		/* Health Damage */
+			100,	/* Health Damage */
 			-1,		/* Armour Damage */
 			-1,		/* Average Speed */
 			-1,		/* Field Charge Used */
@@ -3314,7 +3314,7 @@ AvP_Level_Target_Desc LevelStatsTargets[I_MaxDifficulties][AVP_ENVIRONMENT_END_O
 				0,0,0,0,0,0,0,0,0,0
 			}
 		},
-		CHEATMODE_NONACTIVE,	/* Cheat to activate */
+		CHEATMODE_TERROR,	/* Cheat to activate */
 	},
 	{
 		{	/* Derelict_A / Hard */
