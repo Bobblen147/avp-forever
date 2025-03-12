@@ -203,6 +203,7 @@ inline float WPos2DC(int32_t pos)
 //	if (mainMenu) {
 	if ((GetAvPMenuState() != MENUSSTATE_STARTGAME)) {
 		return (float(pos / (float)640) * 2) - 1;
+		//return (float(pos / (float)ScreenDescriptorBlock.SDB_Width) * 2) - 1;
 	}
 	else {
 		return (float(pos / (float)ScreenDescriptorBlock.SDB_Width) * 2) - 1;
@@ -215,6 +216,7 @@ inline float HPos2DC(int32_t pos)
 //	if (mainMenu) {
 	if ((GetAvPMenuState() != MENUSSTATE_STARTGAME)) {
 		return (float(pos / (float)480) * 2) - 1;
+		//return (float(pos / (float)ScreenDescriptorBlock.SDB_Height) * 2) - 1;
 	}
 	else {
 		return (float(pos / (float)ScreenDescriptorBlock.SDB_Height)* 2) - 1;

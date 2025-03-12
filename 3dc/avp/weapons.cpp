@@ -8705,6 +8705,7 @@ int FireSpeargun(PLAYER_WEAPON_DATA *weaponPtr)
 int Tail_TargetFilter(STRATEGYBLOCK *candidate) {
 
 	switch (candidate->I_SBtype) {
+		case I_BehaviourAlien:
 		case I_BehaviourPredator:
 		case I_BehaviourXenoborg:
 		case I_BehaviourMarine:

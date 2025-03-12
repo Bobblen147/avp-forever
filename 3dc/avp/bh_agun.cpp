@@ -91,7 +91,7 @@ void CastSentrygun(void) {
 
 	VECTORCH position;
 
-	if (AvP.Network!=I_No_Network) {
+	if (AvP.Network!=I_No_Network && !netGameData.skirmishMode) {
 		NewOnScreenMessage("NO SENTRYGUNS IN MULTIPLAYER MODE");
 		return;
 	}
@@ -126,11 +126,10 @@ void CreateSentrygun(VECTORCH *Position,int type)
 	sbPtr->DynPtr = AllocateDynamicsBlock(DYNAMICS_TEMPLATE_SPRITE_NPC);
 	if(sbPtr->DynPtr)
 	{
-		EULER zeroEuler = {0,0,0};
 		DYNAMICSBLOCK *dynPtr = sbPtr->DynPtr;
 		GLOBALASSERT(dynPtr);
       	dynPtr->PrevPosition = dynPtr->Position = *Position;
-		dynPtr->OrientEuler = zeroEuler;
+		dynPtr->OrientEuler = Player->ObEuler; //face away from player
 		CreateEulerMatrix(&dynPtr->OrientEuler, &dynPtr->OrientMat);
 		TransposeMatrixCH(&dynPtr->OrientMat);
 		dynPtr->UseDisplacement=0;

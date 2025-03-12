@@ -146,7 +146,7 @@ void CastXenoborg(void) {
 
 	VECTORCH position;
 
-	if (AvP.Network!=I_No_Network) {
+	if (AvP.Network!=I_No_Network && !netGameData.skirmishMode) {
 		NewOnScreenMessage("NO XENOBORGS IN MULTIPLAYER MODE");
 		return;
 	}

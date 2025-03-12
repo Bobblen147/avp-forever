@@ -10720,7 +10720,7 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 	if (netGameData.skirmishMode)
 	{
 		// Skirmish mode - player can be anything except an alien
-		netGameData.maxAlien = 0;
+		netGameData.maxAlien = 8;
 		netGameData.maxPredator = 8;
 		netGameData.maxMarine = 8;
 		netGameData.maxMarineGeneral = 8;

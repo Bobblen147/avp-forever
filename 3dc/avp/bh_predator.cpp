@@ -482,7 +482,7 @@ void CastPredoBot(int weapon) {
 
         VECTORCH position;
 
-        if (AvP.Network!=I_No_Network) {
+        if (AvP.Network != I_No_Network && !netGameData.skirmishMode) {
                 NewOnScreenMessage("NO PREDOBOTS IN MULTIPLAYER MODE");
                 return;
         }
@@ -5070,11 +5070,8 @@ int Predator_TargetFilter(STRATEGYBLOCK *candidate) {
                                 {
                                         case I_Alien:
                                         case I_Marine:
-                                                return(1);
-                                                break;
                                         case I_Predator:
-                                                /* Just this once. */
-                                                return(0);
+                                                return(1);
                                                 break;
                                         default:
                                                 GLOBALASSERT(0);

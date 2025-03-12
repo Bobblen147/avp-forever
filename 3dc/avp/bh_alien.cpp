@@ -2034,12 +2034,10 @@ int Alien_TargetFilter(STRATEGYBLOCK *candidate) {
 
 				switch(AvP.PlayerType)
 				{
+					case I_Alien:
 					case I_Marine:
 					case I_Predator:
 						return(1);
-						break;
-					case I_Alien:
-						return(0);
 						break;
 					default:
 						GLOBALASSERT(0);

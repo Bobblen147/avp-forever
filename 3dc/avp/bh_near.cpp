@@ -2084,9 +2084,9 @@ int AlienIsAwareOfTarget(STRATEGYBLOCK *sbPtr) {
 		}
 		#endif
 		/* test for player being an alien */
-		if(AvP.PlayerType==I_Alien) {
-			return 0;
-		}
+		//if(AvP.PlayerType==I_Alien) {
+		//	return 0;
+		//}
 		#if 0
 		/* Expensive path test? */
 		if (GetNextModuleForLink_Core(sbPtr->containingModule->m_aimodule,
@@ -2145,9 +2145,9 @@ static int AlienHasPathToTarget(STRATEGYBLOCK *sbPtr) {
 			#endif
 		}
 		/* test for player being an alien */
-		if(AvP.PlayerType==I_Alien) {
-			return 0;
-		}
+		//if(AvP.PlayerType==I_Alien) {
+		//	return 0;
+		//}
 		/* Expensive path test? */
 		if (GetNextModuleForLink_Core(sbPtr->containingModule->m_aimodule,
 			alienStatusPointer->Target->containingModule->m_aimodule,4,1,1)) {

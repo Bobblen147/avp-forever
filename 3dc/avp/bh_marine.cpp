@@ -1317,7 +1317,7 @@ void CastMarineBot(int weapon) {
 
 	VECTORCH position;
 
-	if (AvP.Network!=I_No_Network) {
+	if (AvP.Network!=I_No_Network && !netGameData.skirmishMode) {
 		NewOnScreenMessage("NO MARINEBOTS IN MULTIPLAYER MODE");
 		return;
 	}
@@ -11143,10 +11143,8 @@ int Marine_TargetFilter(STRATEGYBLOCK *candidate) {
 				{
 					case I_Alien:
 					case I_Predator:
-						return(1);
-						break;
 					case I_Marine:
-						return(0);
+						return(1);
 						break;
 					default:
 						GLOBALASSERT(0);
