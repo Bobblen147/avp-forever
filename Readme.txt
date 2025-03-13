@@ -25,17 +25,18 @@ to enable this, first set PredatorWeaponsOverride=true in the config file
 -Predator weapons can now be collected as pickups (use key cards 11,12,13,14,15,16 in the editor to place them)
 -Predator previous vision mode key (default R)
 -Predator tracking weapons (disc, shoulder cannon) can have their tracking enabled/disabled (default key T)
--Added additional Predator bot types (try PREDOBOT 2,3,4 or 5 in debug mode!)
+-Added additional Predator bot types that Rebellion left unused (try PREDOBOT 2,3,4 or 5 in debug mode!)
 
 Gameplay
--Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode.
--Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest release)
+-Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
+-Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest binary)
 -Added sentry gun bot spawn command (type SENTRYGUN in debug mode)
 -Can enable/disable AI attacking a player of the same species.
 
 Skirmish
 -Alien now playable in skirmish mode, tail attack can now target other aliens
 -All bot types can now be spawned in debug mode (including predators, sentry guns etc)
+-In game species change in debug mode (use MORPH_ALIEN, MORPH_MARINE and MORPH_PREDATOR)
 
 Other
 -Enable/disable EAX reverb effects
@@ -76,9 +77,6 @@ The legacy DirectX SDK
 currently available here but Microsoft often change these things
 https://www.microsoft.com/en-gb/download/details.aspx?id=6812
 
-If you only want to play the game rather than build it then the legacy DirectX runtime should do
-https://www.microsoft.com/en-gb/download/details.aspx?id=8109
-
 libogg and libvorbis
 https://www.xiph.org/
 I compiled libogg-1.3.2 and libvorbis-1.3.7
@@ -99,11 +97,14 @@ I used the latest version
 
 
 Known (pre-existing) bugs
+* means I'm using a workaround
 
--Starry sky is drawn in front of the scenery if the scenery is sufficiently distant! (see Stranded)
+-Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)
 -Stranded cliff textures have an outline around the transparent section (bad bilinear filtering?)
 -Animated lava texture in Fury 161 is broken
--In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups
--When killing an NPC marine with a heavy weapon, the weapon drop sound repeats
--EAX reverb / echo levels are way to high on non surround sound setups.
+-Smart gun tracking is too slow (xenoborg tracking too?)
 -Walls seem to be a bit stickier than gold edition (easier to snag them). May be related to high FPS?
+-In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
+-When killing an NPC marine with a heavy weapon, the weapon drop sound sometimes rapidly repeats*
+-EAX reverb / echo levels are way to high on non surround sound setups.*
+-Wireframe debug mode is broken

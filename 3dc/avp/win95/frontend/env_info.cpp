@@ -7,6 +7,7 @@
 #include "user_profile.h"
 #include "mp_config.h"
 #include "pldnet.h"
+#include "ConfigFile.h"
 
 static enum AVP_ENVIRONMENT_ID MarineEpisodes[] =
 {
@@ -5125,13 +5126,31 @@ void SetLevelToLoadForAlien(int episode)
 {
 	strcpy(LevelName,RifNamesForEnvironments[AlienEpisodes[episode]]);
 }
+void SetLevelToLoadForAlienCustom()
+{ 
+	std::string customName = "Custom/" + Config_GetString("[Custom]", "CustomAlienLevelName", "noname");
+	const char* customNamechar = customName.c_str();
+	strcpy(LevelName, customNamechar);
+}
 void SetLevelToLoadForPredator(int episode)
 {
 	strcpy(LevelName,RifNamesForEnvironments[PredatorEpisodes[episode]]);
 }
+void SetLevelToLoadForPredatorCustom()
+{
+	std::string customName = "Custom/" + Config_GetString("[Custom]", "CustomPredatorLevelName", "noname");
+	const char* customNamechar = customName.c_str();
+	strcpy(LevelName, customNamechar);
+}
 void SetLevelToLoadForMarine(int episode)
 {
 	strcpy(LevelName,RifNamesForEnvironments[MarineEpisodes[episode]]);
+}
+void SetLevelToLoadForMarineCustom()
+{
+	std::string customName = "Custom/" + Config_GetString("[Custom]", "CustomMarineLevelName", "noname");
+	const char* customNamechar = customName.c_str();
+	strcpy(LevelName, customNamechar);
 }
 
 void SetLevelToLoadForMultiplayer(int episode)

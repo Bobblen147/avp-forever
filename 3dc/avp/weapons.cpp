@@ -1196,7 +1196,7 @@ static void WeaponStateIdle(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *w
 				||( (weaponPtr->WeaponIDNumber==WEAPON_TWO_PISTOLS)&&(weaponPtr->SecondaryRoundsRemaining) )) {
 			
        			/* consider probability of jamming */
-				WeaponJammingEnabled = Config_GetBool("[Gameplay]", "WeaponJammingEnabled", true);
+				WeaponJammingEnabled = Config_GetBool("[MarineGameplay]", "WeaponJammingEnabled", true);
    	  		   	if (twPtr->ProbabilityOfJamming > Random16BitNumber && WeaponJammingEnabled)  {
 					weaponPtr->CurrentState = WEAPONSTATE_JAMMED;
 					weaponPtr->StateTimeOutCounter = WEAPONSTATE_INITIALTIMEOUTCOUNT;
@@ -11851,7 +11851,7 @@ static void MarineZeroAmmoFunctionality(PLAYER_STATUS* playerStatusPtr, PLAYER_W
 		return;
 	}
 
-	MarineCudgelSelectable = Config_GetBool("[Gameplay]", "MarineCudgelSelectable", false);
+	MarineCudgelSelectable = Config_GetBool("[MarineGameplay]", "MarineCudgelSelectable", false);
 	if (weaponPtr->WeaponIDNumber == WEAPON_CUDGEL && MarineCudgelSelectable) {
 			/* Don't do the zero ammo check if we're selecting the cudgel */
 			return;

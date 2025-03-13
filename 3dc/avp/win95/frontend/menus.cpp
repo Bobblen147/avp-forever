@@ -29,6 +29,7 @@
 #include "tables.h"
 #include "d3d_render.h"
 #include "OnScreenKeyboard.h"
+#include "ConfigFile.h"
 
 #if defined(_MSC_VER)
 #define stricmp		_stricmp
@@ -84,6 +85,9 @@ extern void MakeOpenIPAddressMenu();
 extern int AutoWeaponChangeOn_Temp;
 extern int AutoWeaponChangeOn;
 extern void SetDefaultMultiplayerConfig();
+static bool CustomAlienSinglePlayerLevel = false;
+static bool CustomMarineSinglePlayerLevel = false;
+static bool CustomPredatorSinglePlayerLevel = false;
 
 void HandlePostGameFMVs(void);
 void HandlePreGameFMVs(void);
@@ -2699,7 +2703,14 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			  &&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
 			{
 				AvP.PlayerType = I_Alien;
-				SetLevelToLoadForAlien(AlienEpisodeToPlay);
+				CustomAlienSinglePlayerLevel = Config_GetBool("[Custom]", "CustomAlienSinglePlayerLevel", false);
+				if (CustomAlienSinglePlayerLevel) {
+					AlienEpisodeToPlay = 0;
+					SetLevelToLoadForAlienCustom();
+				}
+				else {
+					SetLevelToLoadForAlien(AlienEpisodeToPlay);
+				}
 
 				if (AlienEpisodeToPlay<MAX_NO_OF_BASIC_ALIEN_EPISODES)
 				{
@@ -2720,7 +2731,14 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				&&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
 			{
 				AvP.PlayerType = I_Marine;
-				SetLevelToLoadForMarine(MarineEpisodeToPlay);
+				CustomMarineSinglePlayerLevel = Config_GetBool("[Custom]", "CustomMarineSinglePlayerLevel", false);
+				if (CustomMarineSinglePlayerLevel) {
+					MarineEpisodeToPlay = 0;
+					SetLevelToLoadForMarineCustom();
+				}
+				else {
+					SetLevelToLoadForMarine(MarineEpisodeToPlay);
+				}
 
 				if (MarineEpisodeToPlay < MAX_NO_OF_BASIC_MARINE_EPISODES)
 				{
@@ -2741,7 +2759,14 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				&&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
 			{
 				AvP.PlayerType = I_Predator;
-				SetLevelToLoadForPredator(PredatorEpisodeToPlay);
+				CustomPredatorSinglePlayerLevel = Config_GetBool("[Custom]", "CustomPredatorSinglePlayerLevel", false);
+				if (CustomPredatorSinglePlayerLevel) {
+					PredatorEpisodeToPlay = 0;
+					SetLevelToLoadForPredatorCustom();
+				}
+				else {
+					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
+				}
 
 				if (PredatorEpisodeToPlay<MAX_NO_OF_BASIC_PREDATOR_EPISODES)
 				{

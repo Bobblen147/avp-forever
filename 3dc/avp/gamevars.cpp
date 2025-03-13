@@ -180,6 +180,27 @@ void CreateGameSpecificConsoleVariables(void)
 			65536*16, // int MaxVal_New
 			IsACheat
 		);
+		ConsoleCommand::Make
+		(
+			"MORPH_ALIEN",
+			"BECOME AN ALIEN",
+			ChangeToAlien,
+			IsACheat
+		);
+		ConsoleCommand::Make
+		(
+			"MORPH_MARINE",
+			"BECOME A MARINE",
+			ChangeToMarine,
+			IsACheat
+		);
+		ConsoleCommand::Make
+		(
+			"MORPH_PREDATOR",
+			"BECOME A PREDATOR",
+			ChangeToPredator,
+			IsACheat
+		);
 	}
 
 	#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
@@ -267,25 +288,6 @@ void CreateGameSpecificConsoleVariables(void)
 		"FORCE QUANTUM OBJECT DIE ROLL (-1 MEANS DON'T FORCE ROLL)", // ProjChar* pProjCh_Description_ToUse
 		 -1, // int MinVal_New,
 		 65535 // int MaxVal_New
-	);
-
-	ConsoleCommand :: Make
-	(
-		"MORPH_ALIEN",
-		"BECOME AN ALIEN",
-		ChangeToAlien
-	);
-	ConsoleCommand :: Make
-	(
-		"MORPH_MARINE",
-		"BECOME A MARINE",
-		ChangeToMarine
-	);
-	ConsoleCommand :: Make
-	(
-		"MORPH_PREDATOR",
-		"BECOME A PREDATOR",
-		ChangeToPredator
 	);
 
 	//various network scoring options

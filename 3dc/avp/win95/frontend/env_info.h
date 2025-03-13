@@ -116,6 +116,9 @@ enum AVP_ENVIRONMENT_ID
 extern void SetLevelToLoadForAlien(int episode);
 extern void SetLevelToLoadForPredator(int episode);
 extern void SetLevelToLoadForMarine(int episode);
+extern void SetLevelToLoadForAlienCustom();
+extern void SetLevelToLoadForPredatorCustom();
+extern void SetLevelToLoadForMarineCustom();
 extern void SetLevelToLoadForMultiplayer(int episode);
 extern void SetLevelToLoadForCooperative(int episode);
 extern void SetLevelToLoad(enum AVP_ENVIRONMENT_ID env);

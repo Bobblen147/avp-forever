@@ -558,15 +558,15 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 			{
 				
 			    //now do the Marine weapon options from config
-				MarinePulseRifleStart = Config_GetBool("[Gameplay]", "MarinePulseRifleStart", true);
-				MarineSmartgunStart = Config_GetBool("[Gameplay]", "MarineSmartgunStart", false);
-				MarineFlamethrowerStart = Config_GetBool("[Gameplay]", "MarineFlamethrowerStart", false);
-				MarineSADARStart = Config_GetBool("[Gameplay]", "MarineSADARStart", false);
-				MarineGrenadeLauncherStart = Config_GetBool("[Gameplay]", "MarineGrenadeLauncherStart", false);
-				MarineMinigunStart = Config_GetBool("[Gameplay]", "MarineMinigunStart", false);
-				MarineSkeeterStart = Config_GetBool("[Gameplay]", "MarineSkeeterStart", false);
-				MarinePistolStart = Config_GetBool("[Gameplay]", "MarinePistolStart", false);
-				MarineDualPistolsStart = Config_GetBool("[Gameplay]", "MarineDualPistolsStart", false);
+				MarinePulseRifleStart = Config_GetBool("[MarineGameplay]", "MarinePulseRifleStart", true);
+				MarineSmartgunStart = Config_GetBool("[MarineGameplay]", "MarineSmartgunStart", false);
+				MarineFlamethrowerStart = Config_GetBool("[MarineGameplay]", "MarineFlamethrowerStart", false);
+				MarineSADARStart = Config_GetBool("[MarineGameplay]", "MarineSADARStart", false);
+				MarineGrenadeLauncherStart = Config_GetBool("[MarineGameplay]", "MarineGrenadeLauncherStart", false);
+				MarineMinigunStart = Config_GetBool("[MarineGameplay]", "MarineMinigunStart", false);
+				MarineSkeeterStart = Config_GetBool("[MarineGameplay]", "MarineSkeeterStart", false);
+				MarinePistolStart = Config_GetBool("[MarineGameplay]", "MarinePistolStart", false);
+				MarineDualPistolsStart = Config_GetBool("[MarineGameplay]", "MarineDualPistolsStart", false);
 				
 				//always have Cudgel
 				a = SlotForThisWeapon(WEAPON_CUDGEL);
@@ -689,13 +689,13 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
        	case I_Predator:
 		{
 			//Predator weapon options from config
-			PredatorWeaponsOverride = Config_GetBool("[Gameplay]", "PredatorWeaponsOverride", false);
-			PredatorWristBladesStart = Config_GetBool("[Gameplay]", "PredatorWristBladesStart", true);
-			PredatorSpearGunStart = Config_GetBool("[Gameplay]", "PredatorSpearGunStart", false);
-			PredatorShoulderCannonStart = Config_GetBool("[Gameplay]", "PredatorShoulderCannonStart", false);
-			PredatorMedicompStart = Config_GetBool("[Gameplay]", "PredatorMedicompStart", false);
-			PredatorPistolStart = Config_GetBool("[Gameplay]", "PredatorPistolStart", false);
-			PredatorDiscStart = Config_GetBool("[Gameplay]", "PredatorDiscStart", false);
+			PredatorWeaponsOverride = Config_GetBool("[PredatorGameplay]", "PredatorWeaponsOverride", false);
+			PredatorWristBladesStart = Config_GetBool("[PredatorGameplay]", "PredatorWristBladesStart", true);
+			PredatorSpearGunStart = Config_GetBool("[PredatorGameplay]", "PredatorSpearGunStart", false);
+			PredatorShoulderCannonStart = Config_GetBool("[PredatorGameplay]", "PredatorShoulderCannonStart", false);
+			PredatorMedicompStart = Config_GetBool("[PredatorGameplay]", "PredatorMedicompStart", false);
+			PredatorPistolStart = Config_GetBool("[PredatorGameplay]", "PredatorPistolStart", false);
+			PredatorDiscStart = Config_GetBool("[PredatorGameplay]", "PredatorDiscStart", false);
 			
 			//If override is set force the weapons chosen in the config
 			if (PredatorWeaponsOverride) {

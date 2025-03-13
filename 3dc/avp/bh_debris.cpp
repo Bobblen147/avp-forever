@@ -1361,7 +1361,7 @@ DISPLAYBLOCK *MakeHierarchicalDebris(STRATEGYBLOCK *parent_sbPtr,SECTION_DATA *r
 		if (parent_sbPtr) {
 			if (parent_sbPtr->I_SBtype==I_BehaviourAutoGun) {
 				/* Always make a thump. */
-				((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
+				((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 			}
 		}
 

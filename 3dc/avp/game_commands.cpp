@@ -423,6 +423,13 @@ void CreateGameSpecificConsoleCommands(void)
 			CastSentrygun,
 			IsACheat
 		);
+
+		ConsoleCommand::Make
+		(
+			"SHOWMODULE",
+			"DISPLAY THE PLAYERS CURRENT MODULE",
+			ShowModule
+		);
 	}
 
 	#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
@@ -438,13 +445,6 @@ void CreateGameSpecificConsoleCommands(void)
 		"SHOWCOORDS",
 		"DISPLAY THE PLAYERS CURRENT POSITION",
 		ShowCoords
-	);
-
-	ConsoleCommand::Make
-	(
-		"SHOWMODULE",
-		"DISPLAY THE PLAYERS CURRENT MODULE",
-		ShowModule
 	);
 
 	ConsoleCommand::Make
