@@ -37,6 +37,7 @@
 #include "ourasert.h"
 #include "pldnet.h"
 #include "user_profile.h"
+#include "ConfigFile.h"
 
 /* external global variables used in this file */
 extern int ModuleArraySize;
@@ -52,6 +53,8 @@ extern int Alt_NearAliens;
 extern int FarAliens;
 extern int Alt_FarAliens;
 extern int ShowHiveState;
+static bool NPCAliensHostileToAlienPlayer = false;
+
 
 /* prototypes for this file */
 
@@ -2031,14 +2034,17 @@ int Alien_TargetFilter(STRATEGYBLOCK *candidate) {
 						return(0);
 					}
 				}
-
+				NPCAliensHostileToAlienPlayer = Config_GetBool("[Gameplay]", "NPCAliensHostileToAlienPlayer", false);
 				switch(AvP.PlayerType)
 				{
-					case I_Alien:
 					case I_Marine:
 					case I_Predator:
 						return(1);
 						break;
+					case I_Alien:
+						if (NPCAliensHostileToAlienPlayer) {
+							 return(1); break;}
+						else {return(0); break;}
 					default:
 						GLOBALASSERT(0);
 						return(0);

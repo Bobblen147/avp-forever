@@ -28,6 +28,7 @@ to enable this, first set PredatorWeaponsOverride=true in the config file
 -Added additional Predator bot types that Rebellion left unused (try PREDOBOT 2,3,4 or 5 in debug mode!)
 
 Gameplay
+-Can play a custom single player level by adding it to the config and just starting a new game as the species you want.
 -Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
 -Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest binary)
 -Added sentry gun bot spawn command (type SENTRYGUN in debug mode)

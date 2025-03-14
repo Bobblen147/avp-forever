@@ -49,6 +49,7 @@
 #include "bh_corpse.h"
 #include "pldghost.h"
 #include "pldnet.h"
+#include "ConfigFile.h"
 
 #define SENTRYGUN_DRAMA 0
 
@@ -58,6 +59,7 @@ extern unsigned char Null_Name[8];
 extern ACTIVESOUNDSAMPLE ActiveSounds[];
 extern SECTION * GetNamedHierarchyFromLibrary(const char * rif_name, const char * hier_name);
 void CreateSentrygun(VECTORCH *Position,int type);
+static bool SentryGunsHostileToMarinePlayer = false;
 
 void AGunMovement_ScanLeftRight(STRATEGYBLOCK *sbPtr,int rate);
 void AGunMovement_Centre(STRATEGYBLOCK *sbPtr,int rate);
@@ -652,7 +654,7 @@ int Autogun_TargetFilter(STRATEGYBLOCK *candidate) {
 				if (Observer) {
 					return(0);
 				}
-
+				SentryGunsHostileToMarinePlayer = Config_GetBool("[Gameplay]", "SentryGunsHostileToMarinePlayer", false);
 				switch(AvP.PlayerType)
 				{
 					case I_Alien:
@@ -660,8 +662,10 @@ int Autogun_TargetFilter(STRATEGYBLOCK *candidate) {
 						return(1);
 						break;
 					case I_Marine:
-						return(0);
-						break;
+						if (SentryGunsHostileToMarinePlayer) {
+							return(1); break;
+						}
+						else { return(0); break; }
 					default:
 						GLOBALASSERT(0);
 						return(0);

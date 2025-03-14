@@ -46,6 +46,7 @@
 #include "showcmds.h"
 #include "extents.h"
 #include "user_profile.h"
+#include "ConfigFile.h"
 
 #define ALL_PULSERIFLES 0
 #define MOTIONTRACKERS 0
@@ -66,6 +67,7 @@ extern char *ModuleCurrVisArray;
 extern unsigned char Null_Name[8];
 extern ACTIVESOUNDSAMPLE ActiveSounds[];
 extern int CurrentLightAtPlayer;
+static bool NPCMarinesHostileToMarinePlayer = false;
 
 extern int AIModuleArraySize;
 extern AIMODULE *AIModuleArray;
@@ -11138,14 +11140,18 @@ int Marine_TargetFilter(STRATEGYBLOCK *candidate) {
 				if (Observer) {
 					return(0);
 				}
-
+				NPCMarinesHostileToMarinePlayer = Config_GetBool("[Gameplay]", "NPCMarinesHostileToMarinePlayer", false);
 				switch(AvP.PlayerType)
 				{
 					case I_Alien:
 					case I_Predator:
-					case I_Marine:
 						return(1);
 						break;
+					case I_Marine:
+						if (NPCMarinesHostileToMarinePlayer) {
+							return(1); break;
+						}
+						else { return(0); break; }
 					default:
 						GLOBALASSERT(0);
 						return(0);

@@ -42,6 +42,7 @@ Source file for predator AI
 #include "ourasert.h"
 #include "extents.h"
 #include "player.h"
+#include "ConfigFile.h"
 
 #define ALL_NEW_AVOIDANCE_PRED  1
 #define PREDATOR_HIT_DELTAS     1
@@ -58,6 +59,7 @@ extern int RouteFinder_CallsThisFrame;
 extern int ShowPredoStats;
 extern unsigned char Null_Name[8];
 extern DEATH_DATA Predator_Special_SelfDestruct_Death;
+static bool NPCPredatorsHostileToPredatorPlayer = false;
 
 static DAMAGE_PROFILE Pred_Weapon_Damage;
 
@@ -5065,14 +5067,17 @@ int Predator_TargetFilter(STRATEGYBLOCK *candidate) {
                                 if (Observer) {
                                         return(0);
                                 }
-
+                                NPCPredatorsHostileToPredatorPlayer = Config_GetBool("[Gameplay]", "NPCPredatorsHostileToPredatorPlayer", false);
                                 switch(AvP.PlayerType)
                                 {
                                         case I_Alien:
                                         case I_Marine:
+                                            return(1);
                                         case I_Predator:
-                                                return(1);
-                                                break;
+                                            if (NPCPredatorsHostileToPredatorPlayer) {
+                                                return(1); break;
+                                            }
+                                            else { return(0); break; }
                                         default:
                                                 GLOBALASSERT(0);
                                                 return(0);
