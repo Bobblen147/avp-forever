@@ -606,7 +606,7 @@ void InitAlienBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 	int i;
 
 	/* check we're not in a net game */
-	if(AvP.Network != I_No_Network && !AvP.NetworkAIServer)
+	if(AvP.Network != I_No_Network && !AvP.NetworkAIServer && !netGameData.skirmishMode)
 	{
 		RemoveBehaviourStrategy(sbPtr);
 		return;

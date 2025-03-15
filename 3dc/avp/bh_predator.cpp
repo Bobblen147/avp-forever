@@ -724,7 +724,7 @@ void InitPredatorBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
         toolsData = (TOOLS_DATA_PREDATOR *)bhdata;
 
         /* check we're not in a net game */
-        if(AvP.Network != I_No_Network)
+        if(AvP.Network != I_No_Network && !netGameData.skirmishMode)
         {
                 RemoveBehaviourStrategy(sbPtr);
                 return;

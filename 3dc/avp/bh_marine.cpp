@@ -1640,7 +1640,7 @@ void InitMarineBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 	LOCALASSERT(sbPtr);
 
 	/* check we're not in a net game */
-	if(AvP.Network != I_No_Network)
+	if(AvP.Network != I_No_Network && !netGameData.skirmishMode)
 	{
 		RemoveBehaviourStrategy(sbPtr);
 		return;
@@ -1949,7 +1949,7 @@ void CreateMarineDynamic(STRATEGYBLOCK *Generator, MARINE_NPC_WEAPONS weapon_for
 	GLOBALASSERT(generatorBlock);
 
 	/* check we're not in a net game */
-	if(AvP.Network != I_No_Network)
+	if(AvP.Network != I_No_Network && !netGameData.skirmishMode)
 	{
 		return;
 	}

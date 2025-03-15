@@ -2990,27 +2990,27 @@ void setup_generators (Environment_Data_Chunk * envd)
 								add_alien(agc);
 								break;
 							case 2:
-								if(AvP.Network == I_No_Network)
+								//if(AvP.Network == I_No_Network)
 									add_predator(agc);
 								break;
 							
 							case 3:
-								if(AvP.Network == I_No_Network)
+								//if(AvP.Network == I_No_Network)
 									add_hugger(agc);
 								break;
 							case 4:
-								if(AvP.Network == I_No_Network)
+								//if(AvP.Network == I_No_Network)
 									add_xenoborg(agc);
 								break;
 							case 5:
 								add_alien(agc);//add_alien also does predaliens
 								break;
 							case 6:
-								if(AvP.Network == I_No_Network)
+								//if(AvP.Network == I_No_Network)
 									add_queen(agc);
 								break;
 							case 7:
-								if(AvP.Network == I_No_Network)
+								//if(AvP.Network == I_No_Network)
 									add_marine(agc);
 								break;
 							case 8:
@@ -3018,7 +3018,7 @@ void setup_generators (Environment_Data_Chunk * envd)
 								break;
 
 							case 9:
-								if(AvP.Network == I_No_Network)
+								//if(AvP.Network == I_No_Network)
 									add_autogun(agc); 
 								break;
 

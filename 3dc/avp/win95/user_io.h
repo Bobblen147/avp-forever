@@ -9,20 +9,20 @@
   -------------------------------------------------*/
 
 
-/*-------------- Patrick 21/10/96 -----------------
-  Configuration structure for Win95 keyboard
-  reading stuff.  Console versions can proabably
-  use the same structure, but don't have to.
+  /*-------------- Patrick 21/10/96 -----------------
+	Configuration structure for Win95 keyboard
+	reading stuff.  Console versions can proabably
+	use the same structure, but don't have to.
 
-  NB Entries in the configuration structure
-  correspond to request flags in the player status
-  block.  However, each request flag does not
-  necessarily need a config entry (eg lie down,
-  which is only activated by special moves). If you
-  don't want to implement a particular request flag
-  functionality, leave it out of the config, and don't
-  set it in ReadPlayerGameInput.
-  -------------------------------------------------*/
+	NB Entries in the configuration structure
+	correspond to request flags in the player status
+	block.  However, each request flag does not
+	necessarily need a config entry (eg lie down,
+	which is only activated by special moves). If you
+	don't want to implement a particular request flag
+	functionality, leave it out of the config, and don't
+	set it in ReadPlayerGameInput.
+	-------------------------------------------------*/
 #include "menus.h"
 #include "strategy_def.h"
 
@@ -180,15 +180,11 @@ typedef struct
 		unsigned char Predator_MessageHistory; // Predator
 		unsigned char Marine_ShowScores; // Marine
 	};
-	union
-	{
-		unsigned char Predator_Say; // Predator
-		unsigned char Marine_ReloadWeapon; // Marine
-	};
-	unsigned char Predator_SpeciesSay; // Predator
-	unsigned char Predator_ShowScores; // Predator
-	unsigned char Predator_PreviousVisionMode; //Predator
+	unsigned char Predator_Say;
+	unsigned char Predator_SpeciesSay;
+	unsigned char Predator_ShowScores;
 	unsigned char Predator_DisableTracking;
+	unsigned char ExpansionSpace8;
 
 } PLAYER_INPUT_CONFIGURATION;
 
@@ -240,36 +236,36 @@ typedef struct
 /* Global Variables */
 
 	/* Globals */
-	extern PLAYER_INPUT_CONFIGURATION MarineInputPrimaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION MarineInputSecondaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION AlienInputPrimaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION AlienInputSecondaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION PredatorInputPrimaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION PredatorInputSecondaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION DefaultMarineInputPrimaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION DefaultMarineInputSecondaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION DefaultAlienInputPrimaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION DefaultAlienInputSecondaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION DefaultPredatorInputPrimaryConfig;
-	extern PLAYER_INPUT_CONFIGURATION DefaultPredatorInputSecondaryConfig;
-	extern CONTROL_METHODS ControlMethods;
-	extern CONTROL_METHODS DefaultControlMethods;
-	extern JOYSTICK_CONTROL_METHODS JoystickControlMethods;
-	extern JOYSTICK_CONTROL_METHODS DefaultJoystickControlMethods;
+extern PLAYER_INPUT_CONFIGURATION MarineInputPrimaryConfig;
+extern PLAYER_INPUT_CONFIGURATION MarineInputSecondaryConfig;
+extern PLAYER_INPUT_CONFIGURATION AlienInputPrimaryConfig;
+extern PLAYER_INPUT_CONFIGURATION AlienInputSecondaryConfig;
+extern PLAYER_INPUT_CONFIGURATION PredatorInputPrimaryConfig;
+extern PLAYER_INPUT_CONFIGURATION PredatorInputSecondaryConfig;
+extern PLAYER_INPUT_CONFIGURATION DefaultMarineInputPrimaryConfig;
+extern PLAYER_INPUT_CONFIGURATION DefaultMarineInputSecondaryConfig;
+extern PLAYER_INPUT_CONFIGURATION DefaultAlienInputPrimaryConfig;
+extern PLAYER_INPUT_CONFIGURATION DefaultAlienInputSecondaryConfig;
+extern PLAYER_INPUT_CONFIGURATION DefaultPredatorInputPrimaryConfig;
+extern PLAYER_INPUT_CONFIGURATION DefaultPredatorInputSecondaryConfig;
+extern CONTROL_METHODS ControlMethods;
+extern CONTROL_METHODS DefaultControlMethods;
+extern JOYSTICK_CONTROL_METHODS JoystickControlMethods;
+extern JOYSTICK_CONTROL_METHODS DefaultJoystickControlMethods;
 
-	/* Prototypes */
-	extern void InitPlayerGameInput(STRATEGYBLOCK* sbPtr);
-	extern void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr);
+/* Prototypes */
+extern void InitPlayerGameInput(STRATEGYBLOCK* sbPtr);
+extern void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr);
 
-	/*
-		DHM 1/4/98: Added prototypes for these functions; changing so
-		that filename to use is passed to them, rather than being hardcoded
-		as "avp.key" so that we can have multiple keyconfig files
-	*/
-	extern void LoadKeyConfiguration(void);
-	extern void SaveKeyConfiguration(void);
+/*
+	DHM 1/4/98: Added prototypes for these functions; changing so
+	that filename to use is passed to them, rather than being hardcoded
+	as "avp.key" so that we can have multiple keyconfig files
+*/
+extern void LoadKeyConfiguration(void);
+extern void SaveKeyConfiguration(void);
 
-	extern void LoadAKeyConfiguration(char* Filename);
-	extern void SaveAKeyConfiguration(char* Filename);
+extern void LoadAKeyConfiguration(char* Filename);
+extern void SaveAKeyConfiguration(char* Filename);
 
 #endif

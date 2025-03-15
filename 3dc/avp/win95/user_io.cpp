@@ -146,7 +146,7 @@ PLAYER_INPUT_CONFIGURATION DefaultMarineInputPrimaryConfig =
 
 	KEY_RBRACKET,  		// NextWeapon;
 	KEY_LBRACKET,  		// PreviousWeapon;
-	KEY_BACKSPACE,		// FlashbackWeapon;
+	KEY_R,		// FlashbackWeapon;
 
 	KEY_SLASH,	  		// ImageIntensifier;
 	KEY_FSTOP,    		// ThrowFlare;
@@ -156,7 +156,6 @@ PLAYER_INPUT_CONFIGURATION DefaultMarineInputPrimaryConfig =
 	KEY_F11,
 	KEY_F12,
 	KEY_TAB,
-	KEY_R, //Reload Weapon
 #endif
 };
 PLAYER_INPUT_CONFIGURATION DefaultPredatorInputPrimaryConfig =
@@ -224,7 +223,7 @@ PLAYER_INPUT_CONFIGURATION DefaultPredatorInputPrimaryConfig =
 	
 	KEY_RBRACKET,		// NextWeapon;
 	KEY_LBRACKET, 			// PreviousWeapon;
-	KEY_BACKSPACE,		// FlashbackWeapon;
+	KEY_R,		// FlashbackWeapon;
 	
 	KEY_FSTOP,	 		// Cloak;
 	KEY_SLASH,	 		// CycleVisionMode;
@@ -237,8 +236,7 @@ PLAYER_INPUT_CONFIGURATION DefaultPredatorInputPrimaryConfig =
 	KEY_F11,
 	KEY_F12,
 	KEY_TAB,
-	KEY_R, //PreviousVisionMode
-	KEY_T, //DisableTracking
+	KEY_T,
 #endif
 };
 
@@ -820,7 +818,6 @@ PLAYER_INPUT_CONFIGURATION DefaultMarineInputSecondaryConfig =
 	KEY_VOID,
 	KEY_VOID,
 
-	KEY_VOID, //ReloadWeapon
 #endif
 };
 
@@ -907,8 +904,7 @@ PLAYER_INPUT_CONFIGURATION DefaultPredatorInputSecondaryConfig =
 	KEY_VOID,
 	KEY_VOID,
 
-	KEY_VOID,	//PreviousVisionMode
-	KEY_VOID,   //DisableTracking
+	KEY_VOID,
 #endif
 };
 
@@ -1175,12 +1171,7 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 
 				if (DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
 					|| DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
-				{
-					if (playerStatusPtr->PreviouslySelectedWeaponSlot != playerStatusPtr->SelectedWeaponSlot)
-					{
-						playerStatusPtr->Mvt_InputRequests.Flags.Rqst_WeaponNo = playerStatusPtr->PreviouslySelectedWeaponSlot + 1;
-					}
-				}
+					Reload_Weapon();
 
 				if (DebouncedKeyboardInput[primaryInput->ThrowFlare]
 				 ||DebouncedKeyboardInput[secondaryInput->ThrowFlare])
@@ -1212,8 +1203,8 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 				 ||KeyboardInput[secondaryInput->Marine_ShowScores])
 					ShowMultiplayerScores();
 
-				if (DebouncedKeyboardInput[primaryInput->Marine_ReloadWeapon]
-					|| DebouncedKeyboardInput[secondaryInput->Marine_ReloadWeapon])
+				if (DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
+					|| DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
 					Reload_Weapon();
 				break;
 			}
@@ -1270,8 +1261,8 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 				 ||KeyboardInput[secondaryInput->Predator_ShowScores])
 					ShowMultiplayerScores();
 
-				if (DebouncedKeyboardInput[primaryInput->Predator_PreviousVisionMode]
-					|| DebouncedKeyboardInput[secondaryInput->Predator_PreviousVisionMode])
+				if (DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
+					|| DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
 					Reload_Weapon(); //shared with marine reload weapon
 
 				if (DebouncedKeyboardInput[primaryInput->Predator_DisableTracking]
@@ -1351,12 +1342,7 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 
 			if (DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
 				|| DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
-			{
-				if (playerStatusPtr->PreviouslySelectedWeaponSlot != playerStatusPtr->SelectedWeaponSlot)
-				{
-					playerStatusPtr->Mvt_InputRequests.Flags.Rqst_WeaponNo = playerStatusPtr->PreviouslySelectedWeaponSlot + 1;
-				}
-			}
+				Reload_Weapon();
 			
 			if(KeyboardInput[primaryInput->FireSecondaryWeapon]
 			 ||KeyboardInput[secondaryInput->FireSecondaryWeapon])
@@ -1411,8 +1397,8 @@ void ReadPlayerGameInput(STRATEGYBLOCK* sbPtr)
 			
 			if(KeyboardInput[FixedInputConfig.Weapon10])
 				playerStatusPtr->Mvt_InputRequests.Flags.Rqst_WeaponNo = 10;
-			if (DebouncedKeyboardInput[primaryInput->Marine_ReloadWeapon]
-				|| DebouncedKeyboardInput[secondaryInput->Marine_ReloadWeapon])
+			if (DebouncedKeyboardInput[primaryInput->FlashbackWeapon]
+				|| DebouncedKeyboardInput[secondaryInput->FlashbackWeapon])
 				Reload_Weapon();
 		}
 		#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO||DEATHMATCH_DEMO)

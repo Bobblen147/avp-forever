@@ -28,6 +28,7 @@
 #include "sfx.h"
 #include "kzsort.h"
 #include "tables.h"
+#include "pldnet.h"
 
 #define HUGGER_STATE_PRINT	0
 
@@ -70,7 +71,7 @@ void InitFacehuggerBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 	toolsData = (TOOLS_DATA_FACEHUGGER *)bhdata;
 
 	/* check we're not in a net game */
-	if(AvP.Network != I_No_Network)
+	if(AvP.Network != I_No_Network && !netGameData.skirmishMode)
 	{
 		RemoveBehaviourStrategy(sbPtr);
 		return;
