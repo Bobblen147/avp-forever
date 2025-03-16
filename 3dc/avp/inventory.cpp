@@ -614,11 +614,6 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					}
 				}
 				if (MarineSkeeterStart) {
-					//always have Cudgel
-					a = SlotForThisWeapon(WEAPON_CUDGEL);
-					if (a != -1) {
-						playerStatusPtr->WeaponSlot[a].Possessed = 1;
-					}
 					a = SlotForThisWeapon(WEAPON_FRISBEE_LAUNCHER);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
@@ -1350,7 +1345,7 @@ static int AbleToPickupWeapon(enum WEAPON_ID weaponID)
 					break;
 				}
 				default:
-					weaponSlot = SlotForThisWeapon(WEAPON_PULSERIFLE);
+					weaponSlot = SlotForThisWeapon(weaponID); //skeeter relies on this
 					break;
 			}
 			break;
