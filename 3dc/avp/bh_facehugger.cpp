@@ -20,6 +20,7 @@
 #include "weapons.h"
 #include "psnd.h"
 #include "psndplat.h"
+#include "huddefs.h"
 #include "targeting.h"
 #include "vdb.h"
 #define UseLocalAssert TRUE
@@ -57,6 +58,140 @@ static void KillFaceHugger(STRATEGYBLOCK *sbPtr,DAMAGE_PROFILE *damage);
 static void JumpAtPlayer(STRATEGYBLOCK *sbPtr);
 
 extern SECTION *GetHierarchyFromLibrary(const char *rif_name);
+void CreateFaceHugger(VECTORCH* Position, int type);
+
+void CastFaceHugger(void) {
+
+#define BOTRANGE 2000
+
+	VECTORCH position;
+
+	if (AvP.Network != I_No_Network && !netGameData.skirmishMode) {
+		NewOnScreenMessage("NO FACEHUGGERS IN MULTIPLAYER MODE");
+		return;
+	}
+
+	position = Player->ObStrategyBlock->DynPtr->Position;
+	position.vx += MUL_FIXED(Player->ObStrategyBlock->DynPtr->OrientMat.mat31, BOTRANGE);
+	position.vy += MUL_FIXED(Player->ObStrategyBlock->DynPtr->OrientMat.mat32, BOTRANGE);
+	position.vz += MUL_FIXED(Player->ObStrategyBlock->DynPtr->OrientMat.mat33, BOTRANGE);
+
+	CreateFaceHugger(&position, 0);
+
+}
+
+void CreateFaceHugger(VECTORCH* Position, int type)
+{
+	STRATEGYBLOCK* sbPtr;
+	int i;
+
+	/* create and initialise a strategy block */
+	sbPtr = CreateActiveStrategyBlock();
+	if (!sbPtr) {
+		NewOnScreenMessage("FAILED TO CREATE BOT: SB CREATION FAILURE");
+		return; /* failure */
+	}
+	InitialiseSBValues(sbPtr);
+
+	sbPtr->I_SBtype = I_BehaviourFaceHugger;
+
+	AssignNewSBName(sbPtr);
+
+	/* create, initialise and attach a dynamics block */
+	sbPtr->DynPtr = AllocateDynamicsBlock(DYNAMICS_TEMPLATE_ALIEN_NPC);
+	if (sbPtr->DynPtr)
+	{
+		EULER zeroEuler = { 0,0,0 };
+		DYNAMICSBLOCK* dynPtr = sbPtr->DynPtr;
+		dynPtr->PrevPosition = dynPtr->Position = *Position;
+		dynPtr->OrientEuler = zeroEuler;
+		CreateEulerMatrix(&dynPtr->OrientEuler, &dynPtr->OrientMat);
+		TransposeMatrixCH(&dynPtr->OrientMat);
+		/* zero linear velocity in dynamics block */
+		dynPtr->LinVelocity.vx = 0;
+		dynPtr->LinVelocity.vy = 0;
+		dynPtr->LinVelocity.vz = 0;
+		dynPtr->Mass = 10;
+	}
+	else
+	{
+		RemoveBehaviourStrategy(sbPtr);
+		NewOnScreenMessage("FAILED TO CREATE BOT: DYNBLOCK CREATION FAILURE");
+		return;
+	}
+
+	sbPtr->shapeIndex = 0;
+
+	sbPtr->maintainVisibility = 1;
+	sbPtr->containingModule = ModuleFromPosition(&(sbPtr->DynPtr->Position), (MODULE*)0);
+
+	{
+		NPC_DATA* NpcData;
+
+		NpcData = GetThisNpcData(I_NPC_FaceHugger);
+		LOCALASSERT(NpcData);
+		sbPtr->SBDamageBlock.Health = NpcData->StartingStats.Health << ONE_FIXED_SHIFT;
+		sbPtr->SBDamageBlock.Armour = NpcData->StartingStats.Armour << ONE_FIXED_SHIFT;
+		sbPtr->SBDamageBlock.SB_H_flags = NpcData->StartingStats.SB_H_flags;
+	}
+	/* create, initialise and attach a facehugger data block */
+	sbPtr->SBdataptr = (void*)AllocateMem(sizeof(FACEHUGGER_STATUS_BLOCK));
+	if (sbPtr->SBdataptr)
+	{
+		SECTION* root_section;
+		FACEHUGGER_STATUS_BLOCK* facehuggerStatus = (FACEHUGGER_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+		NPC_InitMovementData(&(facehuggerStatus->moveData));
+		facehuggerStatus->health = FACEHUGGER_STARTING_HEALTH;
+		sbPtr->integrity = facehuggerStatus->health;
+		facehuggerStatus->stateTimer = 0;
+		facehuggerStatus->DoomTimer = 0;
+		facehuggerStatus->CurveRadius = 0;
+		facehuggerStatus->CurveLength = 0;
+		facehuggerStatus->CurveTimeOut = 0;
+		facehuggerStatus->jumping = 0;
+
+		root_section = GetHierarchyFromLibrary("hnpchugger");
+		if (!root_section) {
+			RemoveBehaviourStrategy(sbPtr);
+			NewOnScreenMessage("FAILED TO CREATE BOT: NO HMODEL");
+			return;
+		}
+		Create_HModel(&facehuggerStatus->HModelController, root_section);
+		InitHModelSequence(&facehuggerStatus->HModelController, 0, 0, ONE_FIXED);
+
+		facehuggerStatus->nearBehaviourState = FHNS_Wait;
+		SetHuggerAnimationSequence(sbPtr, HSS_Stand, (ONE_FIXED << 1));
+		sbPtr->DynPtr->GravityOn = 1;
+
+		facehuggerStatus->soundHandle = SOUND_NOACTIVEINDEX;
+		facehuggerStatus->soundHandle2 = SOUND_NOACTIVEINDEX;
+
+		for (i = 0; i < SB_NAME_LENGTH; i++) facehuggerStatus->death_target_ID[i] = 0;
+		facehuggerStatus->death_target_sbptr = 0;
+		facehuggerStatus->death_target_request = 0;
+
+		/* Containment test NOW! */
+		if (!(sbPtr->containingModule))
+		{
+			/* no containing module can be found... abort*/
+			RemoveBehaviourStrategy(sbPtr);
+			NewOnScreenMessage("FAILED TO CREATE BOT: MODULE CONTAINMENT FAILURE");
+			return;
+		}
+		LOCALASSERT(sbPtr->containingModule);
+
+		MakeFacehuggerNear(sbPtr);
+
+		NewOnScreenMessage("FACEHUGGER CREATED");
+	}
+	else
+	{
+		RemoveBehaviourStrategy(sbPtr);
+		NewOnScreenMessage("FAILED TO CREATE BOT: MALLOC FAILURE");
+		return;
+	}
+}
 
 /* -------------------------------------------------------------------
    Initilaiser, damage, and visibility functions + behaviour shell

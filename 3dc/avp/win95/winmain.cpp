@@ -57,6 +57,7 @@ extern BOOL ForceLoad_PredAlien;
 extern BOOL ForceLoad_Xenoborg;
 extern BOOL ForceLoad_Pretorian;
 extern BOOL ForceLoad_SentryGun;
+extern BOOL ForceLoad_FaceHugger;
 
 BOOL UseMouseCentreing = FALSE;
 BOOL KeepMainRifFile = FALSE;
@@ -205,6 +206,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 							break;
 						case 's':
 							ForceLoad_SentryGun = TRUE;
+							break;
+						case 'f':
+							ForceLoad_FaceHugger = TRUE;
 							break;
 					}
 					strpos++;

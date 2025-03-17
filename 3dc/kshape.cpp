@@ -2970,7 +2970,10 @@ void DoAlienEnergyView(DISPLAYBLOCK *dispPtr)
 
 		if (sbPtr) {
 			switch (sbPtr->I_SBtype) {
-				case I_BehaviourAlien: {
+				case I_BehaviourAlien: 
+				case I_BehaviourFaceHugger:
+				case I_BehaviourQueenAlien:
+				{
 					colour = ALIENS_LIFEFORCE_GLOW_COLOUR;
 					break;
 				}

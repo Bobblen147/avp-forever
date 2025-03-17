@@ -77,6 +77,7 @@ extern void CastPredAlienBot(void);
 extern void CastPraetorianBot(void);
 extern void CastXenoborg(void);
 extern void CastSentrygun(void);
+extern void CastFaceHugger(void);
 
 extern int ShowMultiplayerScoreTimer;
 
@@ -421,6 +422,14 @@ void CreateGameSpecificConsoleCommands(void)
 			"SENTRYGUN",
 			"CREATES A SENTRY GUN BOT",
 			CastSentrygun,
+			IsACheat
+		);
+
+		ConsoleCommand::Make
+		(
+			"FACEHUGGER",
+			"CREATES A FACEHUGGER BOT",
+			CastFaceHugger,
 			IsACheat
 		);
 
