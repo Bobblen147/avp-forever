@@ -23,6 +23,7 @@
 #define UseLocalAssert TRUE
 #include "ourasert.h"
 #include "psnd.h"
+#include "huddefs.h"
 #include "weapons.h"
 #include "extents.h"
 #include "sequences.h"
@@ -232,6 +233,195 @@ static void ThrownObjectBounceNoise(int object_index,VECTORCH* location)
 
 	PlayQueenSound(0,QSC_Object_Bounce,0,&QueenObjectSoundHandles[object_index],location);
 }
+
+void CreateQueen(VECTORCH* Position, int type);
+
+void CastQueen(void) {
+
+#define BOTRANGE 2000
+
+	VECTORCH position;
+
+	if (AvP.Network != I_No_Network && !netGameData.skirmishMode) {
+		NewOnScreenMessage("NO QUEEN BOTS IN MULTIPLAYER MODE");
+		return;
+	}
+
+	position = Player->ObStrategyBlock->DynPtr->Position;
+	position.vx += MUL_FIXED(Player->ObStrategyBlock->DynPtr->OrientMat.mat31, BOTRANGE);
+	position.vy += MUL_FIXED(Player->ObStrategyBlock->DynPtr->OrientMat.mat32, BOTRANGE);
+	position.vz += MUL_FIXED(Player->ObStrategyBlock->DynPtr->OrientMat.mat33, BOTRANGE);
+
+	CreateQueen(&position, 0);
+
+}
+
+void CreateQueen(VECTORCH* Position, int type)
+{
+	STRATEGYBLOCK* sbPtr;
+	int i;
+
+	/* create and initialise a strategy block */
+	sbPtr = CreateActiveStrategyBlock();
+	if (!sbPtr) {
+		NewOnScreenMessage("FAILED TO CREATE BOT: SB CREATION FAILURE");
+		return; /* failure */
+	}
+	InitialiseSBValues(sbPtr);
+
+	sbPtr->I_SBtype = I_BehaviourQueenAlien;
+
+	AssignNewSBName(sbPtr);
+
+	/* create, initialise and attach a dynamics block */
+	sbPtr->DynPtr = AllocateDynamicsBlock(DYNAMICS_TEMPLATE_SPRITE_NPC);
+	if (sbPtr->DynPtr)
+	{
+		EULER zeroEuler = { 0,0,0 };
+		DYNAMICSBLOCK* dynPtr = sbPtr->DynPtr;
+		dynPtr->PrevPosition = dynPtr->Position = *Position;
+		dynPtr->OrientEuler = zeroEuler;
+		CreateEulerMatrix(&dynPtr->OrientEuler, &dynPtr->OrientMat);
+		TransposeMatrixCH(&dynPtr->OrientMat);
+		/* zero linear velocity in dynamics block */
+		dynPtr->LinVelocity.vx = 0;
+		dynPtr->LinVelocity.vy = 0;
+		dynPtr->LinVelocity.vz = 0;
+		dynPtr->Mass = 60000; /* No knockback, please. */
+	}
+	else
+	{
+		RemoveBehaviourStrategy(sbPtr);
+		NewOnScreenMessage("FAILED TO CREATE BOT: DYNBLOCK CREATION FAILURE");
+		return;
+	}
+
+	sbPtr->shapeIndex = 0;
+
+	sbPtr->maintainVisibility = 1;
+	sbPtr->containingModule = ModuleFromPosition(&(sbPtr->DynPtr->Position), (MODULE*)0);
+
+	/* Initialise alien's stats */
+	{
+		NPC_DATA* NpcData;
+
+		NpcData = GetThisNpcData(I_NPC_AlienQueen);
+		LOCALASSERT(NpcData);
+		sbPtr->SBDamageBlock.Health = NpcData->StartingStats.Health << ONE_FIXED_SHIFT;
+		sbPtr->SBDamageBlock.Armour = NpcData->StartingStats.Armour << ONE_FIXED_SHIFT;
+		sbPtr->SBDamageBlock.SB_H_flags = NpcData->StartingStats.SB_H_flags;
+
+
+	}
+	/* create, initialise and attach a predator-alien/queen data block */
+	sbPtr->SBdataptr = (void*)AllocateMem(sizeof(QUEEN_STATUS_BLOCK));
+	if (sbPtr->SBdataptr)
+	{
+		SECTION* root_section;
+		QUEEN_STATUS_BLOCK* queenStatus = (QUEEN_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+		queenStatus = (QUEEN_STATUS_BLOCK*)sbPtr->SBdataptr;
+		NPC_InitMovementData(&(queenStatus->moveData));
+		NPC_InitWanderData(&(queenStatus->wanderData));
+
+		sbPtr->integrity = QUEEN_STARTING_HEALTH;
+
+		queenStatus->QueenState = QBS_Reconsider;
+		queenStatus->current_move = QM_Standby;
+		queenStatus->next_move = QM_Standby;
+		queenStatus->fixed_foot = RightFoot;
+		queenStatus->fixed_foot_section = NULL; //Stupid, but I wouldn't want in uninitialised.
+		queenStatus->fixed_foot_oldpos.vx = 0;
+		queenStatus->fixed_foot_oldpos.vy = 0;
+		queenStatus->fixed_foot_oldpos.vz = 0;
+
+		queenStatus->TargetPos.vx = 0;
+		queenStatus->TargetPos.vy = 0;
+		queenStatus->TargetPos.vz = 0;
+
+
+		queenStatus->moveTimer = 0;
+
+		for (i = 0; i < SB_NAME_LENGTH; i++) queenStatus->death_target_ID[i] = 0;
+		queenStatus->death_target_sbptr = 0;
+		queenStatus->death_target_request = 0;
+
+		root_section = GetNamedHierarchyFromLibrary("queen", "Template");
+		GLOBALASSERT(root_section);
+		Create_HModel(&queenStatus->HModelController, root_section);
+		InitHModelSequence(&queenStatus->HModelController,
+			(int)HMSQT_QueenRightStanceTemplate,
+			(int)QRSTSS_Standard,
+			ONE_FIXED);
+		queenStatus->HModelController.Looped = 1;
+
+		queenStatus->attack_delta = Add_Delta_Sequence(&queenStatus->HModelController, "attack",
+			(int)HMSQT_QueenRightStanceTemplate, (int)QRSTSS_LeftSwipe, Queen_Step_Time);
+		queenStatus->attack_delta->Playing = 0;
+
+		queenStatus->hit_delta = Add_Delta_Sequence(&queenStatus->HModelController, "hit",
+			(int)HMSQT_QueenRightStanceTemplate, (int)QRSTSS_LeftHit, Queen_Step_Time);
+		queenStatus->attack_delta->Playing = 0;
+
+		queenStatus->TempTarget = FALSE;
+		queenStatus->CurrentQueenObject = -1;
+		queenStatus->QueenObjectBias = 1;
+		if (!stricmp(LevelName, "hangar"))
+		{
+			queenStatus->QueenPlayerBias = 1;
+		}
+		else
+		{
+			//int he predator version , make it more likely for the queen to go after the player
+			queenStatus->QueenPlayerBias = 5;
+		}
+		queenStatus->QueenTargetSB = Player->ObStrategyBlock;
+		queenStatus->QueenTauntTimer = 0;
+		queenStatus->QueenFireTimer = 0;
+
+		queenStatus->LastVelocity.vx = 0;
+		queenStatus->LastVelocity.vy = 0;
+		queenStatus->LastVelocity.vz = 0;
+
+		queenStatus->BeenInAirlock = FALSE;
+		queenStatus->QueenActivated = FALSE;
+
+		queenStatus->soundHandle = SOUND_NOACTIVEINDEX;
+
+
+		NumQueenObjects = -1;
+
+		if (AvP.PlayerType == I_Marine)
+		{
+			MakeNonFragable(&queenStatus->HModelController);
+		}
+
+		queenStatus->AttackDoneItsDamage = FALSE;
+
+		/* Containment test NOW! */
+		if (!(sbPtr->containingModule))
+		{
+			/* no containing module can be found... abort*/
+			RemoveBehaviourStrategy(sbPtr);
+			NewOnScreenMessage("FAILED TO CREATE BOT: MODULE CONTAINMENT FAILURE");
+			return;
+		}
+		LOCALASSERT(sbPtr->containingModule);
+
+		MakeQueenNear(sbPtr);
+
+		NewOnScreenMessage("QUEEN BOT CREATED");
+
+	}
+	else
+	{
+		GLOBALASSERT(0);
+		RemoveBehaviourStrategy(sbPtr);
+		NewOnScreenMessage("FAILED TO CREATE BOT: MALLOC FAILURE");
+		return;
+	}
+}
+
 
 void InitQueenBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 {

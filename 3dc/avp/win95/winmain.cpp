@@ -185,7 +185,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 						case 'p':
 							ForceLoad_Predator = TRUE;
 							break;
-						case 'h':
+						case 'f':
 							ForceLoad_Hugger = TRUE;
 							break;
 						case 'q':
