@@ -30,7 +30,6 @@ BOOL ForceLoad_PredAlien=FALSE;
 BOOL ForceLoad_Xenoborg=FALSE;
 BOOL ForceLoad_Pretorian=FALSE;
 BOOL ForceLoad_SentryGun=FALSE;
-BOOL ForceLoad_FaceHugger = FALSE;
 
 extern BOOL KeepMainRifFile;
 extern BOOL Current_Level_Requires_Mirror_Image();
@@ -278,7 +277,6 @@ void InitNPCs(RIFFHANDLE h)
 	if(ForceLoad_Xenoborg)Load_HNPC[HNPC_Xenoborg]=TRUE;
 	if(ForceLoad_Pretorian)Load_HNPC[HNPC_Pretorian]=TRUE;
 	if(ForceLoad_SentryGun)Load_HNPC[HNPC_SentryGun]=TRUE;
-	if(ForceLoad_SentryGun)Load_HNPC[HNPC_Hugger] = TRUE;
 //	#endif
 	
 	HNPC_Files DefaultGeneratorEnemy;
