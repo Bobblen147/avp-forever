@@ -7296,7 +7296,7 @@ void WristBlade_WindUp(void *playerStatus, PLAYER_WEAPON_DATA *weaponPtr) {
 		/* Windup finished and holding... timeout? */
 		Wristblade_StrikeType=-1;
 		GLOBALASSERT(Alien_Tail_Clock<0);
-		Alien_Tail_Clock-=NormalFrameTime;
+		//Alien_Tail_Clock-=NormalFrameTime; //never decrease the timer to disable timeout
 		if (Alien_Tail_Clock<-(ONE_FIXED<<2)) {
 			/* Time out? */
 			if (PlayersWeaponHModelController.Sub_Sequence!=PHSS_PullBack) {

@@ -5141,9 +5141,15 @@ int Predator_TargetFilter(STRATEGYBLOCK *candidate) {
                 case I_BehaviourXenoborg:
                 case I_BehaviourSeal:
                 case I_BehaviourPredatorAlien:
-                        /* Valid. */
-                        return(1);
+                    {
+                        if (NPC_IsDead(candidate)) {
+                            return(0);
+                        }
+                        else {
+                            return(1);
+                        }
                         break;
+                    }
                 case I_BehaviourPredator:
                         #if ANARCHY
                         return(1);

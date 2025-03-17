@@ -26,17 +26,22 @@ to enable this, first set PredatorWeaponsOverride=true in the config file
 -Predator previous vision mode key (default R)
 -Predator tracking weapons (disc, shoulder cannon) can have their tracking enabled/disabled (default key T)
 -Added additional Predator bot types that Rebellion left unused (try PREDOBOT 2,3,4 or 5 in debug mode!)
+-Predator can charge a strong wrist blade attack indefinitely
 
 Gameplay
+-Added sentry gun bot spawn command (type SENTRYGUN in debug mode)
+-Added facehugger bot spawn command (type FACEHUGGER in debug mode)
+-Added queen alien bot spawn command (type QUEENBOT in debug mode)
+-all bot types can be force loaded by passing in the command line -lacmprtxsfq
+-Can enable/disable AI attacking a player of the same species.
 -Can play a custom single player level by adding it to the config and just starting a new game as the species you want.
 -Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
 -Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest binary)
--Added sentry gun bot spawn command (type SENTRYGUN in debug mode)
--Can enable/disable AI attacking a player of the same species.
 
 Skirmish
 -Alien now playable in skirmish mode, tail attack can now target other aliens
--All bot types can now be spawned in debug mode (including predators, sentry guns etc)
+-All bot types can now be spawned in debug mode (not just aliens, predaliens & praetorians)
+-Marine generators can now be used on skirmish maps
 -In game species change in debug mode (use MORPH_ALIEN, MORPH_MARINE and MORPH_PREDATOR)
 
 Other
