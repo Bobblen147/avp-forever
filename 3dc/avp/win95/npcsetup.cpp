@@ -328,6 +328,7 @@ void InitNPCs(RIFFHANDLE h)
 		Load_HNPC[HNPC_Alien]=TRUE;
 		Load_HNPC[HNPC_Predator]=TRUE;
 		Load_HNPC[HNPC_Marine]=TRUE;
+		Load_HNPC[HNPC_Civilian] = TRUE;
 	}
 	
 	/* KJL 16:31:03 06/05/98 - Force all characters to be loaded 
