@@ -654,6 +654,8 @@ void CreatePredoBot(VECTORCH *position, int weapon)
                         predatorStatus->death_target_sbptr=0;
                 }
 
+                //this predator wasn't produced by a generator
+                predatorStatus->generator_sbptr = 0;
 
                 root_section=GetNamedHierarchyFromLibrary(predatorStatus->Selected_Weapon->Riffname,predatorStatus->Selected_Weapon->HierarchyName);
                 if (!root_section) {
@@ -708,6 +710,210 @@ void CreatePredoBot(VECTORCH *position, int weapon)
                 NewOnScreenMessage("FAILED TO CREATE BOT: MALLOC FAILURE");
                 return;
         }
+}
+
+void CreatePredatorDynamic(STRATEGYBLOCK* Generator, PREDATOR_NPC_WEAPONS weapon_for_predator)
+{
+    STRATEGYBLOCK* sbPtr;
+    GENERATOR_BLOCK* generatorBlock;
+
+    generatorBlock = static_cast<GENERATOR_BLOCK*>(Generator->SBdataptr);
+    GLOBALASSERT(generatorBlock);
+
+    /* check we're not in a net game */
+    if (AvP.Network != I_No_Network && !netGameData.skirmishMode)
+    {
+        return;
+    }
+
+    /* create and initialise a strategy block */
+    sbPtr = CreateActiveStrategyBlock();
+    if (!sbPtr)
+    {
+        /* allocation failed */
+        return;
+    }
+
+    InitialiseSBValues(sbPtr);
+    sbPtr->I_SBtype = I_BehaviourPredator;
+
+    AssignNewSBName(sbPtr);
+    /* New way. */
+
+    /* create, initialise and attach a dynamics block */
+    sbPtr->DynPtr = AllocateDynamicsBlock(DYNAMICS_TEMPLATE_SPRITE_NPC);
+    if (sbPtr->DynPtr)
+    {
+        EULER zeroEuler = { 0,0,0 };
+        DYNAMICSBLOCK* dynPtr = sbPtr->DynPtr;
+        GLOBALASSERT(dynPtr);
+        dynPtr->PrevPosition = dynPtr->Position = ((GENERATOR_BLOCK*)Generator->SBdataptr)->Position;
+        dynPtr->OrientEuler = zeroEuler;
+        CreateEulerMatrix(&dynPtr->OrientEuler, &dynPtr->OrientMat);
+        TransposeMatrixCH(&dynPtr->OrientMat);
+    }
+    else
+    {
+        /* allocation failed */
+        RemoveBehaviourStrategy(sbPtr);
+        return;
+    }
+
+    /* set the shape */
+    sbPtr->shapeIndex = Generator->shapeIndex;
+
+    sbPtr->maintainVisibility = 1;
+    sbPtr->containingModule = ModuleFromPosition(&(sbPtr->DynPtr->Position), (MODULE*)0);
+    LOCALASSERT(sbPtr->containingModule);
+    if (!(sbPtr->containingModule))
+    {
+        /* no containing module can be found... abort*/
+        DestroyAnyStrategyBlock(sbPtr);
+        return;
+    }
+
+    /* assert predator is starting as invisible */
+    LOCALASSERT(ModuleCurrVisArray[(sbPtr->containingModule->m_index)] == 0);
+
+    /* Initialise predator's stats */
+    {
+        NPC_DATA* NpcData;
+
+
+        NpcData = GetThisNpcData(I_NPC_Predator);
+        LOCALASSERT(NpcData);
+        sbPtr->SBDamageBlock.Health = NpcData->StartingStats.Health << ONE_FIXED_SHIFT;
+        sbPtr->SBDamageBlock.Armour = NpcData->StartingStats.Armour << ONE_FIXED_SHIFT;
+        sbPtr->SBDamageBlock.SB_H_flags = NpcData->StartingStats.SB_H_flags;
+    }
+
+    /* create, initialise and attach a predator data block */
+    sbPtr->SBdataptr = (void*)AllocateMem(sizeof(PREDATOR_STATUS_BLOCK));
+    if (sbPtr->SBdataptr)
+    {
+        SECTION* root_section;
+        PREDATOR_STATUS_BLOCK* predatorStatus = (PREDATOR_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+        predatorStatus->personalNumber = 0;
+        if (predatorStatus->personalNumber < 0)
+        {
+            predatorStatus->personalNumber = 0;
+            LOCALASSERT(1 == 0);
+        }
+        if (predatorStatus->personalNumber > PRED_MAXIDENTITY)
+        {
+            predatorStatus->personalNumber = PRED_MAXIDENTITY;
+            LOCALASSERT(1 == 0);
+        }
+
+        NPC_InitMovementData(&(predatorStatus->moveData));
+        NPC_InitWanderData(&(predatorStatus->wanderData));
+        predatorStatus->health = predatorCV[predatorStatus->personalNumber].startingHealth;
+        sbPtr->integrity = predatorStatus->health;
+        predatorStatus->behaviourState = PBS_Wandering;
+        predatorStatus->stateTimer = PRED_FAR_MOVE_TIME;
+        predatorStatus->internalState = 0;
+        predatorStatus->weaponTarget.vx = predatorStatus->weaponTarget.vy = predatorStatus->weaponTarget.vz = 0;
+        predatorStatus->volleySize = 0;
+        predatorStatus->IAmCrouched = 0;
+        predatorStatus->nearSpeed = predatorCV[predatorStatus->personalNumber].speed;
+        predatorStatus->GibbFactor = 0;
+        predatorStatus->current_attack = NULL;
+
+        predatorStatus->incidentFlag = 0;
+        predatorStatus->incidentTimer = 0;
+        predatorStatus->patience = PRED_PATIENCE_TIME;
+        predatorStatus->enableSwap = 0;
+        predatorStatus->enableTaunt = 0;
+        predatorStatus->Explode = 0;
+
+#if 0
+        predatorStatus->PrimaryWeapon = PNPCW_Pistol;
+        predatorStatus->SecondaryWeapon = PNPCW_Wristblade;
+#else
+        if (weapon_for_predator == PNPCW_PlasmaCaster)
+        {
+            predatorStatus->PrimaryWeapon = PNPCW_PlasmaCaster;
+        }
+        if (weapon_for_predator == PNPCW_Pistol)
+        {
+            predatorStatus->PrimaryWeapon = PNPCW_Pistol;
+        }
+        if (weapon_for_predator == PNPCW_Speargun)
+        {
+            predatorStatus->PrimaryWeapon = PNPCW_Speargun;
+        }
+        predatorStatus->SecondaryWeapon = PNPCW_Staff;
+#endif
+        predatorStatus->ChangeToWeapon = PNPCW_End;
+        predatorStatus->Selected_Weapon = GetThisNPCPredatorWeapon(predatorStatus->PrimaryWeapon);
+
+        predatorStatus->obstruction.environment = 0;
+        predatorStatus->obstruction.destructableObject = 0;
+        predatorStatus->obstruction.otherCharacter = 0;
+        predatorStatus->obstruction.anySingleObstruction = 0;
+
+        Initialise_AvoidanceManager(sbPtr, &predatorStatus->avoidanceManager);
+        InitWaypointManager(&predatorStatus->waypointManager);
+
+        predatorStatus->Target = NULL; //Player->ObStrategyBlock;
+        COPY_NAME(predatorStatus->Target_SBname, Null_Name);
+
+        predatorStatus->soundHandle = SOUND_NOACTIVEINDEX;
+
+        predatorStatus->Pred_Laser_On = 0;
+
+        predatorStatus->missionmodule = NULL;
+        predatorStatus->fearmodule = NULL;
+        predatorStatus->path=-1;
+        predatorStatus->stepnumber=-1;
+        if ((predatorStatus->path != -1) && (predatorStatus->stepnumber != -1)) {
+            predatorStatus->behaviourState = PBS_Pathfinding;
+        }
+        //a generated predator won't have a death target
+        int i;
+        for (i = 0; i < SB_NAME_LENGTH; i++) predatorStatus->death_target_ID[i] = 0;
+        predatorStatus->death_target_request =0;
+        predatorStatus->death_target_sbptr = 0;
+
+        //note the generator that produced this marine
+        predatorStatus->generator_sbptr = Generator;
+
+        root_section = GetNamedHierarchyFromLibrary(predatorStatus->Selected_Weapon->Riffname, predatorStatus->Selected_Weapon->HierarchyName);
+        GLOBALASSERT(root_section);
+        Create_HModel(&predatorStatus->HModelController, root_section);
+        InitHModelSequence(&predatorStatus->HModelController, 0, 0, ONE_FIXED);
+
+        if (predatorStatus->Selected_Weapon->UseElevation) {
+            DELTA_CONTROLLER* delta;
+            delta = Add_Delta_Sequence(&predatorStatus->HModelController, "Elevation", (int)HMSQT_PredatorStand, (int)PSSS_Elevation, 0);
+            GLOBALASSERT(delta);
+            delta->timer = 32767;
+        }
+
+        predatorStatus->My_Gun_Section = GetThisSectionData(predatorStatus->HModelController.section_data, predatorStatus->Selected_Weapon->GunName);
+        predatorStatus->My_Elevation_Section = GetThisSectionData(predatorStatus->HModelController.section_data, predatorStatus->Selected_Weapon->ElevationName);
+
+        #if PREDATOR_HIT_DELTAS
+        if (HModelSequence_Exists(&predatorStatus->HModelController, (int)HMSQT_PredatorStand, (int)PSSS_HitChestFront)) {
+            DELTA_CONTROLLER* delta;
+            delta = Add_Delta_Sequence(&predatorStatus->HModelController, "HitDelta", (int)HMSQT_PredatorStand, (int)PSSS_HitChestFront, -1);
+            GLOBALASSERT(delta);
+            delta->Playing = 0;
+        }
+        #endif
+
+        ProveHModel_Far(&predatorStatus->HModelController, sbPtr);
+
+        InitPredatorCloak(predatorStatus);
+        }
+        else
+        {
+        /* allocation failure */
+        RemoveBehaviourStrategy(sbPtr);
+        return;
+        }
+
 }
 
 /* Patrick 4/7/97 --------------------------------------------------
@@ -848,6 +1054,8 @@ void InitPredatorBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
                 predatorStatus->death_target_request=toolsData->death_target_request;
                 predatorStatus->death_target_sbptr=0;
 
+                //this predator wasn't produced by a generator
+                predatorStatus->generator_sbptr = 0;
 
                 root_section=GetNamedHierarchyFromLibrary(predatorStatus->Selected_Weapon->Riffname,predatorStatus->Selected_Weapon->HierarchyName);
                 GLOBALASSERT(root_section);
@@ -1571,6 +1779,17 @@ void MakePredatorNear(STRATEGYBLOCK *sbPtr)
     LOCALASSERT(predatorStatusPointer);
     LOCALASSERT(dynPtr);
         LOCALASSERT(sbPtr->SBdptr == NULL);
+
+        /* first of all, see how many predators are currently near: if there are too many,
+    destroy this one, and try to force a generator to make a replacement */
+        if (sbPtr->I_SBtype == I_BehaviourPredator)
+        {
+            if (NumGeneratorNPCsVisible() >= MAX_VISIBLEGENERATORNPCS)
+            {
+                DestroyAnyStrategyBlock(sbPtr);
+                ForceAGenerator();
+            }
+        }
 
         AlienDefaultMap.MapShape = sbPtr->shapeIndex;
         tempModule.m_mapptr = &AlienDefaultMap;
@@ -7039,6 +7258,7 @@ typedef struct predator_save_block
 
 	int missionmodule_index;
 	int fearmodule_index;
+    char Generator_SBname[SB_NAME_LENGTH];
 
 //strategyblock stuff
 	int integrity;
@@ -7126,6 +7346,9 @@ void LoadStrategy_Predator(SAVE_BLOCK_STRATEGY_HEADER* header)
 
 	//get the predator's attack from the attack code
 	predatorStatusPointer->current_attack = GetThisAttack_FromUniqueCode(block->currentAttackCode);
+
+    //find the marine's generator
+    predatorStatusPointer->generator_sbptr = FindSBWithName(block->Generator_SBname);
 
 	//get marine's weapon
 	predatorStatusPointer->Selected_Weapon = GetThisNPCPredatorWeapon(static_cast<enum predator_npc_weapons>(block->weapon_id));

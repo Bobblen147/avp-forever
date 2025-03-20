@@ -186,6 +186,8 @@ typedef struct predatorStatusBlock
 	STRATEGYBLOCK* death_target_sbptr;
 	int death_target_request;
 
+	STRATEGYBLOCK* generator_sbptr;//0 unless created by a generator
+
 }PREDATOR_STATUS_BLOCK;
 
 typedef struct dormantPredatorStatusBlock

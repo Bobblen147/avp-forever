@@ -10,6 +10,7 @@
 #include "io.h"
 #include "bh_alien.h"
 #include "bh_marine.h"
+#include "bh_predator.h"
 #include "pfarlocs.h"
 #include "bh_generator.h"
 #include "pvisible.h"
@@ -21,11 +22,13 @@
 #include "ourasert.h"
 #include "huddefs.h"
 #include "showcmds.h"
+#include "ConfigFile.h"
 
 /* externs for this file */
 extern char *ModuleCurrVisArray;
 
 extern void CreateMarineDynamic(STRATEGYBLOCK* Generator,MARINE_NPC_WEAPONS weapon_for_marine);
+extern void CreatePredatorDynamic(STRATEGYBLOCK* Generator, PREDATOR_NPC_WEAPONS weapon_for_marine);
 
 /* globals for this file */
 HIVE_DATA NPCHive;
@@ -56,6 +59,7 @@ int ShowHiveState=0;
 FILE *logFile;
 #endif
 
+static bool PredatorGenerators = false;
 
 /*
 Stuff for adjusting difficulty level according to player's performance
@@ -234,7 +238,7 @@ void GeneratorBehaviour(STRATEGYBLOCK *sbPtr)
 		return;
 	}
 	/* if there are too many npcs in the env, do not create a new one */
-	if(UseGeneratorBalance && AvP.Network != I_No_Network)
+	if(UseGeneratorBalance && AvP.Network != I_No_Network && !netGameData.skirmishMode)
 	{
 		if(genBlock->use_own_max_npc)
 		{
@@ -343,29 +347,63 @@ void GeneratorBehaviour(STRATEGYBLOCK *sbPtr)
 		}
 		random-=genBlock->PistolCiv_Wt;
 
+		PredatorGenerators = Config_GetBool("[Gameplay]", "PredatorGenerators", false);
+		//flamer civilian overriden by predator
+		if (PredatorGenerators) {
+			if (random < genBlock->FlameCiv_Wt)
+			{
+				CreatePredatorDynamic(sbPtr, PNPCW_PlasmaCaster);
+				return;
+			}
+			random -= genBlock->FlameCiv_Wt;
+		}
 		//flamer civilian
-		if(random<genBlock->FlameCiv_Wt)
-		{
-			CreateMarineDynamic(sbPtr,MNPCW_MFlamer);
-			return;
+		if (!PredatorGenerators) {
+			if (random < genBlock->FlameCiv_Wt)
+			{
+				CreateMarineDynamic(sbPtr, MNPCW_MFlamer);
+				return;
+			}
+			random -= genBlock->FlameCiv_Wt;
 		}
-		random-=genBlock->FlameCiv_Wt;
 
+		//unarmed overriden by predator
+		if (PredatorGenerators) {
+			if (random < genBlock->UnarmedCiv_Wt)
+			{
+				CreatePredatorDynamic(sbPtr, PNPCW_Pistol);
+				return;
+			}
+			random -= genBlock->UnarmedCiv_Wt;
+		}	
 		//unarmed civilian
-		if(random<genBlock->UnarmedCiv_Wt)
-		{
-			CreateMarineDynamic(sbPtr,MNPCW_MUnarmed);
-			return;
+		if (!PredatorGenerators) {
+			if (random < genBlock->UnarmedCiv_Wt)
+			{
+				CreateMarineDynamic(sbPtr, MNPCW_MUnarmed);
+				return;
+			}
+			random -= genBlock->UnarmedCiv_Wt;
 		}
-		random-=genBlock->UnarmedCiv_Wt;
 
-		//molotov civilian
-		if(random<genBlock->MolotovCiv_Wt)
-		{
-			CreateMarineDynamic(sbPtr,MNPCW_MMolotov);
-			return;
+		//molotov civilian overriden by predator
+		if (PredatorGenerators) {
+			if (random < genBlock->MolotovCiv_Wt)
+			{
+				CreatePredatorDynamic(sbPtr, PNPCW_Speargun);
+				return;
+			}
+			random -= genBlock->MolotovCiv_Wt;
 		}
-		random-=genBlock->MolotovCiv_Wt;
+		//molotov civilian
+		if (!PredatorGenerators) {
+			if (random < genBlock->MolotovCiv_Wt)
+			{
+				CreateMarineDynamic(sbPtr, MNPCW_MMolotov);
+				return;
+			}
+			random -= genBlock->MolotovCiv_Wt;
+		}
 
 		//alien
 		if(random<genBlock->Alien_Wt)
@@ -715,7 +753,7 @@ int NumGeneratorNPCsInEnv(void)
 	while(sbIndex < NumActiveStBlocks)
 	{
 		sbPtr = ActiveStBlockList[sbIndex++];
-		if((sbPtr->I_SBtype == I_BehaviourAlien)||(sbPtr->I_SBtype == I_BehaviourMarine))
+		if((sbPtr->I_SBtype == I_BehaviourAlien)||(sbPtr->I_SBtype == I_BehaviourMarine) || (sbPtr->I_SBtype == I_BehaviourPredator))
 		{
 			//All placed bad guys will have the last character of the sbname as 0
 			//generated badguys shoud have a non-zero last character.
@@ -773,6 +811,19 @@ int NumNPCsFromThisGenerator(STRATEGYBLOCK* gen_sbptr)
 				}
 				break;
 
+			case I_BehaviourPredator:
+			{
+				PREDATOR_STATUS_BLOCK* status_block = (PREDATOR_STATUS_BLOCK*)sbPtr->SBdataptr;
+				GLOBALASSERT(status_block);
+
+				if (status_block->generator_sbptr == gen_sbptr)
+				{
+					//this predator was produced by this generator
+					numOfNPCs++;
+				}
+			}
+			break;
+
 			default: ; // do nothing
 		}
 	}
@@ -790,7 +841,7 @@ int NumGeneratorNPCsVisible(void)
 	while(sbIndex < NumActiveStBlocks)
 	{
 		sbPtr = ActiveStBlockList[sbIndex++];
-		if((sbPtr->I_SBtype == I_BehaviourAlien)||(sbPtr->I_SBtype == I_BehaviourMarine))
+		if((sbPtr->I_SBtype == I_BehaviourAlien)||(sbPtr->I_SBtype == I_BehaviourMarine)||(sbPtr->I_SBtype == I_BehaviourPredator))
 		{
 			if(sbPtr->SBdptr)numOfVisNPCs++;
 		}
