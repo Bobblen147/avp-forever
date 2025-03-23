@@ -24,6 +24,7 @@
 #include "bh_weapon.h"
 #include "bh_debris.h"
 #include "bh_alien.h"
+#include "bh_queen.h"
 #include "psnd.h"
 #include "weapons.h"
 #include "load_shape.h"
@@ -11200,6 +11201,20 @@ int Marine_TargetFilter(STRATEGYBLOCK *candidate) {
 				break;
 			}
 		case I_BehaviourQueenAlien:
+		{
+			QUEEN_STATUS_BLOCK* queenStatusPointer;
+			LOCALASSERT(candidate);
+			LOCALASSERT(candidate->DynPtr);
+
+			queenStatusPointer = (QUEEN_STATUS_BLOCK*)(candidate->SBdataptr);
+			if (queenStatusPointer->QueenState == QBS_Dead) {
+				return(0);
+			}
+			else {
+				return(1);
+			}
+			break;
+		}
 		case I_BehaviourFaceHugger:
 		case I_BehaviourPredator:
 		case I_BehaviourXenoborg:

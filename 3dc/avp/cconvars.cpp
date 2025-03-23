@@ -232,10 +232,6 @@ void Show_Adj(void) {
 	ShowAdj=(~ShowAdj);
 }
 
-void Toggle_Observer(void) {
-	Observer=(~Observer);
-}
-
 void ShowRecoilMaxXTilt(void) {
 
 	PLAYER_WEAPON_DATA *weaponPtr;
@@ -1052,13 +1048,6 @@ void CreateMoreGameSpecificConsoleVariables(void)
 		"NUKEDUMMIES",
 		"KILLS ALL PLAYER DUMMIES.",
 		KillAllDummies
-	);
-
-	ConsoleCommand :: Make
-	(
-		"OBSERVER",
-		"TOGGLES OBSERVER MODE.",
-		Toggle_Observer
 	);
 
 	ConsoleCommand :: Make

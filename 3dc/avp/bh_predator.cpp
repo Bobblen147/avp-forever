@@ -5355,6 +5355,20 @@ int Predator_TargetFilter(STRATEGYBLOCK *candidate) {
                     }
 					break;
                 case I_BehaviourQueenAlien:
+                {
+                    QUEEN_STATUS_BLOCK* queenStatusPointer;
+                    LOCALASSERT(candidate);
+                    LOCALASSERT(candidate->DynPtr);
+
+                    queenStatusPointer = (QUEEN_STATUS_BLOCK*)(candidate->SBdataptr);
+                    if (queenStatusPointer->QueenState == QBS_Dead) {
+                        return(0);
+                    }
+                    else {
+                        return(1);
+                    }
+                    break;
+                }
                 case I_BehaviourFaceHugger:
                 case I_BehaviourMarine:
                 case I_BehaviourXenoborg:

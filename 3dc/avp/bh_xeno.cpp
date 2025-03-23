@@ -31,6 +31,7 @@
 #include "sfx.h"
 #include "bh_marine.h"
 #include "bh_far.h"
+#include "bh_queen.h"
 #include "pldghost.h"
 #include "pheromone.h"
 #include "targeting.h"
@@ -2574,6 +2575,20 @@ int Xenoborg_TargetFilter(STRATEGYBLOCK *candidate) {
 				break;
 			}
 		case I_BehaviourQueenAlien:
+		{
+			QUEEN_STATUS_BLOCK* queenStatusPointer;
+			LOCALASSERT(candidate);
+			LOCALASSERT(candidate->DynPtr);
+
+			queenStatusPointer = (QUEEN_STATUS_BLOCK*)(candidate->SBdataptr);
+			if (queenStatusPointer->QueenState == QBS_Dead) {
+				return(0);
+			}
+			else {
+				return(1);
+			}
+			break;
+		}
 		case I_BehaviourFaceHugger:
 		case I_BehaviourPredator:
 		case I_BehaviourSeal:

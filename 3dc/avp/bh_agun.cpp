@@ -40,6 +40,7 @@
 #include "showcmds.h"
 #include "sfx.h"
 #include "bh_marine.h"
+#include "bh_queen.h"
 #include "bh_far.h"
 #include "targeting.h"
 #include "dxlog.h"
@@ -695,6 +696,20 @@ int Autogun_TargetFilter(STRATEGYBLOCK *candidate) {
 			}
 		case I_BehaviourAlien:
 		case I_BehaviourQueenAlien:
+		{
+			QUEEN_STATUS_BLOCK* queenStatusPointer;
+			LOCALASSERT(candidate);
+			LOCALASSERT(candidate->DynPtr);
+
+			queenStatusPointer = (QUEEN_STATUS_BLOCK*)(candidate->SBdataptr);
+			if (queenStatusPointer->QueenState == QBS_Dead) {
+				return(0);
+			}
+			else {
+				return(1);
+			}
+			break;
+		}
 		case I_BehaviourFaceHugger:
 		case I_BehaviourPredator:
 		case I_BehaviourPredatorAlien:

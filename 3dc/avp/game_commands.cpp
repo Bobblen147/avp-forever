@@ -9,6 +9,7 @@
 #include "inline.h"
 #include "strategy_def.h"
 #include "gamedef.h"
+#include "Player.h"
 #include "gameplat.h"
 #include "bh_types.h"
 #include "showcmds.h"
@@ -307,6 +308,10 @@ static void CompleteLevel(void)
 	AvP.LevelCompleted = 1;
 }
 
+void Toggle_Observer(void) {
+	Observer = (~Observer);
+}
+
 void CreateGameSpecificConsoleCommands(void)
 {
 	ShowDebuggingText.FPS = 0;
@@ -447,6 +452,14 @@ void CreateGameSpecificConsoleCommands(void)
 			"SHOWMODULE",
 			"DISPLAY THE PLAYERS CURRENT MODULE",
 			ShowModule
+		);
+
+		ConsoleCommand::Make
+		(
+			"OBSERVER",
+			"TOGGLES OBSERVER MODE.",
+			Toggle_Observer,
+			IsACheat
 		);
 	}
 

@@ -1332,26 +1332,26 @@ DISPLAYBLOCK *MakeHierarchicalDebris(STRATEGYBLOCK *parent_sbPtr,SECTION_DATA *r
 		((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 		/* Consider the bounce sound, by section name. */
 		if (strcmp(root->sempai->Section_Name,"SADAR")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
 			dynPtr->Elasticity=(ONE_FIXED>>3);
 		} else if (strcmp(root->sempai->Section_Name,"gren stock")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
 			/* Grenade launchers aren't very bouncy. */
 		} else if (strcmp(root->sempai->Section_Name,"flamer")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
 		} else if (strcmp(root->sempai->Section_Name,"spring one")==0) {
 			/* This is a smartgun! */
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
 			/* Whilst we're here... */
 			dispPtr->ObMat=*orientation;
 			root->SecMat=Identity_RotMat;
 			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->HModelController.ZeroRootRotation=1;
 			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->HModelController.Playing=0;
 		} else if (strcmp(root->sempai->Section_Name,"mini gun")==0) {
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound= SID_ED_LARGEWEAPONDROP;
 		} else if (strcmp(root->sempai->Section_Name,"flame thrower")==0) {
 			/* Civvie flamer... */
-			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
+			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound= SID_ED_LARGEWEAPONDROP;
 		} else if (strcmp(root->sempai->Section_Name,"pulse mag")==0) {
 			((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
 			/* Don't have a 'tink' yet... */
@@ -1361,7 +1361,7 @@ DISPLAYBLOCK *MakeHierarchicalDebris(STRATEGYBLOCK *parent_sbPtr,SECTION_DATA *r
 		if (parent_sbPtr) {
 			if (parent_sbPtr->I_SBtype==I_BehaviourAutoGun) {
 				/* Always make a thump. */
-				((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_NOSOUND;
+				((HDEBRIS_BEHAV_BLOCK * ) sbPtr->SBdataptr)->Bounce_Sound=SID_ED_LARGEWEAPONDROP;
 			}
 		}
 
@@ -1522,6 +1522,7 @@ void HierarchicalFragmentBehaviour(STRATEGYBLOCK *sptr)
 	if (bounce&&(hdbhv->bouncelastframe==0)) {
 		if (hdbhv->Bounce_Sound!=SID_NOSOUND) {
 			Sound_Play(hdbhv->Bounce_Sound,"dp",&(dynPtr->Position),((FastRandom()&511)-255));
+			Sound_Stop(hdbhv->Bounce_Sound);
 		}
 		hdbhv->bouncelastframe=1;
 	}

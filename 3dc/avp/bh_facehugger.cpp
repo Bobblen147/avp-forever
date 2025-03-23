@@ -30,6 +30,7 @@
 #include "kzsort.h"
 #include "tables.h"
 #include "pldnet.h"
+#include "player.h"
 
 #define HUGGER_STATE_PRINT	0
 
@@ -1037,7 +1038,7 @@ static int HuggerShouldAttackPlayer(void)
 	}
 
 	/* test for player being an alien */
-	if(AvP.PlayerType==I_Alien) return 0;
+	if(AvP.PlayerType==I_Alien || Observer) return 0;
 
 	return 1;
 }
