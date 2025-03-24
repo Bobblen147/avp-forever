@@ -2684,6 +2684,8 @@ static void TestShapeWithDynamicBoundingBox(DISPLAYBLOCK *objectPtr, DYNAMICSBLO
 
 		if (mainDynPtr->IgnoresNotVisPolys && (PolygonFlag & iflag_notvis) && !(PolygonFlag & iflag_mirror)) continue;
 
+		if (PolygonFlag & iflag_mirror) continue; //skip collision check for polys with the mirror flag
+
 		GetPolygonVertices(CollisionPolysPtr);
 
        	if (needToRotate)

@@ -19,6 +19,7 @@
 #include "dynblock.h"
 #include "bh_rubberduck.h"
 #include "pvisible.h"
+#include "pmove.h"
 #include "pldnet.h"
 #include "lighting.h"
 #include "paintball.h"		  
@@ -29,6 +30,7 @@
 #include "detaillevels.h"
 #include "savegame.h"
 
+extern void NewOnScreenMessage(char* messagePtr);
 int DebuggingCommandsActive=0;
 extern void GimmeCharge(void);
 
@@ -309,7 +311,33 @@ static void CompleteLevel(void)
 }
 
 void Toggle_Observer(void) {
-	Observer = (~Observer);
+	switch(Observer) {
+		case 0:
+			NewOnScreenMessage("OBSERVER MODE ENABLED");
+			Observer = 1;
+			break;
+		case 1:
+			NewOnScreenMessage("OBSERVER MODE DISABLED");
+			Observer = 0;
+			break;
+		default:
+			break;
+	}
+}
+
+void Toggle_FlyMode(void) {
+	switch (FlyModeAvailable) {
+	case 0:
+		NewOnScreenMessage("FLY MODE AVAILABLE - PRESS F6 TO TOGGLE");
+		FlyModeAvailable = 1;
+		break;
+	case 1:
+		NewOnScreenMessage("FLY MODE DISABLED");
+		FlyModeAvailable = 0;
+		break;
+	default:
+		break;
+	}
 }
 
 void CreateGameSpecificConsoleCommands(void)
@@ -459,6 +487,14 @@ void CreateGameSpecificConsoleCommands(void)
 			"OBSERVER",
 			"TOGGLES OBSERVER MODE.",
 			Toggle_Observer,
+			IsACheat
+		);
+
+		ConsoleCommand::Make
+		(
+			"FLYMODE",
+			"TOGGLES FLY MODE.",
+			Toggle_FlyMode,
 			IsACheat
 		);
 	}

@@ -531,6 +531,9 @@ void CheckForRayIntersectionWithObject(DISPLAYBLOCK *dPtr)
 		if ((PolyheaderPtr->PolyFlags & iflag_notvis) && !(PolyheaderPtr->PolyFlags & iflag_mirror)) 
 			continue;
 
+		if (PolyheaderPtr->PolyFlags & iflag_mirror) //skip collision check for polys with the mirror flag
+			continue;
+
 		{
 			int normDotBeta;
 

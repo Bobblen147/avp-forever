@@ -55,9 +55,9 @@ static void AlienContactWeapon(void);
 	#endif
 #endif
 //!(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO||DEATHMATCH_DEMO)
-#if FLY_MODE_CHEAT_ON
+//#if FLY_MODE_CHEAT_ON
 extern unsigned char KeyboardInput[];
-#endif
+//#endif
 
 /*KJL*****************************************************
 * If the define below is set to non-zero then the player *
@@ -94,6 +94,7 @@ extern int predHUDSoundHandle;
 extern int predOVision_SoundHandle;
 extern int TauntSoundPlayed;
 
+int FlyModeAvailable = 0;
 static char FlyModeOn = 0;			
 static char FlyModeDebounced = 0;
 extern int deathFadeLevel;
@@ -622,47 +623,49 @@ void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr)
 			}
 		}
 
-		#if FLY_MODE_CHEAT_ON
-		dynPtr->GravityOn=1;
-		if (KeyboardInput[KEY_F6]&&(!(playerStatusPtr->DemoMode)))
-		{
-			if(FlyModeDebounced)
+		//#if FLY_MODE_CHEAT_ON
+		if (FlyModeAvailable) {
+			dynPtr->GravityOn = 1;
+			if (KeyboardInput[KEY_F6] && (!(playerStatusPtr->DemoMode)))
 			{
-				FlyModeOn = !FlyModeOn;			
-				FlyModeDebounced = 0;
+				if (FlyModeDebounced)
+				{
+					FlyModeOn = !FlyModeOn;
+					FlyModeDebounced = 0;
+				}
+			}
+			else FlyModeDebounced = 1;
+
+			if (FlyModeOn)
+			{
+				dynPtr->LinVelocity.vx = 0;
+				dynPtr->LinVelocity.vy = 0;
+				dynPtr->LinVelocity.vz = forwardSpeed;
+				//			dynPtr->IsNetGhost=1;
+				if (playerStatusPtr->Mvt_InputRequests.Flags.Rqst_Strafe)
+				{
+					dynPtr->LinVelocity.vx = strafeSpeed;
+				}
+				else if ((playerStatusPtr->Mvt_InputRequests.Flags.Rqst_SideStepLeft)
+					|| (playerStatusPtr->Mvt_InputRequests.Flags.Rqst_SideStepRight))
+				{
+					dynPtr->LinVelocity.vx = strafeSpeed;
+				}
+
+				/* rotate LinVelocity along camera view */
+				{
+					MATRIXCH mat = Global_VDB_Ptr->VDB_Mat;
+					TransposeMatrixCH(&mat);
+					RotateVector(&dynPtr->LinVelocity, &mat);
+				}
+				dynPtr->GravityOn = 0;
+				//dynPtr->OnlyCollideWithObjects = 1;
+				dynPtr->LinImpulse.vx = 0;
+				dynPtr->LinImpulse.vy = 0;
+				dynPtr->LinImpulse.vz = 0;
 			}
 		}
-		else FlyModeDebounced = 1;
-
-		if(FlyModeOn)
-		{
-			dynPtr->LinVelocity.vx = 0;
-			dynPtr->LinVelocity.vy = 0;
-			dynPtr->LinVelocity.vz = forwardSpeed;
-//			dynPtr->IsNetGhost=1;
-			if(playerStatusPtr->Mvt_InputRequests.Flags.Rqst_Strafe)
-			{
-				dynPtr->LinVelocity.vx = strafeSpeed;
-			}
-			else if((playerStatusPtr->Mvt_InputRequests.Flags.Rqst_SideStepLeft)
-				|| (playerStatusPtr->Mvt_InputRequests.Flags.Rqst_SideStepRight))
-			{
-				dynPtr->LinVelocity.vx = strafeSpeed;
-			}
-
-		   	/* rotate LinVelocity along camera view */
-			{
-				MATRIXCH mat = Global_VDB_Ptr->VDB_Mat;
-				TransposeMatrixCH(&mat);
-				RotateVector(&dynPtr->LinVelocity,&mat);
-			}
-			dynPtr->GravityOn=0;
-			dynPtr->LinImpulse.vx=0;
-			dynPtr->LinImpulse.vy=0;
-			dynPtr->LinImpulse.vz=0;
-		}
-		else
-		#endif
+		//#endif
 		/* KJL 12:28:48 14/04/98 - if we're not in contact with the floor, but we've hit
 		something, set our velocity to zero (otherwise leave it alone) */
 		if(!dynPtr->IsInContactWithFloor)

@@ -65,5 +65,6 @@ extern void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr);
 void ThrowAFlare(void);
 void StartPlayerTaunt(void);
 void NetPlayerRespawn(STRATEGYBLOCK *sbPtr);
+extern int FlyModeAvailable;
 
 #endif
