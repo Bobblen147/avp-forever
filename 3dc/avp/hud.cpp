@@ -293,6 +293,8 @@ void MaintainHUD(void)
 			GADGET_Render();
 		#endif
 
+		gunLayer = false;
+
 		return;
 	}
 

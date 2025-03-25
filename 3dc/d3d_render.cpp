@@ -32,9 +32,11 @@
 #include "frustum.h"
 #include "d3d_render.h"
 #include "bh_types.h"
+#include "ConfigFile.h"
 
 bool frustumCull = false;
 bool gunLayer = false;
+static bool NoBilinearFilter = false;
 
 #define FMV_ON 0
 #define FMV_SIZE 128
@@ -1384,10 +1386,23 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	float RecipW = 1.0f / /*(float)*/ texWidth;
 	float RecipH = 1.0f / /*(float)*/ texHeight;
 
-	if (gunLayer) {
-		weaponList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode);
-	} else {
-		mainList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode);
+	NoBilinearFilter = Config_GetBool("[VideoMode]", "NoBilinearFilter", false);
+
+	if (NoBilinearFilter) {
+		if (gunLayer) {
+			weaponList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode, FILTERING_BILINEAR_OFF);
+		}
+		else {
+			mainList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode, FILTERING_BILINEAR_OFF);
+		}
+	}
+	else {
+		if (gunLayer) {
+			weaponList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode);
+		}
+		else {
+			mainList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode);
+		}
 	}
 
 	for (uint32_t i = 0; i < RenderPolygon.NumberOfVertices; i++)
