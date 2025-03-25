@@ -15,29 +15,27 @@ https://github.com/Bobblen147/avp-forever/tree/other/avp-source-code-update
 Most new features can be toggled from the config file found here:
 documents\My Games\Aliens versus Predator\AliensVsPredator.cfg
 
-Marine 
+Marine Weapons
 -Start marine levels with any combination of weapons (including none at all)
 -Make marine cudgel selectable with key 0 even if you have ammo for other weapons
 -Marine weapon reload any time (default key R)
 -Marine weapon jamming can be disabled
 
-Predator
+Predator Weapons
 -Override map specific predator inventory and start with any combination of weapons
 to enable this, first set PredatorWeaponsOverride=true in the config file
-
 -Predator weapons can now be collected as pickups (use key cards 11,12,13,14,15,16 in the editor to place them)
 -Predator previous vision mode key (default R)
 -Predator tracking weapons (disc, shoulder cannon) can have their tracking enabled/disabled (default key T)
--Added additional Predator bot types that Rebellion left unused (try PREDOBOT 2,3,4 or 5 in debug mode!)
 
 Gameplay
 -Added sentry gun bot spawn command (type SENTRYGUN in debug mode)
 -Added facehugger bot spawn command (type FACEHUGGER in debug mode)
 -Added alien queen bot spawn command (type QUEENBOT in debug mode)
+-Added additional Predator bot types that Rebellion left unused (PREDOBOT 2,3,4 or 5 in debug mode)
 -to force load all bots, pass in the command line -lacmprtxsfq (s=sentry, f=fhugger, q=queen)
 -Can enable/disable AI attacking a player of the same species.
-
--Can play a custom single player level by adding it to the config and just starting a new game as the species you want.
+-Can force sentry guns to target a human player
 -Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
 -Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest binary)
 
@@ -49,9 +47,16 @@ place a marine generator in your map and spawn unarmed, molotov or flamer civili
 -All bot types can now be spawned in debug mode (not just aliens, predaliens & praetorians)
 -In game species change in debug mode (use MORPH_ALIEN, MORPH_MARINE and MORPH_PREDATOR)
 
+Custom map making
+-Fly mode can be enabled in the console by typing FLYMODE then F6 anytime during play to toggle.
+-Observer mode can be enabled in the console by typing OBSERVER (no longer needs debug EXE)
+-typing SHOWMODULE will show which module the player is in (no longer needs debug EXE)
+-The unused mirror flag is now a 'no collision' flag and can be used to make false walls
+-Can play a custom single player level by adding it to the config and just starting a new game as the species you want.
+
 Other
 -Enable/disable EAX reverb effects
--Temporarily removed the NPC Marine heavy weapon drop sound as it was buggy and would get stuck playing
+-Partially fixed NPC heavy weapons drop sound repeating bug (needs 60fps or less)
 -Work around a sound bug when breaking armour/light weapon pickups in skirmish by replacing an unused sound
 
 The implementation for the reload and prev vision mode keys are heavily based on the implementation from the Cancer Black mod.
@@ -112,10 +117,11 @@ Known (pre-existing) bugs
 
 -Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)
 -Stranded cliff textures have an outline around the transparent section (bad bilinear filtering?)
--Animated lava texture in Fury 161 is broken
--Smart gun tracking is too slow (xenoborg tracking too?)
--Walls seem to be a bit stickier than gold edition (easier to snag them). May be related to high FPS?
+-Animated lava texture in Fury 161 (& Earthbound animated lights) are broken
+-Getting hit by a xenoborg sometimes breaks the graphics completely
+-Walls seem to be a bit stickier than gold edition (easier to snag them)? May be related to high FPS?
 -In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
 -When killing an NPC marine with a heavy weapon, the weapon drop sound sometimes rapidly repeats*
 -EAX reverb / echo levels are way to high on non surround sound setups.*
--Wireframe debug mode is broken
+-Wireframe debug mode just does nothing
+-CDSTOP/PLAY in game commands not hooked up

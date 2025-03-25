@@ -659,12 +659,22 @@ void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr)
 					RotateVector(&dynPtr->LinVelocity, &mat);
 				}
 				dynPtr->GravityOn = 0;
-				//dynPtr->OnlyCollideWithObjects = 1;
+				dynPtr->OnlyCollideWithObjects = 1;
 				dynPtr->LinImpulse.vx = 0;
 				dynPtr->LinImpulse.vy = 0;
 				dynPtr->LinImpulse.vz = 0;
 			}
+
+			if (!FlyModeOn){ //disable if toggled
+				dynPtr->GravityOn = 1;
+				dynPtr->OnlyCollideWithObjects = 0;
+			}
 		}
+		else { //make sure we turn off flying if we disable in the console
+			dynPtr->GravityOn = 1;
+			dynPtr->OnlyCollideWithObjects = 0;
+		}
+
 		//#endif
 		/* KJL 12:28:48 14/04/98 - if we're not in contact with the floor, but we've hit
 		something, set our velocity to zero (otherwise leave it alone) */
