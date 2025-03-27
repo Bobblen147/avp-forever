@@ -2,6 +2,7 @@
 #include "MusicPlayer.h"
 #include "FileStream.h"
 #include "logstring.h"
+#include "console.h"
 #include "VorbisPlayer.h"
 #include "3dc.h"
 #include "gamedef.h"
@@ -63,7 +64,7 @@ bool Music_Init()
 	{
 		ExtractTracksForLevel(startBufferptr, LevelCDTracks[i]);
 	}
-
+	
 	delete[] buffer;
 
 	musicAvailable = true;

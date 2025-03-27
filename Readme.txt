@@ -57,11 +57,17 @@ Custom map making
 Other
 -Enable/disable EAX reverb effects
 -Partially fixed NPC heavy weapons drop sound repeating bug (needs 60fps or less)
+-Work around bad bilinear filtering by slightly altering a couple of textures (thanks Olde)
 -Work around a sound bug when breaking armour/light weapon pickups in skirmish by replacing an unused sound
+-Added config file option to disable bilinear filtering
+
+
+Extra credits
 
 The implementation for the reload and prev vision mode keys are heavily based on the implementation from the Cancer Black mod.
 https://github.com/shole/AvP-CancerBlack/tree/df80b44ca7d1e97c6c310d847b1a10172bac0533)
 
+Thanks to Olde for much testing, and the avp classic discord for suggestions and encouragement
 
 
 Installing
@@ -70,18 +76,29 @@ The most reliable way is to first use the automated installer from
 http://homepage.eircom.net/~duncandsl/avp/
 To do a full install of AvPx. This will also take care of a number of prerequisites automatically.
 
-Then only copy over the newly compiled files you need
-AvPx.exe (or Debug_AvPx.exe for a debug build)
+Then copy the files in this package overwriting any existing files.
+AvPxEnhanced.exe
 enet.dll
 libogg.dll
 libvorbis.dll
 libvorbisfile.dll
 libbinkdec.dll 
 libsmackerdec.dll
-language.txt (overwriting the existing file)
-fastfile/Snd21.ffl (overwriting the existing file)
+OpenAL32.dll
+pthreadVC2.dll
+language.txt
+fastfile/Snd21.ffl
+fastfile/Tex20.ffl
+fastfile/Tex38.ffl
+fastfile/Tex48.ffl
 
-you can continue using the existing OpenAL32.dll & pthreadVC2.dll from the automatic installer without issue.
+The extra skirmish map in the samples folder can be dropped in avp_rifs/Custom.
+Don't forget if you want predators to spawn instead of civilians, you must enabled PredatorGenerators in the config file
+
+The default config file AliensVsPredator.cfg should be placed in
+documents\My Games\Aliens versus Predator\ (or you can just let the game generate you one by playing it)
+
+It is highly recommended if you have a high refresh rate monitor to use a 3rd party tool to lock the framerate to 59fps. There are big problems with the AI and physics if you go higher than this!
 
 
 Building
@@ -112,16 +129,17 @@ https://www.openal-soft.org/
 I used the latest version
 
 
-Known (pre-existing) bugs
+Known (pre-existing) avpx bugs
 * means I'm using a workaround
 
 -Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)
--Stranded cliff textures have an outline around the transparent section (bad bilinear filtering?)
+-Stranded cliff textures have an outline around the transparent section (bad bilinear filtering)*
 -Animated lava texture in Fury 161 (& Earthbound animated lights) are broken
 -Getting hit by a xenoborg sometimes breaks the graphics completely
 -Walls seem to be a bit stickier than gold edition (easier to snag them)? May be related to high FPS?
 -In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
 -When killing an NPC marine with a heavy weapon, the weapon drop sound sometimes rapidly repeats*
--EAX reverb / echo levels are way to high on non surround sound setups.*
+-EAX reverb / echo levels are way too high on non surround sound setups.*
 -Wireframe debug mode just does nothing
--CDSTOP/PLAY in game commands not hooked up
+-Motionblur and Triptastic cheat modes do not have the blurring effect, decals also don't wobble along with the environment.
+-CDSTOP/PLAY in game commands not hooked up, only one cd track is played per level instead of five

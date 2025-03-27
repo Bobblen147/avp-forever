@@ -466,7 +466,7 @@ void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr)
 		
 		if (( ((AvP.PlayerType == I_Alien) || (playerStatusPtr->ShapeState == PMph_Standing))
 			&& (playerStatusPtr->Mvt_InputRequests.Flags.Rqst_Faster) && (playerStatusPtr->Encumberance.CanRun) )
-			|| !bTurnSpeedAdjust)
+			)
 		{	
 			/* Test - half backward speed for predators */
 			if (AvP.PlayerType==I_Predator) {
@@ -480,6 +480,7 @@ void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr)
 			/* walk = half speed */
 			strafeSpeed = (strafeSpeed)/2;
 			forwardSpeed = (forwardSpeed)/2;
+			if (!bTurnSpeedAdjust)
 			turnSpeed = (turnSpeed)/2;
 		}	
 

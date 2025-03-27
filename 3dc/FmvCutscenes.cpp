@@ -418,7 +418,7 @@ void StartMenuMusic()
 {
 	menuMusic = new SmackerPlayback;
 
-	if (menuMusic->Open("FMVs/IntroSound.smk") != FMV_OK)
+	if (menuMusic->Open("FMVs/IntroSound.smk", true) != FMV_OK) //looping not handled in libsmackerdec yet
 	{
 		Con_PrintError("Can't open file IntroSound.smk");
 		delete menuMusic;

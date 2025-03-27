@@ -14,7 +14,6 @@
 #include "gamedef.h"
 #include "dynamics.h"
 #include "psndplat.h"
-#include "ConfigFile.h"
 #define UseLocalAssert TRUE
 #include "ourasert.h"
 #include <math.h>
