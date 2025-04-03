@@ -1213,7 +1213,7 @@ int LoadWavFile(int soundNum, const std::string &fileName)
 
 	if (!fStream.IsGood())
 	{
-		Con_PrintError("Can't open WAV file");
+		Con_PrintError("Can't open WAV file " + fileName);
 		return 0;
 	}
 

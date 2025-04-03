@@ -89,9 +89,9 @@ FastFileHandle* FF_Find(const std::string &fileName)
 	*/
 	for (int i = (nEntries-1); i >= 0; i--)
 	{
-		if (i == 0) { // no string to check as first entry, just return it and assume it's ok.
-			return &fastFileHandles[hash][i];
-		}
+		//if (i == 0) { // no string to check as first entry, just return it and assume it's ok.
+		//	return &fastFileHandles[hash][i];
+		//}
 
 		if (fastFileHandles[hash][i].fileName == lowercaseFileName) {
 			return &fastFileHandles[hash][i];
@@ -220,11 +220,12 @@ static bool FF_Open(const std::string &fastFileName, int32_t fastFileIndex)
 		hash = hash % hashTableSize;
 
 		// if size > 0, we already have an item at this location, so we've got a collision
-		if (fastFileHandles[hash].size())
-		{
-			// collision detected. store file name for collision resolution
-			newHandle.fileName = requestedFile;
-		}
+		//if (fastFileHandles[hash].size())
+		//{
+		//	// collision detected. store file name for collision resolution
+		//	newHandle.fileName = requestedFile;
+		//}
+		newHandle.fileName = requestedFile; //always store the file name for debug
 
 		fastFileHandles[hash].push_back(newHandle);
 
