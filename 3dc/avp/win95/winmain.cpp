@@ -295,6 +295,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	else if (strstr(command_line, "-debug"))
 	{
 		DebuggingCommandsActive = 1;
+		ForceLoad_Alien = TRUE;
+		ForceLoad_Marine = TRUE;
+		ForceLoad_Predator = TRUE;
+		ForceLoad_Hugger = TRUE;
+		ForceLoad_Queen = TRUE;
+		ForceLoad_Civvie = TRUE;
+		ForceLoad_Xenoborg = TRUE;
+		ForceLoad_Pretorian = TRUE;
+		ForceLoad_PredAlien = TRUE;
+		ForceLoad_SentryGun = TRUE;
 	}
 
 	if (instr = strstr(command_line, "-ip"))
