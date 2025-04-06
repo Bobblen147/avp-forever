@@ -7,6 +7,9 @@
 #include "inline.h"
 #include "menus.h"
 #include "intro.h"
+#include "ConfigFile.h"
+
+static bool SkipIntro = false;
 
 extern void DirectReadKeyboard(void);
 extern void DrawFadeQuad(uint32_t topX, uint32_t topY, uint32_t alpha);
@@ -40,9 +43,14 @@ extern void PlayIntroSequence(void)
 	IntroHasAlreadyBeenPlayed = true;
 
 	ResetFrameCounter();
-	Show_CopyrightInfo();
 
-	PlayFMV("FMVs/logos.bik");
+	SkipIntro = Config_GetBool("[Misc]", "SkipIntro", false);
+
+	if (!SkipIntro) {
+		Show_CopyrightInfo();
+
+		PlayFMV("FMVs/logos.bik");
+	}
 
 	StartMenuMusic();
 	ResetFrameCounter();
