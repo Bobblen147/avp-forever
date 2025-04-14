@@ -38,6 +38,8 @@
 extern int ModuleArraySize;
 extern char *ModuleCurrVisArray;
 
+extern int PlacedHuggerCount;
+
 extern ACTIVESOUNDSAMPLE ActiveSounds[];
 
 /* prototypes for this file */
@@ -288,6 +290,8 @@ void InitFacehuggerBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		for(i=0;i<SB_NAME_LENGTH;i++) facehuggerStatus->death_target_ID[i] = toolsData->death_target_ID[i];
 		facehuggerStatus->death_target_sbptr=0;
 		facehuggerStatus->death_target_request=toolsData->death_target_request;
+
+		PlacedHuggerCount++;
 	}
 	else
 	{
@@ -618,7 +622,16 @@ static void KillFaceHugger(STRATEGYBLOCK *sbPtr,DAMAGE_PROFILE *damage)
 		dynPtr->LinVelocity.vx = sbPtr->DynPtr->LinVelocity.vy = sbPtr->DynPtr->LinVelocity.vz = 0;
 		/* Okay... */
 
+		/* Inform the network. */
+		if (AvP.Network != I_No_Network)
+		{
+			AddNetMsg_FacehuggerAIKilled(sbPtr,FACEHUGGER_DYINGTIME, damage);
+		}
+
+		PlacedHuggerCount--;
 	}
+
+
 }
 
 

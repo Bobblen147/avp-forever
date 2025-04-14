@@ -54,6 +54,12 @@ extern int FarAliens;
 extern int Alt_FarAliens;
 extern int ShowHiveState;
 static bool NPCAliensHostileToAlienPlayer = false;
+extern int PlacedAlienCount;
+extern int PlacedPredAlienCount;
+extern int PlacedPraetorianCount;
+extern int GenAlienCount;
+extern int GenPredAlienCount;
+extern int GenPraetorianCount;
 
 
 /* prototypes for this file */
@@ -588,6 +594,22 @@ void CreateAlienDynamic(STRATEGYBLOCK *Generator, ALIEN_TYPE type_of_alien)
 		}
 		alienStatus->aliensIgniterId=0;
 
+		//keep count of generated enemies
+		switch (alienStatus->Type) {
+		case AT_Standard:
+			GenAlienCount++;
+			break;
+		case AT_Predalien:
+			GenPredAlienCount++;
+			break;
+		case AT_Praetorian:
+			GenPraetorianCount++;
+			break;
+		default:
+			GLOBALASSERT(0);
+			break;
+		}
+
 	}
 	else
 	{
@@ -623,7 +645,7 @@ void InitAlienBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 	/* strategy block initialisation */
 	sbPtr->shapeIndex =	toolsData->shapeIndex;
 
-	if(AvP.Network==I_No_Network)
+	if(AvP.Network==I_No_Network || netGameData.skirmishMode)
 	{
 		for(i=0;i<SB_NAME_LENGTH;i++) sbPtr->SBname[i] = toolsData->nameID[i];
 	}
@@ -809,6 +831,22 @@ void InitAlienBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		}
 
 		alienStatus->aliensIgniterId=0;
+
+		//keep count of placed enemies
+		switch (alienStatus->Type) {
+		case AT_Standard:
+			PlacedAlienCount++;
+			break;
+		case AT_Predalien:
+			PlacedPredAlienCount++;
+			break;
+		case AT_Praetorian:
+			PlacedPraetorianCount++;
+			break;
+		default:
+			GLOBALASSERT(0);
+			break;
+		}
 
 	}
 	else
@@ -1702,6 +1740,26 @@ void KillAlien(STRATEGYBLOCK *sbPtr,int wounds,DAMAGE_PROFILE *damage, int multi
 		sbPtr->DynPtr->Mass	= 160;
 		/* Okay... */
 		#else
+
+		//decrease kill counter
+		switch (alienStatusPointer->Type) {
+		case AT_Standard:
+			if (alienStatusPointer->generator_sbptr == 0) { PlacedAlienCount--; }
+			else { GenAlienCount--; }
+			break;
+		case AT_Predalien:
+			if (alienStatusPointer->generator_sbptr == 0) { PlacedPredAlienCount--; }
+			else { GenPredAlienCount--; }
+			break;
+		case AT_Praetorian:
+			if (alienStatusPointer->generator_sbptr == 0) { PlacedPraetorianCount--; }
+			else { GenPraetorianCount--; }
+			break;
+		default:
+			GLOBALASSERT(0);
+			break;
+		}
+
 		Convert_Alien_To_Corpse(sbPtr,this_death,damage);
 		#endif
 	}

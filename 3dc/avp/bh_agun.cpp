@@ -61,6 +61,7 @@ extern ACTIVESOUNDSAMPLE ActiveSounds[];
 extern SECTION * GetNamedHierarchyFromLibrary(const char * rif_name, const char * hier_name);
 void CreateSentrygun(VECTORCH *Position,int type);
 static bool SentryGunsHostileToMarinePlayer = false;
+extern int PlacedSentryCount;
 
 void AGunMovement_ScanLeftRight(STRATEGYBLOCK *sbPtr,int rate);
 void AGunMovement_Centre(STRATEGYBLOCK *sbPtr,int rate);
@@ -254,7 +255,7 @@ void CreateSentrygun(VECTORCH *Position,int type)
 		NewOnScreenMessage("FAILED TO CREATE GUN: MALLOC FAILURE");
 		return;
 	}
-	if(AvP.Network != I_No_Network)
+	if(AvP.Network != I_No_Network && !netGameData.skirmishMode)
 	{
 //		AddNetGameObjectID(sbPtr);
 		AssignNewSBName(sbPtr);
@@ -450,6 +451,8 @@ void AutoGunBehaveInit(void *bhdata,STRATEGYBLOCK *sbPtr) {
 			return;
 		}
 		LOCALASSERT(sbPtr->containingModule);
+
+		PlacedSentryCount++;
 	}
 	else
 	{
@@ -1530,6 +1533,8 @@ static void KillAGun(STRATEGYBLOCK *sbPtr,int wounds,DAMAGE_PROFILE *damage, int
 		/* Well, it shouldn't be! */
 		Sound_Stop(agunStatusPointer->soundHandle);
 	}
+
+	PlacedSentryCount--;
 
 }
 

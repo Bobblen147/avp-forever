@@ -58,6 +58,26 @@ extern BOOL ForceLoad_Xenoborg;
 extern BOOL ForceLoad_Pretorian;
 extern BOOL ForceLoad_SentryGun;
 
+//enemy counters
+int PlacedAlienCount=0;
+int PlacedPredAlienCount = 0;
+int PlacedPraetorianCount=0;
+int GenAlienCount = 0;
+int GenPredAlienCount = 0;
+int GenPraetorianCount = 0;
+int PlacedMarineCount = 0;
+int PlacedCivilianCount = 0;
+int PlacedAndroidCount = 0;
+int GenMarineCount = 0;
+int GenCivilianCount = 0;
+int GenAndroidCount = 0;
+int PlacedPredCount = 0;
+int GenPredCount = 0;
+int PlacedHuggerCount = 0;
+int PlacedXenoborgCount = 0;
+int PlacedSentryCount = 0;
+int PlacedQueenCount = 0;
+
 BOOL UseMouseCentreing = FALSE;
 BOOL KeepMainRifFile = FALSE;
 
@@ -517,6 +537,28 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 									PrintDebuggingText("Gun Position x:%d,y:%d,z:%d\n",twPtr->RestPosition.vx,twPtr->RestPosition.vy,twPtr->RestPosition.vz);
 								}
 							}
+							if (ShowDebuggingText.EnemyCount) {
+								//placed
+								if (PlacedAlienCount > 0) ReleasePrintDebuggingText("Placed Aliens = %d\n", PlacedAlienCount);
+								if (PlacedPredAlienCount > 0) ReleasePrintDebuggingText("Placed PredAliens = %d\n", PlacedPredAlienCount);
+								if (PlacedPraetorianCount > 0) ReleasePrintDebuggingText("Placed Praetorians = %d\n", PlacedPraetorianCount);
+								if (PlacedMarineCount > 0) ReleasePrintDebuggingText("Placed Marines = %d\n", PlacedMarineCount);
+								if (PlacedCivilianCount > 0) ReleasePrintDebuggingText("Placed Civilians = %d\n", PlacedCivilianCount);
+								if (PlacedAndroidCount > 0) ReleasePrintDebuggingText("Placed Androids = %d\n", PlacedAndroidCount);
+								if (PlacedPredCount > 0) ReleasePrintDebuggingText("Placed Predators = %d\n", PlacedPredCount);
+								if (PlacedHuggerCount > 0) ReleasePrintDebuggingText("Placed Facehuggers = %d\n", PlacedHuggerCount);
+								if (PlacedSentryCount > 0) ReleasePrintDebuggingText("Placed Sentry Guns = %d\n", PlacedSentryCount);
+								if (PlacedXenoborgCount > 0) ReleasePrintDebuggingText("Placed Xenoborgs = %d\n", PlacedXenoborgCount);
+								if (PlacedQueenCount > 0) ReleasePrintDebuggingText("Placed Alien Queens = %d\n", PlacedQueenCount);
+								//generated
+								if (GenAlienCount > 0) ReleasePrintDebuggingText("Generated Aliens = %d\n", GenAlienCount);
+								if (GenPredAlienCount > 0) ReleasePrintDebuggingText("Generated PredAliens = %d\n", GenPredAlienCount);
+								if (GenPraetorianCount > 0) ReleasePrintDebuggingText("Generated Praetorians = %d\n", GenPraetorianCount);
+								if (GenMarineCount > 0) ReleasePrintDebuggingText("Generated Marines = %d\n", GenMarineCount);
+								if (GenCivilianCount > 0) ReleasePrintDebuggingText("Generated Civilians = %d\n", GenCivilianCount);
+								if (GenAndroidCount > 0) ReleasePrintDebuggingText("Generated Androids = %d\n", GenAndroidCount);
+								if (GenPredCount > 0) ReleasePrintDebuggingText("Generated Predators = %d\n", GenPredCount);
+							}
 						}
 						//#endif  /* MainTextPrint */
 
@@ -595,6 +637,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 				AvP.RestartLevel = 0;
 				AvP.LevelCompleted = 0;
 				FixCheatModesInUserProfile(UserProfilePtr);
+				//reset enemy counters
+				PlacedAlienCount = 0;
+				PlacedPredAlienCount = 0;
+				PlacedPraetorianCount = 0;
+				GenAlienCount = 0;
+				GenPredAlienCount = 0;
+				GenPraetorianCount = 0;
+				PlacedMarineCount = 0;
+				PlacedCivilianCount = 0;
+				PlacedAndroidCount = 0;
+				GenMarineCount = 0;
+				GenCivilianCount = 0;
+				GenAndroidCount = 0;
+				PlacedPredCount = 0;
+				GenPredCount = 0;
+				PlacedHuggerCount = 0;
+				PlacedXenoborgCount = 0;
+				PlacedSentryCount = 0;
+				PlacedQueenCount = 0;
 				RestartLevel();
 			}
 		} 

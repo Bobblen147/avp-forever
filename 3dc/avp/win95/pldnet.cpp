@@ -29,6 +29,7 @@
 #include "bh_marine.h"
 #include "bh_binary_switch.h"
 #include "bh_agun.h"
+#include "bh_facehugger.h"
 #include "bh_weapon.h"
 #include "bh_corpse.h"
 #include "bh_light.h"
@@ -226,6 +227,21 @@ MULTIPLAYER_START *predatorStartPositions = 0;
 
 int ShowMultiplayerScoreTimer = 0;
 int MultiplayerRestartSeed = 0;
+
+//new kill counters
+int MarinePulseRifleKilled = 0;
+int MarineSmartGunKilled = 0;
+int MarineFlamerKilled = 0;
+int MarineSADARKilled = 0;
+int MarineGrenadeKilled = 0;
+int MarineMinigunKilled = 0;
+int MarinePistolKilled = 0;
+int PredatorSCannonKilled = 0;
+int PredatorPistolKilled = 0;
+int PredatorSpeargunKilled = 0;
+int CivilianFlamerKilled = 0;
+int CivilianMolotovKilled = 0;
+int FacehuggerKilled = 0;
 
 static int GameTimeSinceLastSend = 0;
 
@@ -5057,6 +5073,55 @@ void AddNetMsg_AlienAIKilled(STRATEGYBLOCK *sbPtr, int death_code, int death_tim
 	//find the icon for the weapon used
 	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
 	Inform_AiHasDied(messagePtr->killerId, static_cast<enum AlienType>(messagePtr->AlienType), messagePtr->weaponIcon);
+}
+
+void AddNetMsg_MarineAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage)
+{
+	MARINE_STATUS_BLOCK* marineStatus = (MARINE_STATUS_BLOCK*)sbPtr->SBdataptr;
+	
+	if (marineStatus->My_Weapon->id == MNPCW_PulseRifle) {
+			MarinePulseRifleKilled++;
+		}
+	if (marineStatus->My_Weapon->id == MNPCW_Flamethrower) {
+		MarineFlamerKilled++;
+	}
+	if (marineStatus->My_Weapon->id == MNPCW_Smartgun) {
+		MarineSmartGunKilled++;
+	}
+	if (marineStatus->My_Weapon->id == MNPCW_SADAR) {
+		MarineSADARKilled++;
+	}
+	if (marineStatus->My_Weapon->id == MNPCW_GrenadeLauncher) {
+		MarineGrenadeKilled++;
+	}
+	if (marineStatus->My_Weapon->id == MNPCW_Minigun) {
+		MarineMinigunKilled++;
+	}
+	if (marineStatus->My_Weapon->id == MNPCW_PistolMarine) {
+		MarinePistolKilled++;
+	}
+}
+
+void AddNetMsg_PredatorAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage)
+{
+	PREDATOR_STATUS_BLOCK* predatorStatus = (PREDATOR_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+	if (predatorStatus->PrimaryWeapon == PNPCW_PlasmaCaster) {
+		PredatorSCannonKilled++;
+	}
+	if (predatorStatus->PrimaryWeapon == PNPCW_Pistol) {
+		PredatorPistolKilled++;
+	}
+	if (predatorStatus->PrimaryWeapon == PNPCW_Speargun) {
+		PredatorSpeargunKilled++;
+	}
+}
+
+void AddNetMsg_FacehuggerAIKilled(STRATEGYBLOCK* sbPtr, int death_time, DAMAGE_PROFILE* damage)
+{
+	FACEHUGGER_STATUS_BLOCK* facehuggerStatus = (FACEHUGGER_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+	FacehuggerKilled++;
 }
 
 void AddNetMsg_FarAlienPosition(STRATEGYBLOCK *sbPtr, int targetModuleIndex, int index, BOOL indexIsModuleIndex)
@@ -9980,6 +10045,41 @@ static void Inform_AiHasDied(NetID killer, ALIEN_TYPE type, char weaponIcon)
 	}
 }
 
+static void Inform_MarineAiHasDied(NetID killer, marine_npc_weapons type, char weaponIcon)
+{
+	int killerIndex = PlayerIdInPlayerList(killer);
+
+	if (killerIndex != NET_IDNOTINPLAYERLIST)
+	{
+		char weaponSymbol[5] = "";
+
+		if (weaponIcon) {
+			sprintf(weaponSymbol, " %c", weaponIcon);
+		}
+
+		switch (type)
+		{
+		case MNPCW_PulseRifle:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_ALIEN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+			break;
+		}
+
+		case AT_Predalien:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_PREDALIEN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+			break;
+		}
+
+		case AT_Praetorian:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_PRAETORIAN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+			break;
+		}
+		}
+	}
+}
+
 static void Inform_PlayerHasLeft(NetID player)
 {
 	int playerIndex = PlayerIdInPlayerList(player);
@@ -11325,23 +11425,59 @@ void DoMultiplayerEndGameScreen(void)
 
 	if (netGameData.gameType == NGT_Coop)
 	{
-		if (NPCHive.AliensCanBeGenerated)
-		{
+		//if (NPCHive.AliensCanBeGenerated)
+		//{
 			RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_ALIENS), x, y, 0xffffffff);
 			x += 20;
-		}
+		//}
 
-		if (NPCHive.PredAliensCanBeGenerated)
-		{
+		//if (NPCHive.PredAliensCanBeGenerated)
+		//{
 			RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PREDALIENS), x, y, 0xffffffff);
 			x += 20;
-		}
+		//}
 
-		if (NPCHive.PraetoriansCanBeGenerated)
-		{
+		//if (NPCHive.PraetoriansCanBeGenerated)
+		//{
 			RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PRAETORIANS), x, y, 0xffffffff);
 			x += 20;
-		}
+		//}
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_PULSERIFLE), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_FLAMER), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_SMARTGUN), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_SADAR), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_GRENADELAUNCHER), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_MINIGUN), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_PISTOLS), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PREDATOR), x, y, 0xffffffff);
+		RenderStringVertically(GetTextString(TEXTSTRING_INGAME_SHOULDERCANNON), x, y - 50, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PREDATOR), x, y, 0xffffffff);
+		RenderStringVertically(GetTextString(TEXTSTRING_INGAME_PISTOL), x, y - 50, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PREDATOR), x, y, 0xffffffff);
+		RenderStringVertically(GetTextString(TEXTSTRING_INGAME_RIFLE), x, y - 50, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_GAMESTATS_FACEHUGGER), x, y, 0xffffffff);
+		x += 20;
 
 		x += 20;
 		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_SCORE), x, y, 0xffffffff);
@@ -11411,26 +11547,69 @@ void DoMultiplayerEndGameScreen(void)
 			{
 				int score = 0;
 
-				if (NPCHive.AliensCanBeGenerated)
-				{
+				//if (NPCHive.AliensCanBeGenerated)
+				//{
 					sprintf(text, "%d", netGameData.playerData[i].aliensKilled[0]);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
-				}
+				//}
 
-				if (NPCHive.PredAliensCanBeGenerated)
-				{
+				//if (NPCHive.PredAliensCanBeGenerated)
+				//{
 					sprintf(text, "%d", netGameData.playerData[i].aliensKilled[1]);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
-				}
+				//}
 
-				if (NPCHive.PraetoriansCanBeGenerated)
-				{
+				//if (NPCHive.PraetoriansCanBeGenerated)
+				//{
 					sprintf(text, "%d", netGameData.playerData[i].aliensKilled[2]);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
-				}
+				//}
+					sprintf(text, "%d", MarinePulseRifleKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", MarineFlamerKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", MarineSmartGunKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", MarineSADARKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", MarineGrenadeKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", MarineMinigunKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", MarinePistolKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", PredatorSCannonKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", PredatorPistolKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", PredatorSpeargunKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", FacehuggerKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;	
 
 				for (j = 0; j < 3; j++) {
 					score += netGameData.playerData[i].aliensKilled[j] * netGameData.aiKillValues[j];

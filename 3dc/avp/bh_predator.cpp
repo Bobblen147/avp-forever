@@ -60,6 +60,8 @@ extern int ShowPredoStats;
 extern unsigned char Null_Name[8];
 extern DEATH_DATA Predator_Special_SelfDestruct_Death;
 static bool NPCPredatorsHostileToPredatorPlayer = false;
+extern int PlacedPredCount;
+extern int GenPredCount;
 
 static DAMAGE_PROFILE Pred_Weapon_Damage;
 
@@ -876,7 +878,7 @@ void CreatePredatorDynamic(STRATEGYBLOCK* Generator, PREDATOR_NPC_WEAPONS weapon
         predatorStatus->death_target_request =0;
         predatorStatus->death_target_sbptr = 0;
 
-        //note the generator that produced this marine
+        //note the generator that produced this predator
         predatorStatus->generator_sbptr = Generator;
 
         root_section = GetNamedHierarchyFromLibrary(predatorStatus->Selected_Weapon->Riffname, predatorStatus->Selected_Weapon->HierarchyName);
@@ -906,6 +908,8 @@ void CreatePredatorDynamic(STRATEGYBLOCK* Generator, PREDATOR_NPC_WEAPONS weapon
         ProveHModel_Far(&predatorStatus->HModelController, sbPtr);
 
         InitPredatorCloak(predatorStatus);
+
+        GenPredCount++;
         }
         else
         {
@@ -1084,6 +1088,8 @@ void InitPredatorBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
                 ProveHModel_Far(&predatorStatus->HModelController,sbPtr);
 
                 InitPredatorCloak(predatorStatus);
+                //keep count of placed enemies
+                PlacedPredCount++;
         }
         else
         {
@@ -1104,6 +1110,7 @@ void InitDormantPredatorBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 
         sbPtr->SBdataptr=(void*) pred_bhv;
 
+        PlacedPredCount++;
 }
 
 void ActivateDormantPredator(STRATEGYBLOCK* sbPtr)
@@ -1117,6 +1124,7 @@ void ActivateDormantPredator(STRATEGYBLOCK* sbPtr)
         toolsData=pred_bhv->toolsData;
 
         //convert this strategyblock to a predator
+        PlacedPredCount--; //dormant predator going active is not a new predator
         DeallocateMem(pred_bhv);
         InitialiseSBValues(sbPtr);
         sbPtr->I_SBtype = I_BehaviourPredator;
@@ -2150,7 +2158,10 @@ void PredatorIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int multipl
                         Remove_Delta_Sequence(&predatorStatusPointer->HModelController,"Elevation");
                         Remove_Delta_Sequence(&predatorStatusPointer->HModelController,"HitDelta");
 
-                        Convert_Predator_To_Corpse(sbPtr,this_death);
+                        if (predatorStatusPointer->generator_sbptr == 0) { PlacedPredCount--; }
+                        else { GenPredCount--; }
+
+                        Convert_Predator_To_Corpse(sbPtr,this_death,damage);
 
                         return;
                 }

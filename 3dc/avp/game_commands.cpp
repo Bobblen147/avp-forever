@@ -129,6 +129,10 @@ static void ShowSounds(void)
 {
 	ShowDebuggingText.Sounds = ~ShowDebuggingText.Sounds;
 }
+static void ShowEnemyCount(void)
+{
+	ShowDebuggingText.EnemyCount = ~ShowDebuggingText.EnemyCount;
+}
 
 
 extern void ChangeToMarine();
@@ -352,6 +356,7 @@ void CreateGameSpecificConsoleCommands(void)
 	ShowDebuggingText.GunPos = 0;
 	ShowDebuggingText.Tears = 0;
 	ShowDebuggingText.PolyCount = 0;
+	ShowDebuggingText.EnemyCount = 0;
 
 	#ifndef AVP_DEBUG_VERSION 
 	bool IsACheat = true;
@@ -496,6 +501,13 @@ void CreateGameSpecificConsoleCommands(void)
 			"TOGGLES FLY MODE.",
 			Toggle_FlyMode,
 			IsACheat
+		);
+
+		ConsoleCommand::Make
+		(
+			"ENEMYCOUNT",
+			"DISPLAY THE NUMBER OF ENEMIES IN THE LEVEL",
+			ShowEnemyCount
 		);
 	}
 

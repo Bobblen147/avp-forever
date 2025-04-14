@@ -44,6 +44,8 @@ extern SECTION * GetNamedHierarchyFromLibrary(const char * rif_name, const char 
 extern char LevelName[];
 extern unsigned char Null_Name[8];
 
+extern int PlacedQueenCount;
+
 #define QueenAttackRange 3500
 
 /*minimum time for flamethrower before queen takes notice*/
@@ -574,6 +576,8 @@ void InitQueenBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		}
 
 		queenStatus->AttackDoneItsDamage = FALSE;
+
+		PlacedQueenCount++;
 	
 	}		   	   	   	   
 	else
@@ -2918,6 +2922,8 @@ void KillQueen(STRATEGYBLOCK *sbPtr,DAMAGE_PROFILE *damage, int multiple,SECTION
 		sbPtr->DynPtr->UseStandardGravity=1;
 
 	}
+
+	PlacedQueenCount--;
 
 
 }

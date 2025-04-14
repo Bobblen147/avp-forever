@@ -69,6 +69,12 @@ extern unsigned char Null_Name[8];
 extern ACTIVESOUNDSAMPLE ActiveSounds[];
 extern int CurrentLightAtPlayer;
 static bool NPCMarinesHostileToMarinePlayer = false;
+extern int PlacedMarineCount;
+extern int PlacedCivilianCount;
+extern int PlacedAndroidCount;
+extern int GenMarineCount;
+extern int GenCivilianCount;
+extern int GenAndroidCount;
 
 extern int AIModuleArraySize;
 extern AIMODULE *AIModuleArray;
@@ -1925,6 +1931,18 @@ void InitMarineBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		} else {
 			InitMission(sbPtr,toolsData->Mission);
 		}
+
+		//keep count of placed enemies
+		if (marineStatus->My_Weapon->Android) {
+			PlacedAndroidCount++;
+		}
+		else if (marineStatus->My_Weapon->ARealMarine) {
+			PlacedMarineCount++;
+		}
+		else {
+			PlacedCivilianCount++;
+		}
+
 	}
 	else
 	{
@@ -2217,6 +2235,17 @@ void CreateMarineDynamic(STRATEGYBLOCK *Generator, MARINE_NPC_WEAPONS weapon_for
 			InitMission(sbPtr,MM_Pathfinder);
 		} else {
 			InitMission(sbPtr,MM_Wander);
+		}
+
+		//keep count of placed enemies
+		if (marineStatus->My_Weapon->Android) {
+			GenAndroidCount++;
+		}
+		else if (marineStatus->My_Weapon->ARealMarine) {
+			GenMarineCount++;
+		}
+		else {
+			GenCivilianCount++;
 		}
 
 	}
@@ -5448,7 +5477,21 @@ void KillMarine(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int multiple, int 
 		Remove_Delta_Sequence(&marineStatusPointer->HModelController,"Minigun");
 		Remove_Delta_Sequence(&marineStatusPointer->HModelController,"sprintheaddelta");
 
-		Convert_Marine_To_Corpse(sbPtr,this_death);
+		//keep count of placed enemies
+		if (marineStatusPointer->My_Weapon->Android) {
+			if (marineStatusPointer->generator_sbptr == 0) { PlacedAndroidCount--; }
+			else { GenAndroidCount--; }		
+		}
+		else if (marineStatusPointer->My_Weapon->ARealMarine) {
+			if (marineStatusPointer->generator_sbptr == 0) { PlacedMarineCount--; }
+			else { GenMarineCount--; }
+		}
+		else {
+			if (marineStatusPointer->generator_sbptr == 0) { PlacedCivilianCount--; }
+			else { GenCivilianCount--; };
+		}
+
+		Convert_Marine_To_Corpse(sbPtr,this_death,damage);
 	}
 
 	/* See if anyone saw that? */

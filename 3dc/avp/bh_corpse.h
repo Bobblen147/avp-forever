@@ -39,8 +39,8 @@ typedef struct netcorpsedatablock {
 }NETCORPSEDATABLOCK;
 
 extern void Convert_Alien_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death,DAMAGE_PROFILE* damage);
-extern void Convert_Predator_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death);
-extern void Convert_Marine_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death);
+extern void Convert_Predator_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death,DAMAGE_PROFILE* damage);
+extern void Convert_Marine_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death,DAMAGE_PROFILE* damage);
 extern void Convert_Xenoborg_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death);
 extern void CorpseBehaveFun(STRATEGYBLOCK *sbPtr);
 extern void MakeCorpseNear(STRATEGYBLOCK *sbPtr);

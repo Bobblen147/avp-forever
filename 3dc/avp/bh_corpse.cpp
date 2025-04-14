@@ -215,7 +215,7 @@ void Convert_Alien_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death,DAMAGE_
 	}
 }
 
-void Convert_Predator_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death) {
+void Convert_Predator_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death, DAMAGE_PROFILE* damage) {
 
 	NETCORPSEDATABLOCK *corpseDataPtr;
 	PREDATOR_STATUS_BLOCK *predatorStatusPointer;
@@ -226,6 +226,12 @@ void Convert_Predator_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death) {
     GLOBALASSERT(sbPtr);
 	GLOBALASSERT(this_death);
 	GLOBALASSERT(predatorStatusPointer);
+
+	/* Inform the network. */
+	if (AvP.Network != I_No_Network)
+	{
+		AddNetMsg_PredatorAIKilled(sbPtr, this_death->Multiplayer_Code, PRED_DIETIME, predatorStatusPointer->GibbFactor, damage);
+	}
 
 	corpseDataPtr = static_cast<NETCORPSEDATABLOCK*>(AllocateMem(sizeof(NETCORPSEDATABLOCK)));
 	GLOBALASSERT(corpseDataPtr);
@@ -319,7 +325,7 @@ void Convert_Predator_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death) {
 
 }
 
-void Convert_Marine_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death) {
+void Convert_Marine_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death, DAMAGE_PROFILE* damage) {
 
 	NETCORPSEDATABLOCK *corpseDataPtr;
 	MARINE_STATUS_BLOCK *marineStatusPointer;
@@ -330,6 +336,12 @@ void Convert_Marine_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death) {
     GLOBALASSERT(sbPtr);
 	GLOBALASSERT(this_death);
 	GLOBALASSERT(marineStatusPointer);
+
+	/* Inform the network. */
+	if (AvP.Network != I_No_Network)
+	{
+		AddNetMsg_MarineAIKilled(sbPtr, this_death->Multiplayer_Code, MARINE_DYINGTIME, marineStatusPointer->GibbFactor, damage);
+	}
 
 	corpseDataPtr = static_cast<NETCORPSEDATABLOCK*>(AllocateMem(sizeof(NETCORPSEDATABLOCK)));
 	GLOBALASSERT(corpseDataPtr);

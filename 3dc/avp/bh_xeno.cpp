@@ -57,6 +57,8 @@ extern int ModuleArraySize;
 extern char *ModuleCurrVisArray;
 extern unsigned char Null_Name[8];
 
+extern int PlacedXenoborgCount;
+
 VECTORCH null_vec={0,0,0};
 
 extern HIERARCHY_SHAPE_REPLACEMENT* GetHierarchyAlternateShapeSetFromLibrary(const char* rif_name,const char* shape_set_name);
@@ -679,6 +681,8 @@ void InitXenoborgBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		GLOBALASSERT(sbPtr->containingModule);
 		Xeno_SwitchLED(sbPtr,0);
 
+		PlacedXenoborgCount++;
+
 	}
 	else
 	{
@@ -1270,6 +1274,8 @@ static void KillXeno(STRATEGYBLOCK *sbPtr,int wounds,DAMAGE_PROFILE *damage, int
 			deathtype,&facing,0,0,0);
 
 		GLOBALASSERT(this_death);
+
+		PlacedXenoborgCount--;
 
 		Convert_Xenoborg_To_Corpse(sbPtr,this_death);
 	}
