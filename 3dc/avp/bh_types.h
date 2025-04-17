@@ -143,12 +143,12 @@ typedef struct player_input_requests
 	unsigned int Rqst_GrapplingHook :1;
 	unsigned int Rqst_ReverseCycleVisionMode : 1;
 
-	/* Alien Specific */
-	unsigned int Rqst_Spit :1;
-
 	/* Marine Specific */
 	unsigned int Rqst_ThrowFlare :1;
 	unsigned int Rqst_Jetpack :1;
+
+	/* Alien Specific */
+	unsigned int Rqst_Spit : 1;
 
 	unsigned int :0;
 
