@@ -157,6 +157,10 @@ void RubberDuckBehaviour(STRATEGYBLOCK *sbPtr)
 			{
 				level = 32000;
 			}
+			else if (!strcmp(LevelName, "Custom/DesertRequiem"))
+			{
+				level = 7650;
+			}
 			dynPtr->Position.vy = newLevel+level;
 		}
 	}

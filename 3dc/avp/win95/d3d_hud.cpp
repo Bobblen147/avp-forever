@@ -296,7 +296,11 @@ void LoadCommonTextures(void)
 	{
 		WaterShaftImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/GenShd1/colonywater.RIM");
 	}
-	else if (!strcmp(LevelName,"fall") || !strcmp(LevelName,"fall_m"))
+	else if (!strcmp(LevelName,"fall") || !strcmp(LevelName,"fall_m") || !strcmp(LevelName, "Custom/Fall_m"))
+	{
+		ChromeImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/fall/stream_water.RIM");
+	}
+	else if (!strcmp(LevelName, "Custom/DesertRequiem"))
 	{
 		ChromeImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/fall/stream_water.RIM");
 	}

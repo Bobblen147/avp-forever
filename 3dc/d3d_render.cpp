@@ -1939,7 +1939,7 @@ void PostLandscapeRendering()
 {
 	int numOfObjects = NumOnScreenBlocks;
 
-	if (!strcmp(LevelName,"fall") || !strcmp(LevelName,"fall_m"))
+	if (!strcmp(LevelName,"fall") || !strcmp(LevelName,"fall_m") || !strcmp(LevelName, "Custom/Fall_m"))
 	{
 		bool drawWaterFall = false;
 		bool drawStream    = false;
@@ -2011,6 +2011,59 @@ void PostLandscapeRendering()
 		 	D3D_DrawWaterPatch(x+MeshXScale, y, z+MeshZScale);
 		 	D3D_DrawWaterPatch(x+MeshXScale*2, y, z+MeshZScale);
 		 	D3D_DrawWaterPatch(x+MeshXScale*3, y, z+MeshZScale);
+		}
+	}
+	else if (!strcmp(LevelName, "Custom/DesertRequiem"))
+	{
+		bool drawOasis = false;
+
+		while (numOfObjects)
+		{
+			DISPLAYBLOCK* objectPtr = OnScreenBlockList[--numOfObjects];
+			MODULE* modulePtr = objectPtr->ObMyModule;
+
+			// if it's a module, which isn't inside another module
+			if (modulePtr && modulePtr->name)
+			{
+				if ((!strcmp(modulePtr->name, "desert01"))
+					|| (!strcmp(modulePtr->name, "desert02"))
+					|| (!strcmp(modulePtr->name, "desert03"))
+					|| (!strcmp(modulePtr->name, "desert04"))
+					|| (!strcmp(modulePtr->name, "desert05"))
+					|| (!strcmp(modulePtr->name, "desert06")))
+				{
+					drawOasis = true;
+				}
+			}
+		}
+
+		if (drawOasis)
+		{
+			int x = -9094;
+			int y = 7650;
+			int z = 16228;
+			MeshXScale = (10000);
+			MeshZScale = (10000);
+
+			CheckForObjectsInWater(x, x + MeshXScale, z, z + MeshZScale, y);
+
+			WaterXOrigin = x;
+			WaterZOrigin = z;
+			WaterUScale = 4.0f / (float)MeshXScale;
+			WaterVScale = 4.0f / (float)MeshZScale;
+			MeshXScale /= 4;
+			MeshZScale /= 2;
+
+			currentWaterTexture = ChromeImageNumber;
+
+			D3D_DrawWaterPatch(x, y, z);
+			D3D_DrawWaterPatch(x + MeshXScale, y, z);
+			D3D_DrawWaterPatch(x + MeshXScale * 2, y, z);
+			D3D_DrawWaterPatch(x + MeshXScale * 3, y, z);
+			D3D_DrawWaterPatch(x, y, z + MeshZScale);
+			D3D_DrawWaterPatch(x + MeshXScale, y, z + MeshZScale);
+			D3D_DrawWaterPatch(x + MeshXScale * 2, y, z + MeshZScale);
+			D3D_DrawWaterPatch(x + MeshXScale * 3, y, z + MeshZScale);
 		}
 	}
 	else if (!_stricmp(LevelName,"invasion_a"))
