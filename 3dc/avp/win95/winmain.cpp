@@ -59,9 +59,9 @@ extern BOOL ForceLoad_Pretorian;
 extern BOOL ForceLoad_SentryGun;
 
 //enemy counters
-int PlacedAlienCount=0;
+int PlacedAlienCount = 0;
 int PlacedPredAlienCount = 0;
-int PlacedPraetorianCount=0;
+int PlacedPraetorianCount = 0;
 int GenAlienCount = 0;
 int GenPredAlienCount = 0;
 int GenPraetorianCount = 0;
@@ -77,6 +77,19 @@ int PlacedHuggerCount = 0;
 int PlacedXenoborgCount = 0;
 int PlacedSentryCount = 0;
 int PlacedQueenCount = 0;
+
+//pickup counters
+int FieldChargeCount = 0;
+int PulseRifleCount = 0;
+int SmartGunCount = 0;
+int FlameThrowerCount = 0;
+int SADARCount = 0;
+int GrenadeLauncherCount = 0;
+int MinigunCount = 0;
+int PistolCount = 0;
+int SkeeterCount = 0;
+int MarineHealthCount = 0;
+int MarineArmourCount = 0;
 
 BOOL UseMouseCentreing = FALSE;
 BOOL KeepMainRifFile = FALSE;
@@ -559,6 +572,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 								if (GenAndroidCount > 0) ReleasePrintDebuggingText("Generated Androids = %d\n", GenAndroidCount);
 								if (GenPredCount > 0) ReleasePrintDebuggingText("Generated Predators = %d\n", GenPredCount);
 							}
+
+							if (ShowDebuggingText.PickupCount) {
+								//field charge
+								if (FieldChargeCount > 0) ReleasePrintDebuggingText("Field Charge = %d\n", FieldChargeCount);
+								//Marine weapons
+								if (PulseRifleCount > 0) ReleasePrintDebuggingText("Pulse Rifle = %d\n", PulseRifleCount);
+								if (SmartGunCount > 0) ReleasePrintDebuggingText("Smart Gun = %d\n", SmartGunCount);
+								if (FlameThrowerCount > 0) ReleasePrintDebuggingText("Flame Thrower = %d\n", FlameThrowerCount);
+								if (SADARCount > 0) ReleasePrintDebuggingText("SADAR = %d\n", SADARCount);
+								if (GrenadeLauncherCount > 0) ReleasePrintDebuggingText("Grenade Launcher = %d\n", GrenadeLauncherCount);
+								if (MinigunCount > 0) ReleasePrintDebuggingText("Minigun = %d\n", MinigunCount);
+								if (PistolCount > 0) ReleasePrintDebuggingText("Pistol = %d\n", PistolCount);
+								if (SkeeterCount > 0) ReleasePrintDebuggingText("Skeeter = %d\n", SkeeterCount);
+								//Marine pickups
+								if (MarineHealthCount > 0) ReleasePrintDebuggingText("Medikit = %d\n", MarineHealthCount);
+								if (MarineArmourCount > 0) ReleasePrintDebuggingText("Armour = %d\n", MarineArmourCount);
+							}
 						}
 						//#endif  /* MainTextPrint */
 
@@ -656,6 +686,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 				PlacedXenoborgCount = 0;
 				PlacedSentryCount = 0;
 				PlacedQueenCount = 0;
+				//reset pickup counters
+				FieldChargeCount = 0;
+				PulseRifleCount = 0;
+				SmartGunCount = 0;
+				FlameThrowerCount = 0;
+				SADARCount = 0;
+				GrenadeLauncherCount = 0;
+				MinigunCount = 0;
+				PistolCount = 0;
+				SkeeterCount = 0;
+				MarineHealthCount = 0;
+				MarineArmourCount = 0;
 				RestartLevel();
 			}
 		} 

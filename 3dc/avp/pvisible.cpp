@@ -63,6 +63,19 @@ extern char *ModuleCurrVisArray;
 extern int NumActiveBlocks;
 extern int GlobalFrameCounter;
 
+//pickup counters
+extern int FieldChargeCount;
+extern int PulseRifleCount;
+extern int SmartGunCount;
+extern int FlameThrowerCount;
+extern int SADARCount;
+extern int GrenadeLauncherCount;
+extern int MinigunCount;
+extern int PistolCount;
+extern int SkeeterCount;
+extern int MarineHealthCount;
+extern int MarineArmourCount;
+
 extern void ActivateSelfDestructSequence(int seconds);
 
 extern SOUND3DDATA Explosion_SoundData;
@@ -1251,7 +1264,7 @@ void InitInanimateObject(void* bhdata, STRATEGYBLOCK *sbPtr)
                         sbPtr->integrity = DEFAULT_OBJECT_INTEGRITY;
                         break;
                 }
-        case IOT_MTrackerUpgrade:
+                case IOT_MTrackerUpgrade:
                 {
                         sbPtr->DynPtr = AllocateDynamicsBlock(DYNAMICS_TEMPLATE_PICKUPOBJECT);
                         if(!sbPtr->DynPtr)
@@ -1401,6 +1414,31 @@ void InitInanimateObject(void* bhdata, STRATEGYBLOCK *sbPtr)
 				}	
 			}
 		}
+
+        //pickup counters
+        if (objectstatusptr->typeId == IOT_FieldCharge)
+        {
+            FieldChargeCount++;
+        }
+        if (objectstatusptr->typeId == IOT_Health)
+        {
+            MarineHealthCount++;
+        }
+        if (objectstatusptr->typeId == IOT_Armour)
+        {
+            MarineArmourCount++;
+        }
+        if (objectstatusptr->typeId == IOT_Weapon)
+        {
+            if (objectstatusptr->subType == WEAPON_PULSERIFLE) { PulseRifleCount++ ;}
+            if (objectstatusptr->subType == WEAPON_SMARTGUN) { SmartGunCount++ ;}
+            if (objectstatusptr->subType == WEAPON_FLAMETHROWER) { FlameThrowerCount++;}
+            if (objectstatusptr->subType == WEAPON_SADAR) { SADARCount++ ;}
+            if (objectstatusptr->subType == WEAPON_GRENADELAUNCHER) { GrenadeLauncherCount++ ;}
+            if (objectstatusptr->subType == WEAPON_MINIGUN) { MinigunCount++ ;}
+            if (objectstatusptr->subType == WEAPON_MARINE_PISTOL) { PistolCount++ ;}
+            if (objectstatusptr->subType == WEAPON_FRISBEE_LAUNCHER) { SkeeterCount++ ;}
+        }
 }
 
 void InanimateObjectBehaviour(STRATEGYBLOCK *sbPtr)
@@ -1760,7 +1798,7 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                         /* do nothing */
                         break;
                 }
-        case IOT_MTrackerUpgrade:
+                case IOT_MTrackerUpgrade:
                 {
                         if(sbPtr->SBDamageBlock.Health <= 0) 
                         {

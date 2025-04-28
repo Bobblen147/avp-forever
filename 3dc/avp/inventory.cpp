@@ -39,7 +39,8 @@ static int AbleToPickupMTrackerUpgrade(int mtrackerID);
 void RemovePickedUpObject(STRATEGYBLOCK *objectPtr);
 static int AbleToPickupFieldCharge(int chargeID);
 int AutoWeaponChangeOn = TRUE;
-//marine starting weapons
+
+//marine starting weapon overrides
 static bool MarinePulseRifleStart = true;
 static bool MarineSmartgunStart = false;
 static bool MarineFlamethrowerStart = false;
@@ -49,6 +50,7 @@ static bool MarineMinigunStart = false;
 static bool MarineSkeeterStart = false;
 static bool MarinePistolStart = false;
 static bool MarineDualPistolsStart = false;
+//predator starting weapon overrides
 static bool PredatorWeaponsOverride = false;
 static bool PredatorWristBladesStart = true;
 static bool PredatorSpearGunStart = false;
@@ -56,6 +58,19 @@ static bool PredatorShoulderCannonStart = false;
 static bool PredatorMedicompStart = false;
 static bool PredatorPistolStart = false;
 static bool PredatorDiscStart = false;
+
+//pickup counters
+extern int FieldChargeCount;
+extern int PulseRifleCount;
+extern int SmartGunCount;
+extern int FlameThrowerCount;
+extern int SADARCount;
+extern int GrenadeLauncherCount;
+extern int MinigunCount;
+extern int PistolCount;
+extern int SkeeterCount;
+extern int MarineHealthCount;
+extern int MarineArmourCount;
 
 PLAYER_STARTING_EQUIPMENT StartingEquipment;
 
@@ -93,7 +108,16 @@ void MaintainPlayersInventory(void)
 					{
 						if (AbleToPickupWeapon(static_cast<enum WEAPON_ID>(objStatPtr->subType)))
 						{
-							RemovePickedUpObject(collidedWith);	
+							RemovePickedUpObject(collidedWith);
+							//update pickup counters
+							if (objStatPtr->subType == WEAPON_PULSERIFLE) { PulseRifleCount--; }
+							if (objStatPtr->subType == WEAPON_SMARTGUN) { SmartGunCount--; }
+							if (objStatPtr->subType == WEAPON_FLAMETHROWER) { FlameThrowerCount--; }
+							if (objStatPtr->subType == WEAPON_SADAR) { SADARCount--; }
+							if (objStatPtr->subType == WEAPON_GRENADELAUNCHER) { GrenadeLauncherCount--; }
+							if (objStatPtr->subType == WEAPON_MINIGUN) { MinigunCount--; }
+							if (objStatPtr->subType == WEAPON_MARINE_PISTOL) { PistolCount--; }
+							if (objStatPtr->subType == WEAPON_FRISBEE_LAUNCHER) { SkeeterCount--; }
 						 	/*Message now done in able to pickup function*/
 						 //	NewOnScreenMessage(GetTextString(TemplateWeapon[objStatPtr->subType].Name));
 						}
@@ -113,6 +137,7 @@ void MaintainPlayersInventory(void)
 						if (AbleToPickupHealth(objStatPtr->subType)) {
 							RemovePickedUpObject(collidedWith);
 							NewOnScreenMessage(GetTextString(TEXTSTRING_INGAME_MEDIKIT));
+							MarineHealthCount--;
 						}
 						break;
 					}
@@ -121,6 +146,7 @@ void MaintainPlayersInventory(void)
 						if (AbleToPickupArmour(objStatPtr->subType)) {
 							RemovePickedUpObject(collidedWith);
 							NewOnScreenMessage(GetTextString(TEXTSTRING_INGAME_ARMOUR));
+							MarineArmourCount--;
 						}
 						break;
 					}
@@ -170,6 +196,7 @@ void MaintainPlayersInventory(void)
 					{
 						if (AbleToPickupFieldCharge(objStatPtr->subType)) {
 							RemovePickedUpObject(collidedWith);
+							FieldChargeCount--;
 						}
 						break;
 					}

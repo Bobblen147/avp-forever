@@ -33,11 +33,13 @@ Gameplay
 -Added facehugger bot spawn command (type FACEHUGGER in debug mode)
 -Added alien queen bot spawn command (type QUEENBOT in debug mode)
 -Added additional Predator bot types that Rebellion left unused (PREDOBOT 2,3,4 or 5 in debug mode)
--to force load all bots, pass in the command line -lacmprtxsfq (s=sentry, f=fhugger, q=queen)
+-all bot types are force loaded automatically when you use debug mode (don't need -lampcrtx anymore)
 -Can enable/disable AI attacking a player of the same species.
 -Can force sentry guns to target a human player
 -Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
 -Enable/disable half mouse movement speed when ducking (feature added by sirlemonhead but not included in their latest binary)
+-EXPERIMENTAL - ENEMYCOUNT debug command adds a live kill counter to the top left of the screen (including both placed and generated enemies)
+-EXPERIMENTAL - PICKUPCOUNT debug command adds a live pickup counter to the top left of the screen (includes marine weapons, health, armour and pred field charge)
 
 Skirmish
 -EXPERIMENTAL - Predator generators added. Enable Predator Generators in config file then
@@ -46,6 +48,7 @@ place a marine generator in your map and spawn unarmed, molotov or flamer civili
 -Alien now playable in skirmish mode, tail attack can now target other aliens
 -All bot types can now be spawned in debug mode (not just aliens, predaliens & praetorians)
 -In game species change in debug mode (use MORPH_ALIEN, MORPH_MARINE and MORPH_PREDATOR)
+-TAB high score table now includes marine and predator kill counts
 
 Custom map making
 -Fly mode can be enabled in the console by typing FLYMODE then F6 anytime during play to toggle.
@@ -56,10 +59,15 @@ Custom map making
 
 Other
 -Enable/disable EAX reverb effects
+-Added config file option to disable bilinear filtering
+-Added config file option to skip the copyright and intro logo videos
+
+Bug fixes
 -Partially fixed NPC heavy weapons drop sound repeating bug (needs 60fps or less)
 -Work around bad bilinear filtering by slightly altering a couple of textures (thanks Olde)
--Work around a sound bug when breaking armour/light weapon pickups in skirmish by replacing an unused sound
--Added config file option to disable bilinear filtering
+-Fixed a sound bug when breaking armour/light weapon pickups in skirmish
+-Fixed incorrect sound playing in custom maps if correct sound is missing
+-Single player AI alien triggers now work in skirmish (aliens don't stay dormant)
 
 
 Extra credits
@@ -139,7 +147,7 @@ Known (pre-existing) avpx bugs
 -Walls seem to be a bit stickier than gold edition (easier to snag them)? May be related to high FPS?
 -In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
 -When killing an NPC marine with a heavy weapon, the weapon drop sound sometimes rapidly repeats*
--EAX reverb / echo levels are way too high on non surround sound setups.*
+-EAX reverb / echo levels are way to high on non surround sound setups.*
 -Wireframe debug mode just does nothing
--Motionblur and Triptastic cheat modes do not have the blurring effect, decals also don't wobble along with the environment.
--CDSTOP/PLAY in game commands not hooked up, only one cd track is played per level instead of five
+-Motionblur and Triptastic cheat modes do not have the blurring effect, decals also don't wobble like the environment.
+-CDSTOP/PLAY in game commands not hooked up, only one cd track is played per level

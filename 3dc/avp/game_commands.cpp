@@ -133,6 +133,10 @@ static void ShowEnemyCount(void)
 {
 	ShowDebuggingText.EnemyCount = ~ShowDebuggingText.EnemyCount;
 }
+static void ShowPickupCount(void)
+{
+	ShowDebuggingText.PickupCount = ~ShowDebuggingText.PickupCount;
+}
 
 
 extern void ChangeToMarine();
@@ -357,6 +361,7 @@ void CreateGameSpecificConsoleCommands(void)
 	ShowDebuggingText.Tears = 0;
 	ShowDebuggingText.PolyCount = 0;
 	ShowDebuggingText.EnemyCount = 0;
+	ShowDebuggingText.PickupCount = 0;
 
 	#ifndef AVP_DEBUG_VERSION 
 	bool IsACheat = true;
@@ -508,6 +513,13 @@ void CreateGameSpecificConsoleCommands(void)
 			"ENEMYCOUNT",
 			"DISPLAY THE NUMBER OF ENEMIES IN THE LEVEL",
 			ShowEnemyCount
+		);
+
+		ConsoleCommand::Make
+		(
+			"PICKUPCOUNT",
+			"DISPLAY THE NUMBER OF PICKUPS IN THE LEVEL",
+			ShowPickupCount
 		);
 	}
 

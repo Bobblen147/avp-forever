@@ -25,6 +25,7 @@ struct DEBUGGINGTEXTOPTIONS
 	unsigned int PolyCount :1;
 	unsigned int Sounds :1;
 	unsigned int EnemyCount : 1;
+	unsigned int PickupCount : 1;
 };
 
 extern struct DEBUGGINGTEXTOPTIONS ShowDebuggingText;
