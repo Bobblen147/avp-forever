@@ -134,7 +134,9 @@ typedef enum netgame_charactertype
 	NGCT_Alien,
 	NGCT_AI_Alien,
 	NGCT_AI_Predalien,
-	NGCT_AI_Praetorian
+	NGCT_AI_Praetorian,
+	NGCT_AI_Marine,
+	NGCT_AI_Predator
 } NETGAME_CHARACTERTYPE;
 
 #define NUM_PC_SUBTYPES 9
@@ -766,6 +768,36 @@ typedef struct netmessage_alienaikilled
 
 	char weaponIcon;
 } NETMESSAGE_ALIENAIKILLED;
+
+typedef struct netmessage_marineaikilled
+{
+	signed int Guid;
+
+	int death_code;
+	int death_time;
+	int GibbFactor;
+
+	NetID killerId;
+	int killCount;
+	unsigned int MarineType : 19;
+
+	char weaponIcon;
+} NETMESSAGE_MARINEAIKILLED;
+
+typedef struct netmessage_predatoraikilled
+{
+	signed int Guid;
+
+	int death_code;
+	int death_time;
+	int GibbFactor;
+
+	NetID killerId;
+	int killCount;
+	unsigned int PredatorType : 7;
+
+	char weaponIcon;
+} NETMESSAGE_PREDATORAIKILLED;
 
 typedef struct netmessage_faralienposition
 {

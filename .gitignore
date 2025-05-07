@@ -1,3 +1,5 @@
+redist/
+tools/installer/Output/
 win32/VS2022/Win32/
 win32/VS2022/.vs/
 enet/win32/VS2010/Win32/

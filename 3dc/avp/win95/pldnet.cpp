@@ -365,6 +365,8 @@ static PREDATOR_SEQUENCE GetMyPredatorSequence(void);
 
 static void Inform_PlayerHasDied(NetID killer, NetID victim, NETGAME_CHARACTERTYPE killerType, char weaponIcon);
 static void Inform_AiHasDied(NetID killer, ALIEN_TYPE type, char weaponIcon);
+static void Inform_MarineAiHasDied(NetID killer, MARINE_NPC_WEAPONS type, char weaponIcon);
+static void Inform_PredatorAiHasDied(NetID killer, PREDATOR_NPC_WEAPONS type, char weaponIcon);
 static void Inform_PlayerHasLeft(NetID player);
 static void Inform_PlayerHasJoined(NetID player);
 static void Inform_PlayerHasConnected(NetID player);
@@ -2879,6 +2881,7 @@ char GetWeaponIconFromDamage(DAMAGE_PROFILE *damage)
 	switch (damage->Id)
 	{
 		case AMMO_10MM_CULW :
+		case AMMO_10MM_CULW_NPC:
 			return ICON_PULSERIFLE;
 
 		case AMMO_PULSE_GRENADE :
@@ -2886,6 +2889,7 @@ char GetWeaponIconFromDamage(DAMAGE_PROFILE *damage)
 			return ICON_PULSERIFLE_GRENADE;
 
 		case AMMO_SMARTGUN :
+		case AMMO_SMARTGUN_NPC:
 			return ICON_SMARTGUN;
 
 		case AMMO_FLAMETHROWER :
@@ -2907,6 +2911,7 @@ char GetWeaponIconFromDamage(DAMAGE_PROFILE *damage)
 			return ICON_GRENADE_PROX;
 
 		case AMMO_MINIGUN :
+		case AMMO_MINIGUN_NPC:
 			return ICON_MINIGUN ;
 
 		case AMMO_MARINE_PISTOL :
@@ -2944,14 +2949,23 @@ char GetWeaponIconFromDamage(DAMAGE_PROFILE *damage)
 			return ICON_PRED_PISTOL;
 
 		case AMMO_ALIEN_CLAW :
+		case AMMO_NPC_ALIEN_CLAW:
+		case AMMO_NPC_PREDALIEN_CLAW:
+		case AMMO_NPC_PRAETORIAN_CLAW:
 			return ICON_CLAW;
 
 		case AMMO_ALIEN_TAIL :
+		case AMMO_NPC_ALIEN_TAIL:
+		case AMMO_NPC_PREDALIEN_TAIL:
+		case AMMO_NPC_PRAETORIAN_TAIL:
 			return ICON_TAIL;
 
 		case AMMO_ALIEN_BITE_KILLSECTION :
 		case AMMO_PC_ALIEN_BITE :
 		case AMMO_ALIEN_BITE_KILLSECTION_SUPER :
+		case AMMO_NPC_ALIEN_BITE:
+		case AMMO_NPC_PREDALIEN_BITE:
+		case AMMO_NPC_PRAETORIAN_BITE:
 			return ICON_JAWS;
 	}
 
@@ -3023,7 +3037,7 @@ void AddNetMsg_PlayerKilled(int objectId, DAMAGE_PROFILE *damage)
 	// find the icon for the weapon used
 	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
 
-	/*look at the damage type to see if the damage was done by an ai alien*/
+	/*look at the damage type to see if the damage was done by an ai alien, marine or pred*/
 	if (damage)
 	{
 		switch (damage->Id)
@@ -3044,6 +3058,27 @@ void AddNetMsg_PlayerKilled(int objectId, DAMAGE_PROFILE *damage)
 			case AMMO_NPC_PRAETORIAN_BITE :
 			case AMMO_NPC_PRAETORIAN_TAIL :
 				messagePtr->killerType = NGCT_AI_Praetorian;
+				break;
+
+			case AMMO_10MM_CULW_NPC:
+			case AMMO_FLAMETHROWER:
+			case AMMO_SMARTGUN_NPC:
+			case AMMO_MINIGUN_NPC:
+			case AMMO_MARINE_PISTOL:
+			case AMMO_SHOTGUN:
+				messagePtr->killerType = NGCT_AI_Marine;
+				break;
+
+			case AMMO_NPC_PRED_STAFF:
+			case AMMO_PRED_WRISTBLADE:
+			case AMMO_HEAVY_PRED_WRISTBLADE:
+			case AMMO_PRED_PISTOL:
+			case AMMO_PREDPISTOL_STRIKE:
+			case AMMO_PRED_RIFLE:
+			case AMMO_PRED_ENERGY_BOLT:
+			case AMMO_PLASMACASTER_NPCKILL:
+			case AMMO_PLASMACASTER_PCKILL:
+				messagePtr->killerType = NGCT_AI_Predator;
 				break;
 		}
 	}
@@ -5077,44 +5112,164 @@ void AddNetMsg_AlienAIKilled(STRATEGYBLOCK *sbPtr, int death_code, int death_tim
 
 void AddNetMsg_MarineAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage)
 {
+	NETMESSAGEHEADER* headerPtr;
+	NETMESSAGE_MARINEAIKILLED* messagePtr;
+	int headerSize = sizeof(NETMESSAGEHEADER);
+	int messageSize = sizeof(NETMESSAGE_MARINEAIKILLED);
 	MARINE_STATUS_BLOCK* marineStatus = (MARINE_STATUS_BLOCK*)sbPtr->SBdataptr;
-	
-	if (marineStatus->My_Weapon->id == MNPCW_PulseRifle) {
-			MarinePulseRifleKilled++;
+
+	// don't do this if we aren't playing (possibly on end game screen)
+	if (netGameData.myGameState != NGS_Playing) {
+		return;
+	}
+
+	/* check there's enough room in the send buffer */
+	{
+		int numBytesReqd = headerSize + messageSize;
+		int numBytesLeft = NET_MESSAGEBUFFERSIZE - ((int)(endSendBuffer - &sendBuffer[0]));
+
+		if (numBytesReqd > numBytesLeft)
+		{
+			LOCALASSERT(1 == 0);
+			/* don't add it */
+			return;
 		}
-	if (marineStatus->My_Weapon->id == MNPCW_Flamethrower) {
-		MarineFlamerKilled++;
 	}
-	if (marineStatus->My_Weapon->id == MNPCW_Smartgun) {
-		MarineSmartGunKilled++;
+	/* set up pointers to header and message structures */
+	headerPtr = (NETMESSAGEHEADER*)endSendBuffer;
+	endSendBuffer += headerSize;
+	messagePtr = (NETMESSAGE_MARINEAIKILLED*)endSendBuffer;
+	endSendBuffer += messageSize;
+	/* fill out the header */
+	headerPtr->type = (unsigned char)NetMT_AlienAIKilled;
+	/* fill out anim sequence */
+	messagePtr->death_code = death_code;
+	messagePtr->death_time = death_time;
+	messagePtr->GibbFactor = GibbFactor;
+	messagePtr->killerId = myNetworkKillerId;
+	{
+		int killerIndex = PlayerIdInPlayerList(messagePtr->killerId);
+
+		if (killerIndex != NET_IDNOTINPLAYERLIST)
+		{
+			if (marineStatus->My_Weapon->id == MNPCW_PulseRifle) {
+				MarinePulseRifleKilled++;
+			}
+			if (marineStatus->My_Weapon->id == MNPCW_Flamethrower) {
+				MarineFlamerKilled++;
+			}
+			if (marineStatus->My_Weapon->id == MNPCW_Smartgun) {
+				MarineSmartGunKilled++;
+			}
+			if (marineStatus->My_Weapon->id == MNPCW_SADAR) {
+				MarineSADARKilled++;
+			}
+			if (marineStatus->My_Weapon->id == MNPCW_GrenadeLauncher) {
+				MarineGrenadeKilled++;
+			}
+			if (marineStatus->My_Weapon->id == MNPCW_Minigun) {
+				MarineMinigunKilled++;
+			}
+			if (marineStatus->My_Weapon->id == MNPCW_PistolMarine) {
+				MarinePistolKilled++;
+			}
+		}
+		else
+		{
+			/*
+			the player doing the damage has either left the game , or never existed.
+			call it suicide then.
+			(Could also be 'neutral' damage - flame jets)
+			*/
+			messagePtr->killerId = 0;
+			messagePtr->killCount = 0;
+		}
 	}
-	if (marineStatus->My_Weapon->id == MNPCW_SADAR) {
-		MarineSADARKilled++;
+	/* fill out guid */
+	{
+		int guid = *((int*)(&(sbPtr->SBname[4])));
+		//      LOCALASSERT((guid >= -NET_MAXOBJECTID)&&(guid <= NET_MAXOBJECTID));
+		messagePtr->Guid = guid;
 	}
-	if (marineStatus->My_Weapon->id == MNPCW_GrenadeLauncher) {
-		MarineGrenadeKilled++;
-	}
-	if (marineStatus->My_Weapon->id == MNPCW_Minigun) {
-		MarineMinigunKilled++;
-	}
-	if (marineStatus->My_Weapon->id == MNPCW_PistolMarine) {
-		MarinePistolKilled++;
-	}
+	messagePtr->MarineType = marineStatus->My_Weapon->id;
+	//find the icon for the weapon used
+	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
+	Inform_MarineAiHasDied(messagePtr->killerId, static_cast<enum marine_npc_weapons>(messagePtr->MarineType), messagePtr->weaponIcon);	
 }
 
 void AddNetMsg_PredatorAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage)
 {
+	NETMESSAGEHEADER* headerPtr;
+	NETMESSAGE_PREDATORAIKILLED* messagePtr;
+	int headerSize = sizeof(NETMESSAGEHEADER);
+	int messageSize = sizeof(NETMESSAGE_PREDATORAIKILLED);
 	PREDATOR_STATUS_BLOCK* predatorStatus = (PREDATOR_STATUS_BLOCK*)sbPtr->SBdataptr;
 
-	if (predatorStatus->PrimaryWeapon == PNPCW_PlasmaCaster) {
-		PredatorSCannonKilled++;
+	// don't do this if we aren't playing (possibly on end game screen)
+	if (netGameData.myGameState != NGS_Playing) {
+		return;
 	}
-	if (predatorStatus->PrimaryWeapon == PNPCW_Pistol) {
-		PredatorPistolKilled++;
+
+	/* check there's enough room in the send buffer */
+	{
+		int numBytesReqd = headerSize + messageSize;
+		int numBytesLeft = NET_MESSAGEBUFFERSIZE - ((int)(endSendBuffer - &sendBuffer[0]));
+
+		if (numBytesReqd > numBytesLeft)
+		{
+			LOCALASSERT(1 == 0);
+			/* don't add it */
+			return;
+		}
 	}
-	if (predatorStatus->PrimaryWeapon == PNPCW_Speargun) {
-		PredatorSpeargunKilled++;
+	/* set up pointers to header and message structures */
+	headerPtr = (NETMESSAGEHEADER*)endSendBuffer;
+	endSendBuffer += headerSize;
+	messagePtr = (NETMESSAGE_PREDATORAIKILLED*)endSendBuffer;
+	endSendBuffer += messageSize;
+	/* fill out the header */
+	headerPtr->type = (unsigned char)NetMT_AlienAIKilled;
+	/* fill out anim sequence */
+	messagePtr->death_code = death_code;
+	messagePtr->death_time = death_time;
+	messagePtr->GibbFactor = GibbFactor;
+	messagePtr->killerId = myNetworkKillerId;
+	{
+		int killerIndex = PlayerIdInPlayerList(messagePtr->killerId);
+
+		if (killerIndex != NET_IDNOTINPLAYERLIST)
+		{
+			if (predatorStatus->PrimaryWeapon == PNPCW_PlasmaCaster) {
+				PredatorSCannonKilled++;
+			}
+			if (predatorStatus->PrimaryWeapon == PNPCW_Pistol) {
+				PredatorPistolKilled++;
+			}
+			if (predatorStatus->PrimaryWeapon == PNPCW_Speargun) {
+				PredatorSpeargunKilled++;
+			}
+		}
+		else
+		{
+			/*
+			the player doing the damage has either left the game , or never existed.
+			call it suicide then.
+			(Could also be 'neutral' damage - flame jets)
+			*/
+			messagePtr->killerId = 0;
+			messagePtr->killCount = 0;
+		}
 	}
+	/* fill out guid */
+	{
+		int guid = *((int*)(&(sbPtr->SBname[4])));
+		//      LOCALASSERT((guid >= -NET_MAXOBJECTID)&&(guid <= NET_MAXOBJECTID));
+		messagePtr->Guid = guid;
+	}
+	messagePtr->PredatorType = predatorStatus->PrimaryWeapon;
+	//find the icon for the weapon used
+	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
+	Inform_PredatorAiHasDied(messagePtr->killerId, static_cast<enum predator_npc_weapons>(messagePtr->PredatorType), messagePtr->weaponIcon);
 }
 
 void AddNetMsg_FacehuggerAIKilled(STRATEGYBLOCK* sbPtr, int death_time, DAMAGE_PROFILE* damage)
@@ -9957,6 +10112,11 @@ static void Inform_PlayerHasDied(NetID killer, NetID victim, NETGAME_CHARACTERTY
 {
 	int victimIndex = PlayerIdInPlayerList(victim);
 
+	char weaponSymbol[5] = "";
+	if (weaponIcon) {
+		sprintf(weaponSymbol, " %c", weaponIcon);
+	}
+
 	// KJL 15:35:38 09/04/98 - not knowing who the victim is what make things a bit awkward...
 	if (victimIndex == NET_IDNOTINPLAYERLIST) {
 		return;
@@ -9966,19 +10126,31 @@ static void Inform_PlayerHasDied(NetID killer, NetID victim, NETGAME_CHARACTERTY
 	{
 		case NGCT_AI_Alien :
 		{
-			NetworkGameConsoleMessage(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_ALIEN, netGameData.playerData[victimIndex].name, 0);
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_ALIEN, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
 			break;
 		}
 
 		case NGCT_AI_Predalien :
 		{
-			NetworkGameConsoleMessage(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_PREDALIEN, netGameData.playerData[victimIndex].name, 0);
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_PREDALIEN, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
 			break;
 		}
 
 		case NGCT_AI_Praetorian :
 		{
-			NetworkGameConsoleMessage(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_PRAETORIAN, netGameData.playerData[victimIndex].name, 0);
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_PRAETORIAN, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
+			break;
+		}
+
+		case NGCT_AI_Marine:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_MARINE, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
+			break;
+		}
+
+		case NGCT_AI_Predator:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_PREDATOR, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
 			break;
 		}
 
@@ -9992,12 +10164,6 @@ static void Inform_PlayerHasDied(NetID killer, NetID victim, NETGAME_CHARACTERTY
 
 				if (killerIndex != NET_IDNOTINPLAYERLIST)
 				{
-					char weaponSymbol[5] = "";
-
-					if (weaponIcon) {
-						sprintf(weaponSymbol, " %c", weaponIcon);
-					}
-
 					NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY, netGameData.playerData[victimIndex].name, netGameData.playerData[killerIndex].name, weaponSymbol);
 				}
 			}
@@ -10060,20 +10226,61 @@ static void Inform_MarineAiHasDied(NetID killer, marine_npc_weapons type, char w
 		switch (type)
 		{
 		case MNPCW_PulseRifle:
+		case MNPCW_Flamethrower:
+		case MNPCW_Smartgun:
+		case MNPCW_SADAR:
+		case MNPCW_GrenadeLauncher:
+		case MNPCW_Minigun:
+		case MNPCW_PistolMarine:
+		case MNPCW_TwoPistols:
+		case MNPCW_Skeeter:
 		{
-			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_ALIEN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_MARINE_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
 			break;
 		}
-
-		case AT_Predalien:
+		case MNPCW_MShotgun:
+		case MNPCW_MPistol:
+		case MNPCW_MFlamer:
+		case MNPCW_MUnarmed:
+		case MNPCW_MMolotov:
 		{
-			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_PREDALIEN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_CIVILIAN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
 			break;
 		}
-
-		case AT_Praetorian:
+		case MNPCW_Android:
+		case MNPCW_AndroidSpecial:
+		case MNPCW_Android_Pistol_Special:
 		{
-			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_PRAETORIAN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_ANDROID_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+			break;
+		}
+		}
+	}
+}
+
+static void Inform_PredatorAiHasDied(NetID killer, predator_npc_weapons type, char weaponIcon)
+{
+	int killerIndex = PlayerIdInPlayerList(killer);
+
+	if (killerIndex != NET_IDNOTINPLAYERLIST)
+	{
+		char weaponSymbol[5] = "";
+
+		if (weaponIcon) {
+			sprintf(weaponSymbol, " %c", weaponIcon);
+		}
+
+		switch (type)
+		{
+		case PNPCW_Pistol:
+		case PNPCW_Wristblade:
+		case PNPCW_PlasmaCaster:
+		case PNPCW_Staff:
+		case PNPCW_Medicomp:
+		case PNPCW_Speargun:
+		case PNPCW_SeriousPlasmaCaster:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_PREDATOR_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
 			break;
 		}
 		}
