@@ -38,12 +38,11 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "{app}\language.txt"; DestDir: "{app}\redist\"; Flags: external uninsneveruninstall
 Source: "..\..\redist\AvPxEnhanced.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\redist\AvPx_License.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\redist\AvPx_Readme.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\redist\AvPx_Enhanced_Readme.txt"; DestDir: "{app}"; Flags: ignoreversion
-Source: "..\..\redist\language.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\redist\langavpx.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\redist\fastfile\*"; DestDir: "{app}\fastfile\"; Flags: ignoreversion recursesubdirs
 Source: "..\..\redist\samples\*"; DestDir: "{app}\avp_rifs\Custom\"; Flags: ignoreversion recursesubdirs
 Source: "..\..\redist\directx\*"; DestDir: "{app}\redist\directx\"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -79,3 +78,4 @@ Name: {app}\OpenAL32.dll; Type: files;
 Name: {app}\AvPx_License.txt; Type: files;
 Name: {app}\AvPx_Readme.txt; Type: files;
 Name: {app}\AvPx_Enhanced_Readme.txt; Type: files;
+Name: {app}\langavpx.txt; Type: files;

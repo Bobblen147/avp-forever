@@ -4256,5 +4256,32 @@ END OF JULES BONUS MESSAGES
 # <TEXTSTRING_CONSOLE_GOD_OFF>
 "IMMORTALITY DISABLED"
 
+# <TEXTSTRING_MULTIPLAYERCONSOLE_MARINE_KILLED>
+"%1 has killed a marine"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_CIVILIAN_KILLED>
+"%1 has killed a civilian"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_ANDROID_KILLED>
+"%1 has killed an android"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_MARINE>
+"%1 has been killed by a marine"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_CIVILIAN>
+"%1 has been killed by a civilian"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_ANDROID>
+"%1 has been killed by an android"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_PREDATOR_KILLED>
+"%1 has killed a predator"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_PREDATOR>
+"%1 has been killed by a predator"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_ALIEN_KILLED_NPC>
+"An NPC has killed an alien"
+
 @ This line signifies end of file. Do not delete!
 																			 

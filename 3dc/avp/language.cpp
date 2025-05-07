@@ -49,7 +49,7 @@ void InitTextStrings(void)
 	#elif PREDATOR_DEMO
 	filenamePtr = "english.txt";
 	#else
-	filenamePtr = "language.txt";
+	filenamePtr = "langavpx.txt";
 	#endif
 
 	TextBufferPtr = LoadTextFile(filenamePtr);
