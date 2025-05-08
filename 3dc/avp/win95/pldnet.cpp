@@ -30,6 +30,8 @@
 #include "bh_binary_switch.h"
 #include "bh_agun.h"
 #include "bh_facehugger.h"
+#include "bh_xeno.h"
+#include "bh_queen.h"
 #include "bh_weapon.h"
 #include "bh_corpse.h"
 #include "bh_light.h"
@@ -229,19 +231,14 @@ int ShowMultiplayerScoreTimer = 0;
 int MultiplayerRestartSeed = 0;
 
 //new kill counters
-int MarinePulseRifleKilled = 0;
-int MarineSmartGunKilled = 0;
-int MarineFlamerKilled = 0;
-int MarineSADARKilled = 0;
-int MarineGrenadeKilled = 0;
-int MarineMinigunKilled = 0;
-int MarinePistolKilled = 0;
-int PredatorSCannonKilled = 0;
-int PredatorPistolKilled = 0;
-int PredatorSpeargunKilled = 0;
-int CivilianFlamerKilled = 0;
-int CivilianMolotovKilled = 0;
+int MarineKilled = 0;
+int PredatorKilled = 0;
+int CivilianKilled = 0;
+int AndroidKilled = 0;
 int FacehuggerKilled = 0;
+int XenoborgKilled = 0;
+int QueenKilled = 0;
+int SentryGunKilled = 0;
 
 static int GameTimeSinceLastSend = 0;
 
@@ -367,6 +364,10 @@ static void Inform_PlayerHasDied(NetID killer, NetID victim, NETGAME_CHARACTERTY
 static void Inform_AiHasDied(NetID killer, ALIEN_TYPE type, char weaponIcon);
 static void Inform_MarineAiHasDied(NetID killer, MARINE_NPC_WEAPONS type, char weaponIcon);
 static void Inform_PredatorAiHasDied(NetID killer, PREDATOR_NPC_WEAPONS type, char weaponIcon);
+static void Inform_FacehuggerAiHasDied(NetID killer, char weaponIcon);
+static void Inform_XenoborgAiHasDied(NetID killer, char weaponIcon);
+static void Inform_SentrygunAiHasDied(NetID killer, char weaponIcon);
+static void Inform_QueenAiHasDied(NetID killer, char weaponIcon);
 static void Inform_PlayerHasLeft(NetID player);
 static void Inform_PlayerHasJoined(NetID player);
 static void Inform_PlayerHasConnected(NetID player);
@@ -3080,6 +3081,18 @@ void AddNetMsg_PlayerKilled(int objectId, DAMAGE_PROFILE *damage)
 			case AMMO_PLASMACASTER_PCKILL:
 				messagePtr->killerType = NGCT_AI_Predator;
 				break;
+			case AMMO_FACEHUGGER:
+				messagePtr->killerType = NGCT_AI_Facehugger;
+				break;
+			case AMMO_XENOBORG:
+				messagePtr->killerType = NGCT_AI_Xenoborg;
+				break;
+			case AMMO_AUTOGUN:
+				messagePtr->killerType = NGCT_AI_Sentrygun;
+				break;
+			case AMMO_NPC_PAQ_CLAW:
+				messagePtr->killerType = NGCT_AI_Queen;
+				break;
 		}
 	}
 
@@ -5152,26 +5165,31 @@ void AddNetMsg_MarineAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_ti
 
 		if (killerIndex != NET_IDNOTINPLAYERLIST)
 		{
-			if (marineStatus->My_Weapon->id == MNPCW_PulseRifle) {
-				MarinePulseRifleKilled++;
-			}
-			if (marineStatus->My_Weapon->id == MNPCW_Flamethrower) {
-				MarineFlamerKilled++;
-			}
-			if (marineStatus->My_Weapon->id == MNPCW_Smartgun) {
-				MarineSmartGunKilled++;
-			}
-			if (marineStatus->My_Weapon->id == MNPCW_SADAR) {
-				MarineSADARKilled++;
-			}
-			if (marineStatus->My_Weapon->id == MNPCW_GrenadeLauncher) {
-				MarineGrenadeKilled++;
-			}
-			if (marineStatus->My_Weapon->id == MNPCW_Minigun) {
-				MarineMinigunKilled++;
-			}
-			if (marineStatus->My_Weapon->id == MNPCW_PistolMarine) {
-				MarinePistolKilled++;
+			switch(marineStatus->My_Weapon->id)
+			{
+			case MNPCW_PulseRifle:
+			case MNPCW_Flamethrower:
+			case MNPCW_Smartgun:
+			case MNPCW_SADAR:
+			case MNPCW_GrenadeLauncher:
+			case MNPCW_Minigun:
+			case MNPCW_PistolMarine:
+			case MNPCW_TwoPistols:
+			case MNPCW_Skeeter:
+				MarineKilled++;
+				break;
+			case MNPCW_MShotgun:
+			case MNPCW_MPistol:
+			case MNPCW_MFlamer:
+			case MNPCW_MUnarmed:
+			case MNPCW_MMolotov:
+				CivilianKilled++;
+				break;
+			case MNPCW_Android:
+			case MNPCW_AndroidSpecial:
+			case MNPCW_Android_Pistol_Special:
+				AndroidKilled++;
+				break;
 			}
 		}
 		else
@@ -5239,15 +5257,7 @@ void AddNetMsg_PredatorAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_
 
 		if (killerIndex != NET_IDNOTINPLAYERLIST)
 		{
-			if (predatorStatus->PrimaryWeapon == PNPCW_PlasmaCaster) {
-				PredatorSCannonKilled++;
-			}
-			if (predatorStatus->PrimaryWeapon == PNPCW_Pistol) {
-				PredatorPistolKilled++;
-			}
-			if (predatorStatus->PrimaryWeapon == PNPCW_Speargun) {
-				PredatorSpeargunKilled++;
-			}
+			PredatorKilled++;
 		}
 		else
 		{
@@ -5274,9 +5284,266 @@ void AddNetMsg_PredatorAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_
 
 void AddNetMsg_FacehuggerAIKilled(STRATEGYBLOCK* sbPtr, int death_time, DAMAGE_PROFILE* damage)
 {
+	NETMESSAGEHEADER* headerPtr;
+	NETMESSAGE_FACEHUGGERAIKILLED* messagePtr;
+	int headerSize = sizeof(NETMESSAGEHEADER);
+	int messageSize = sizeof(NETMESSAGE_FACEHUGGERAIKILLED);
 	FACEHUGGER_STATUS_BLOCK* facehuggerStatus = (FACEHUGGER_STATUS_BLOCK*)sbPtr->SBdataptr;
 
-	FacehuggerKilled++;
+	// don't do this if we aren't playing (possibly on end game screen)
+	if (netGameData.myGameState != NGS_Playing) {
+		return;
+	}
+
+	/* check there's enough room in the send buffer */
+	{
+		int numBytesReqd = headerSize + messageSize;
+		int numBytesLeft = NET_MESSAGEBUFFERSIZE - ((int)(endSendBuffer - &sendBuffer[0]));
+
+		if (numBytesReqd > numBytesLeft)
+		{
+			LOCALASSERT(1 == 0);
+			/* don't add it */
+			return;
+		}
+	}
+	/* set up pointers to header and message structures */
+	headerPtr = (NETMESSAGEHEADER*)endSendBuffer;
+	endSendBuffer += headerSize;
+	messagePtr = (NETMESSAGE_FACEHUGGERAIKILLED*)endSendBuffer;
+	endSendBuffer += messageSize;
+	/* fill out the header */
+	headerPtr->type = (unsigned char)NetMT_AlienAIKilled;
+	/* fill out anim sequence */
+	messagePtr->death_code = 0;
+	messagePtr->death_time = death_time;
+	messagePtr->GibbFactor = 0;
+	messagePtr->killerId = myNetworkKillerId;
+	{
+		int killerIndex = PlayerIdInPlayerList(messagePtr->killerId);
+
+		if (killerIndex != NET_IDNOTINPLAYERLIST)
+		{
+		FacehuggerKilled++;
+		}
+		else
+		{
+			/*
+			the player doing the damage has either left the game , or never existed.
+			call it suicide then.
+			(Could also be 'neutral' damage - flame jets)
+			*/
+			messagePtr->killerId = 0;
+			messagePtr->killCount = 0;
+		}
+	}
+	/* fill out guid */
+	{
+		int guid = *((int*)(&(sbPtr->SBname[4])));
+		//      LOCALASSERT((guid >= -NET_MAXOBJECTID)&&(guid <= NET_MAXOBJECTID));
+		messagePtr->Guid = guid;
+	}
+	//find the icon for the weapon used
+	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
+	Inform_FacehuggerAiHasDied(messagePtr->killerId, messagePtr->weaponIcon);
+}
+
+void AddNetMsg_XenoborgAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage)
+{
+	NETMESSAGEHEADER* headerPtr;
+	NETMESSAGE_XENOBORGAIKILLED* messagePtr;
+	int headerSize = sizeof(NETMESSAGEHEADER);
+	int messageSize = sizeof(NETMESSAGE_XENOBORGAIKILLED);
+	XENO_STATUS_BLOCK* xenoStatus = (XENO_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+	// don't do this if we aren't playing (possibly on end game screen)
+	if (netGameData.myGameState != NGS_Playing) {
+		return;
+	}
+
+	/* check there's enough room in the send buffer */
+	{
+		int numBytesReqd = headerSize + messageSize;
+		int numBytesLeft = NET_MESSAGEBUFFERSIZE - ((int)(endSendBuffer - &sendBuffer[0]));
+
+		if (numBytesReqd > numBytesLeft)
+		{
+			LOCALASSERT(1 == 0);
+			/* don't add it */
+			return;
+		}
+	}
+	/* set up pointers to header and message structures */
+	headerPtr = (NETMESSAGEHEADER*)endSendBuffer;
+	endSendBuffer += headerSize;
+	messagePtr = (NETMESSAGE_XENOBORGAIKILLED*)endSendBuffer;
+	endSendBuffer += messageSize;
+	/* fill out the header */
+	headerPtr->type = (unsigned char)NetMT_AlienAIKilled;
+	/* fill out anim sequence */
+	messagePtr->death_code = death_code;
+	messagePtr->death_time = death_time;
+	messagePtr->GibbFactor = GibbFactor;
+	messagePtr->killerId = myNetworkKillerId;
+	{
+		int killerIndex = PlayerIdInPlayerList(messagePtr->killerId);
+
+		if (killerIndex != NET_IDNOTINPLAYERLIST)
+		{
+		XenoborgKilled++;
+		}
+		else
+		{
+			/*
+			the player doing the damage has either left the game , or never existed.
+			call it suicide then.
+			(Could also be 'neutral' damage - flame jets)
+			*/
+			messagePtr->killerId = 0;
+			messagePtr->killCount = 0;
+		}
+	}
+	/* fill out guid */
+	{
+		int guid = *((int*)(&(sbPtr->SBname[4])));
+		//      LOCALASSERT((guid >= -NET_MAXOBJECTID)&&(guid <= NET_MAXOBJECTID));
+		messagePtr->Guid = guid;
+	}
+	//find the icon for the weapon used
+	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
+	Inform_XenoborgAiHasDied(messagePtr->killerId, messagePtr->weaponIcon);
+}
+
+void AddNetMsg_SentryGunAIKilled(STRATEGYBLOCK* sbPtr, int death_time, DAMAGE_PROFILE* damage)
+{
+	NETMESSAGEHEADER* headerPtr;
+	NETMESSAGE_SENTRYGUNAIKILLED* messagePtr;
+	int headerSize = sizeof(NETMESSAGEHEADER);
+	int messageSize = sizeof(NETMESSAGE_SENTRYGUNAIKILLED);
+	AUTOGUN_STATUS_BLOCK* sentryStatus = (AUTOGUN_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+	// don't do this if we aren't playing (possibly on end game screen)
+	if (netGameData.myGameState != NGS_Playing) {
+		return;
+	}
+
+	/* check there's enough room in the send buffer */
+	{
+		int numBytesReqd = headerSize + messageSize;
+		int numBytesLeft = NET_MESSAGEBUFFERSIZE - ((int)(endSendBuffer - &sendBuffer[0]));
+
+		if (numBytesReqd > numBytesLeft)
+		{
+			LOCALASSERT(1 == 0);
+			/* don't add it */
+			return;
+		}
+	}
+	/* set up pointers to header and message structures */
+	headerPtr = (NETMESSAGEHEADER*)endSendBuffer;
+	endSendBuffer += headerSize;
+	messagePtr = (NETMESSAGE_SENTRYGUNAIKILLED*)endSendBuffer;
+	endSendBuffer += messageSize;
+	/* fill out the header */
+	headerPtr->type = (unsigned char)NetMT_AlienAIKilled;
+	/* fill out anim sequence */
+	messagePtr->death_code = 0;
+	messagePtr->death_time = death_time;
+	messagePtr->GibbFactor = 0;
+	messagePtr->killerId = myNetworkKillerId;
+	{
+		int killerIndex = PlayerIdInPlayerList(messagePtr->killerId);
+
+		if (killerIndex != NET_IDNOTINPLAYERLIST)
+		{
+		SentryGunKilled++;
+		}
+		else
+		{
+			/*
+			the player doing the damage has either left the game , or never existed.
+			call it suicide then.
+			(Could also be 'neutral' damage - flame jets)
+			*/
+			messagePtr->killerId = 0;
+			messagePtr->killCount = 0;
+		}
+	}
+	/* fill out guid */
+	{
+		int guid = *((int*)(&(sbPtr->SBname[4])));
+		//      LOCALASSERT((guid >= -NET_MAXOBJECTID)&&(guid <= NET_MAXOBJECTID));
+		messagePtr->Guid = guid;
+	}
+	//find the icon for the weapon used
+	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
+	Inform_SentrygunAiHasDied(messagePtr->killerId, messagePtr->weaponIcon);
+}
+
+void AddNetMsg_QueenAIKilled(STRATEGYBLOCK* sbPtr, DAMAGE_PROFILE* damage)
+{
+	NETMESSAGEHEADER* headerPtr;
+	NETMESSAGE_QUEENAIKILLED* messagePtr;
+	int headerSize = sizeof(NETMESSAGEHEADER);
+	int messageSize = sizeof(NETMESSAGE_QUEENAIKILLED);
+	QUEEN_STATUS_BLOCK* queenStatus = (QUEEN_STATUS_BLOCK*)sbPtr->SBdataptr;
+
+	// don't do this if we aren't playing (possibly on end game screen)
+	if (netGameData.myGameState != NGS_Playing) {
+		return;
+	}
+
+	/* check there's enough room in the send buffer */
+	{
+		int numBytesReqd = headerSize + messageSize;
+		int numBytesLeft = NET_MESSAGEBUFFERSIZE - ((int)(endSendBuffer - &sendBuffer[0]));
+
+		if (numBytesReqd > numBytesLeft)
+		{
+			LOCALASSERT(1 == 0);
+			/* don't add it */
+			return;
+		}
+	}
+	/* set up pointers to header and message structures */
+	headerPtr = (NETMESSAGEHEADER*)endSendBuffer;
+	endSendBuffer += headerSize;
+	messagePtr = (NETMESSAGE_QUEENAIKILLED*)endSendBuffer;
+	endSendBuffer += messageSize;
+	/* fill out the header */
+	headerPtr->type = (unsigned char)NetMT_AlienAIKilled;
+	/* fill out anim sequence */
+	messagePtr->death_code = 0;
+	messagePtr->death_time = 0;
+	messagePtr->GibbFactor = 0;
+	messagePtr->killerId = myNetworkKillerId;
+	{
+		int killerIndex = PlayerIdInPlayerList(messagePtr->killerId);
+
+		if (killerIndex != NET_IDNOTINPLAYERLIST)
+		{
+		QueenKilled++;
+		}
+		else
+		{
+			/*
+			the player doing the damage has either left the game , or never existed.
+			call it suicide then.
+			(Could also be 'neutral' damage - flame jets)
+			*/
+			messagePtr->killerId = 0;
+			messagePtr->killCount = 0;
+		}
+	}
+	/* fill out guid */
+	{
+		int guid = *((int*)(&(sbPtr->SBname[4])));
+		//      LOCALASSERT((guid >= -NET_MAXOBJECTID)&&(guid <= NET_MAXOBJECTID));
+		messagePtr->Guid = guid;
+	}
+	//find the icon for the weapon used
+	messagePtr->weaponIcon = GetWeaponIconFromDamage(damage);
+	Inform_QueenAiHasDied(messagePtr->killerId, messagePtr->weaponIcon);
 }
 
 void AddNetMsg_FarAlienPosition(STRATEGYBLOCK *sbPtr, int targetModuleIndex, int index, BOOL indexIsModuleIndex)
@@ -10154,6 +10421,30 @@ static void Inform_PlayerHasDied(NetID killer, NetID victim, NETGAME_CHARACTERTY
 			break;
 		}
 
+		case NGCT_AI_Facehugger:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_FACEHUGGER, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
+			break;
+		}
+
+		case NGCT_AI_Xenoborg:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_XENOBORG, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
+			break;
+		}
+
+		case NGCT_AI_Sentrygun:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_SENTRYGUN, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
+			break;
+		}
+
+		case NGCT_AI_Queen:
+		{
+			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_QUEEN, netGameData.playerData[victimIndex].name, 0, weaponSymbol);
+			break;
+		}
+
 		default :
 		{
 			/* KJL 15:36:03 09/04/98 - killer should be set to null if it's a suicide */
@@ -10284,6 +10575,74 @@ static void Inform_PredatorAiHasDied(NetID killer, predator_npc_weapons type, ch
 			break;
 		}
 		}
+	}
+}
+
+static void Inform_FacehuggerAiHasDied(NetID killer, char weaponIcon)
+{
+	int killerIndex = PlayerIdInPlayerList(killer);
+
+	if (killerIndex != NET_IDNOTINPLAYERLIST)
+	{
+		char weaponSymbol[5] = "";
+
+		if (weaponIcon) {
+			sprintf(weaponSymbol, " %c", weaponIcon);
+		}
+
+		NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_FACEHUGGER_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+	
+	}
+}
+
+static void Inform_XenoborgAiHasDied(NetID killer, char weaponIcon)
+{
+	int killerIndex = PlayerIdInPlayerList(killer);
+
+	if (killerIndex != NET_IDNOTINPLAYERLIST)
+	{
+		char weaponSymbol[5] = "";
+
+		if (weaponIcon) {
+			sprintf(weaponSymbol, " %c", weaponIcon);
+		}
+
+		NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_XENOBORG_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+
+	}
+}
+
+static void Inform_SentrygunAiHasDied(NetID killer, char weaponIcon)
+{
+	int killerIndex = PlayerIdInPlayerList(killer);
+
+	if (killerIndex != NET_IDNOTINPLAYERLIST)
+	{
+		char weaponSymbol[5] = "";
+
+		if (weaponIcon) {
+			sprintf(weaponSymbol, " %c", weaponIcon);
+		}
+
+		NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_SENTRYGUN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+
+	}
+}
+
+static void Inform_QueenAiHasDied(NetID killer, char weaponIcon)
+{
+	int killerIndex = PlayerIdInPlayerList(killer);
+
+	if (killerIndex != NET_IDNOTINPLAYERLIST)
+	{
+		char weaponSymbol[5] = "";
+
+		if (weaponIcon) {
+			sprintf(weaponSymbol, " %c", weaponIcon);
+		}
+
+		NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_QUEEN_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+
 	}
 }
 
@@ -11650,41 +12009,30 @@ void DoMultiplayerEndGameScreen(void)
 			x += 20;
 		//}
 
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_PULSERIFLE), x, y, 0xffffffff);
-		x += 20;
-
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_FLAMER), x, y, 0xffffffff);
-		x += 20;
-
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_SMARTGUN), x, y, 0xffffffff);
-		x += 20;
-
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_SADAR), x, y, 0xffffffff);
-		x += 20;
-
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_GRENADELAUNCHER), x, y, 0xffffffff);
-		x += 20;
-
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_MINIGUN), x, y, 0xffffffff);
-		x += 20;
-
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE_PISTOLS), x, y, 0xffffffff);
+		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_MARINE), x, y, 0xffffffff);
 		x += 20;
 
 		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PREDATOR), x, y, 0xffffffff);
-		RenderStringVertically(GetTextString(TEXTSTRING_INGAME_SHOULDERCANNON), x, y - 50, 0xffffffff);
 		x += 20;
 
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PREDATOR), x, y, 0xffffffff);
-		RenderStringVertically(GetTextString(TEXTSTRING_INGAME_PISTOL), x, y - 50, 0xffffffff);
+		RenderStringVertically(GetTextString(TEXTSTRING_GAMESTATS_CIVILIAN), x, y, 0xffffffff);
 		x += 20;
 
-		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_PREDATOR), x, y, 0xffffffff);
-		RenderStringVertically(GetTextString(TEXTSTRING_INGAME_RIFLE), x, y - 50, 0xffffffff);
+		RenderStringVertically(GetTextString(TEXTSTRING_GAMESTATS_ANDROID), x, y, 0xffffffff);
 		x += 20;
 
 		RenderStringVertically(GetTextString(TEXTSTRING_GAMESTATS_FACEHUGGER), x, y, 0xffffffff);
 		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_GAMESTATS_XENOBORG), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_GAMESTATS_SENTRYGUN), x, y, 0xffffffff);
+		x += 20;
+
+		RenderStringVertically(GetTextString(TEXTSTRING_GAMESTATS_QUEEN), x, y, 0xffffffff);
+		x += 20;
+
 
 		x += 20;
 		RenderStringVertically(GetTextString(TEXTSTRING_MULTIPLAYER_SCORE), x, y, 0xffffffff);
@@ -11774,47 +12122,35 @@ void DoMultiplayerEndGameScreen(void)
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
 				//}
-					sprintf(text, "%d", MarinePulseRifleKilled);
+					sprintf(text, "%d", MarineKilled);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
 
-					sprintf(text, "%d", MarineFlamerKilled);
+					sprintf(text, "%d", PredatorKilled);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
 
-					sprintf(text, "%d", MarineSmartGunKilled);
+					sprintf(text, "%d", CivilianKilled);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
 
-					sprintf(text, "%d", MarineSADARKilled);
-					RenderStringCentred(text, x, y, 0xff00ff00);
-					x += 20;
-
-					sprintf(text, "%d", MarineGrenadeKilled);
-					RenderStringCentred(text, x, y, 0xff00ff00);
-					x += 20;
-
-					sprintf(text, "%d", MarineMinigunKilled);
-					RenderStringCentred(text, x, y, 0xff00ff00);
-					x += 20;
-
-					sprintf(text, "%d", MarinePistolKilled);
-					RenderStringCentred(text, x, y, 0xff00ff00);
-					x += 20;
-
-					sprintf(text, "%d", PredatorSCannonKilled);
-					RenderStringCentred(text, x, y, 0xff00ff00);
-					x += 20;
-
-					sprintf(text, "%d", PredatorPistolKilled);
-					RenderStringCentred(text, x, y, 0xff00ff00);
-					x += 20;
-
-					sprintf(text, "%d", PredatorSpeargunKilled);
+					sprintf(text, "%d", AndroidKilled);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;
 
 					sprintf(text, "%d", FacehuggerKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", XenoborgKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", SentryGunKilled);
+					RenderStringCentred(text, x, y, 0xff00ff00);
+					x += 20;
+
+					sprintf(text, "%d", QueenKilled);
 					RenderStringCentred(text, x, y, 0xff00ff00);
 					x += 20;	
 

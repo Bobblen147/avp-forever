@@ -442,7 +442,7 @@ void Convert_Marine_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death, DAMAG
 
 }
 
-void Convert_Xenoborg_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death) {
+void Convert_Xenoborg_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death, DAMAGE_PROFILE* damage) {
 
 	NETCORPSEDATABLOCK *corpseDataPtr;
 	XENO_STATUS_BLOCK *xenoStatusPointer;
@@ -453,6 +453,12 @@ void Convert_Xenoborg_To_Corpse(STRATEGYBLOCK *sbPtr,DEATH_DATA *this_death) {
     GLOBALASSERT(sbPtr);
 	GLOBALASSERT(this_death);
 	GLOBALASSERT(xenoStatusPointer);
+
+	/* Inform the network. */
+	if (AvP.Network != I_No_Network)
+	{
+		AddNetMsg_XenoborgAIKilled(sbPtr, this_death->Multiplayer_Code, XENO_DYINGTIME, xenoStatusPointer->GibbFactor, damage);
+	}
 
 	corpseDataPtr = static_cast<NETCORPSEDATABLOCK*>(AllocateMem(sizeof(NETCORPSEDATABLOCK)));
 	GLOBALASSERT(corpseDataPtr);

@@ -2923,6 +2923,12 @@ void KillQueen(STRATEGYBLOCK *sbPtr,DAMAGE_PROFILE *damage, int multiple,SECTION
 
 	}
 
+	/* Inform the network. */
+	if (AvP.Network != I_No_Network)
+	{
+		AddNetMsg_QueenAIKilled(sbPtr, damage);
+	}
+
 	PlacedQueenCount--;
 
 

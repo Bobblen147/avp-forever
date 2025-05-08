@@ -4280,8 +4280,32 @@ END OF JULES BONUS MESSAGES
 # <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_PREDATOR>
 "%1 has been killed by a predator"
 
-# <TEXTSTRING_MULTIPLAYERCONSOLE_ALIEN_KILLED_NPC>
-"An NPC has killed an alien"
+# <TEXTSTRING_MULTIPLAYERCONSOLE_FACEHUGGER_KILLED>
+"%1 has killed a facehugger"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_FACEHUGGER>
+"%1 has been killed by a facehugger"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_XENOBORG_KILLED>
+"%1 has killed a xenoborg"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_XENOBORG>
+"%1 has been killed by a xenoborg"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_SENTRYGUN_KILLED>
+"%1 has destroyed a sentry gun"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_SENTRYGUN>
+"%1 has been killed by a sentry gun"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_QUEEN_KILLED>
+"%1 has killed an alien queen"
+
+# <TEXTSTRING_MULTIPLAYERCONSOLE_KILLEDBY_QUEEN>
+"%1 has been killed by an alien queen"
+
+# <TEXTSTRING_GAMESTATS_SENTRYGUN>
+"Sentry Gun"
 
 @ This line signifies end of file. Do not delete!
 																			 

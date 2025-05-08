@@ -1534,6 +1534,12 @@ static void KillAGun(STRATEGYBLOCK *sbPtr,int wounds,DAMAGE_PROFILE *damage, int
 		Sound_Stop(agunStatusPointer->soundHandle);
 	}
 
+	/* Inform the network. */
+	if (AvP.Network != I_No_Network)
+	{
+		AddNetMsg_SentryGunAIKilled(sbPtr, AGUN_DYINGTIME, damage);
+	}
+	
 	PlacedSentryCount--;
 
 }

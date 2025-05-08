@@ -136,7 +136,11 @@ typedef enum netgame_charactertype
 	NGCT_AI_Predalien,
 	NGCT_AI_Praetorian,
 	NGCT_AI_Marine,
-	NGCT_AI_Predator
+	NGCT_AI_Predator,
+	NGCT_AI_Facehugger,
+	NGCT_AI_Xenoborg,
+	NGCT_AI_Sentrygun,
+	NGCT_AI_Queen
 } NETGAME_CHARACTERTYPE;
 
 #define NUM_PC_SUBTYPES 9
@@ -799,6 +803,62 @@ typedef struct netmessage_predatoraikilled
 	char weaponIcon;
 } NETMESSAGE_PREDATORAIKILLED;
 
+typedef struct netmessage_facehuggeraikilled
+{
+	signed int Guid;
+
+	int death_code;
+	int death_time;
+	int GibbFactor;
+
+	NetID killerId;
+	int killCount;
+
+	char weaponIcon;
+} NETMESSAGE_FACEHUGGERAIKILLED;
+
+typedef struct netmessage_xenoborgaikilled
+{
+	signed int Guid;
+
+	int death_code;
+	int death_time;
+	int GibbFactor;
+
+	NetID killerId;
+	int killCount;
+
+	char weaponIcon;
+} NETMESSAGE_XENOBORGAIKILLED;
+
+typedef struct netmessage_sentrygunaikilled
+{
+	signed int Guid;
+
+	int death_code;
+	int death_time;
+	int GibbFactor;
+
+	NetID killerId;
+	int killCount;
+
+	char weaponIcon;
+} NETMESSAGE_SENTRYGUNAIKILLED;
+
+typedef struct netmessage_queenaikilled
+{
+	signed int Guid;
+
+	int death_code;
+	int death_time;
+	int GibbFactor;
+
+	NetID killerId;
+	int killCount;
+
+	char weaponIcon;
+} NETMESSAGE_QUEENAIKILLED;
+
 typedef struct netmessage_faralienposition
 {
 	signed int Guid;
@@ -940,10 +1000,15 @@ extern void AddNetMsg_FragmentalObjectsStatus(void);
 extern void AddNetMsg_StrategySynch(void);
 extern void AddNetMsg_AlienAIState(STRATEGYBLOCK *sbPtr);
 extern void AddNetMsg_AlienAISeqChange(STRATEGYBLOCK *sbPtr,int sequence_type,int sub_sequence,int sequence_length,int tweening_time);
+
 extern void AddNetMsg_AlienAIKilled(STRATEGYBLOCK *sbPtr,int death_code,int death_time, int GibbFactor,DAMAGE_PROFILE* damage);
 extern void AddNetMsg_MarineAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage);
 extern void AddNetMsg_PredatorAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage);
 extern void AddNetMsg_FacehuggerAIKilled(STRATEGYBLOCK* sbPtr, int death_time, DAMAGE_PROFILE* damage);
+extern void AddNetMsg_XenoborgAIKilled(STRATEGYBLOCK* sbPtr, int death_code, int death_time, int GibbFactor, DAMAGE_PROFILE* damage);
+extern void AddNetMsg_SentryGunAIKilled(STRATEGYBLOCK* sbPtr, int death_time, DAMAGE_PROFILE* damage);
+extern void AddNetMsg_QueenAIKilled(STRATEGYBLOCK* sbPtr, DAMAGE_PROFILE* damage);
+
 extern void AddNetMsg_FarAlienPosition(STRATEGYBLOCK* sbPtr,int targetModuleIndex,int index,BOOL indexIsModuleIndex);
 extern void AddNetMsg_GhostHierarchyDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int multiple, int sectionID,VECTORCH* incoming);
 extern void AddNetMsg_SpotAlienSound(int soundCategory,int alienType,int pitch,VECTORCH *position);

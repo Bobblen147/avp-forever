@@ -1277,7 +1277,7 @@ static void KillXeno(STRATEGYBLOCK *sbPtr,int wounds,DAMAGE_PROFILE *damage, int
 
 		PlacedXenoborgCount--;
 
-		Convert_Xenoborg_To_Corpse(sbPtr,this_death);
+		Convert_Xenoborg_To_Corpse(sbPtr,this_death,damage);
 	}
 
 }
