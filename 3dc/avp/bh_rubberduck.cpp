@@ -141,19 +141,19 @@ void RubberDuckBehaviour(STRATEGYBLOCK *sbPtr)
 			{
 				level = 3300;
 			}
-			else if (!strcmp(LevelName,"invasion_a")||!strcmp(LevelName, "Custom/invasion_a"))
+			else if (!strcmp(LevelName,"invasion_a")||!strcmp(LevelName, "Custom/Invasion_A"))
 			{
 				level = -35800;
 			}
-			else if (!strcmp(LevelName,"genshd1")||!strcmp(LevelName, "Custom/genshd1"))
+			else if (!strcmp(LevelName,"genshd1")||!strcmp(LevelName, "Custom/Genshd1"))
 			{
 				level = 2656;
 			}
-			else if (!strcmp(LevelName,"fall")||!strcmp(LevelName, "Custom/fall")||!strcmp(LevelName,"fall_m")||!strcmp(LevelName, "Custom/fall_m"))
+			else if (!strcmp(LevelName,"fall")||!strcmp(LevelName, "Custom/Fall")||!strcmp(LevelName,"fall_m")||!strcmp(LevelName, "Custom/Fall_m"))
 			{
 				level = 12925;
 			}
-			else if (!strcmp(LevelName,"derelict")||!strcmp(LevelName, "Custom/derelict"))
+			else if (!strcmp(LevelName,"derelict")||!strcmp(LevelName, "Custom/Derelict"))
 			{
 				level = 32000;
 			}
@@ -319,7 +319,7 @@ void CreateRubberDucks(void)
 	}
 	else 
 	#endif
-	if ( (!stricmp(LevelName,"invasion_a")) )
+	if ( (!stricmp(LevelName,"invasion_a")) || (!stricmp(LevelName, "Custom/Invasion_A")) )
 	{
 		int i = 6;
 

@@ -733,7 +733,7 @@ void CheckIfMirroringIsRequired(void)
 {
 	MirroringActive = false;
 
-	if (!stricmp(LevelName, "derelict"))
+	if (!stricmp(LevelName, "derelict")||!stricmp(LevelName, "Custom/Derelict"))
 	{
 		if (playerPherModule && playerPherModule->name)
 		{

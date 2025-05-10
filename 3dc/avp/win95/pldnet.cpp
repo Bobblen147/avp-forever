@@ -551,6 +551,16 @@ void InitAVPNetGameForHost(int species, int gamestyle, int level)
 	netGameData.numDeaths[0] = 0;
 	netGameData.numDeaths[1] = 0;
 	netGameData.numDeaths[2] = 0;
+
+	//also clear non alien AI kill counters
+	MarineKilled = 0;
+	CivilianKilled = 0;
+	AndroidKilled = 0;
+	PredatorKilled = 0;
+	FacehuggerKilled = 0;
+	XenoborgKilled = 0;
+	SentryGunKilled = 0;
+	QueenKilled = 0;
 }
 
 void InitAVPNetGameForJoin(void)
@@ -10116,7 +10126,7 @@ DYNAMICSBLOCK PlayersMirrorDynBlock;
 
 BOOL Current_Level_Requires_Mirror_Image()
 {
-	if ((!_stricmp(LevelName, "e3demo")) || (!_stricmp(LevelName, "e3demosp")) || (!_stricmp(LevelName, "derelict"))) {
+	if ((!_stricmp(LevelName, "e3demo")) || (!_stricmp(LevelName, "e3demosp")) || (!_stricmp(LevelName, "derelict")) || (!_stricmp(LevelName, "Custom/Derelict"))) {
 		return TRUE;
 	}
 

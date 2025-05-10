@@ -667,7 +667,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 				AvP.RestartLevel = 0;
 				AvP.LevelCompleted = 0;
 				FixCheatModesInUserProfile(UserProfilePtr);
-				//reset enemy counters
+
+				//reset debug enemy counters
 				PlacedAlienCount = 0;
 				PlacedPredAlienCount = 0;
 				PlacedPraetorianCount = 0;
@@ -686,7 +687,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 				PlacedXenoborgCount = 0;
 				PlacedSentryCount = 0;
 				PlacedQueenCount = 0;
-				//reset pickup counters
+				//reset debug pickup counters
 				FieldChargeCount = 0;
 				PulseRifleCount = 0;
 				SmartGunCount = 0;

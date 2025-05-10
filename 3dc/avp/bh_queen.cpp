@@ -368,7 +368,7 @@ void CreateQueen(VECTORCH* Position, int type)
 		queenStatus->TempTarget = FALSE;
 		queenStatus->CurrentQueenObject = -1;
 		queenStatus->QueenObjectBias = 1;
-		if (!stricmp(LevelName, "hangar"))
+		if (!stricmp(LevelName, "hangar")||!stricmp(LevelName, "Custom/Hangar"))
 		{
 			queenStatus->QueenPlayerBias = 1;
 		}
@@ -545,7 +545,7 @@ void InitQueenBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		queenStatus->TempTarget=FALSE;
 		queenStatus->CurrentQueenObject=-1;
 		queenStatus->QueenObjectBias=1;
-		if(!stricmp(LevelName,"hangar"))
+		if(!stricmp(LevelName,"hangar") || !stricmp(LevelName, "Custom/Hangar"))
 		{
 			queenStatus->QueenPlayerBias=1;
 		}
@@ -3169,7 +3169,7 @@ void QueenForceReconsider(STRATEGYBLOCK* sbPtr)
 void QueenCheckForAvoidAirlock(STRATEGYBLOCK *sbPtr)
 {
 	//only need to look out for the airlock in hangar
-	if(!stricmp(LevelName,"hangar"))
+	if(!stricmp(LevelName,"hangar") || !stricmp(LevelName, "Custom/Hangar"))
 	{
 		QUEEN_STATUS_BLOCK *queenStatusPointer =(QUEEN_STATUS_BLOCK *)(sbPtr->SBdataptr);
 		VECTORCH* qpos=&sbPtr->DynPtr->Position;
@@ -3408,7 +3408,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 	if(queenStatusPointer->QueenState==QBS_Dead)
 	{
 		//check for victory on marine level.
-		if(!stricmp(LevelName,"hangar"))
+		if(!stricmp(LevelName,"hangar") || !stricmp(LevelName, "Custom/Hangar"))
 		{
 			//is the player in the locker ('hangar')
 			if(Player->ObWorld.vx> HangarLockerMinX && Player->ObWorld.vx < HangarLockerMaxX &&
@@ -3483,7 +3483,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 	if(dynPtr->IsInContactWithFloor)
 	{
 		
-		if(!stricmp(LevelName,"hangar"))
+		if(!stricmp(LevelName,"hangar") || !stricmp(LevelName, "Custom/Hangar"))
 		{
 			//is the player in the trench
 			if((dynPtr->Position.vy+1500)<Player->ObWorld.vy)
@@ -3917,7 +3917,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 							int dist;
 							SubVector(&dynPtr->Position,&pos);
 
-							if(!stricmp(LevelName,"battle"))
+							if(!stricmp(LevelName,"battle") || !stricmp(LevelName, "Custom/Battle"))
 							{
 								//In battle , the objects near the egg sack are hard for the queen to get to.
 								//So best ignore them.
@@ -3951,7 +3951,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 						queenStatusPointer->CurrentQueenObject=closest;
 						queenStatusPointer->QueenTargetSB=QueenObjectList[queenStatusPointer->CurrentQueenObject];
 
-						if(!stricmp(LevelName,"hangar"))
+						if(!stricmp(LevelName,"hangar") || !stricmp(LevelName, "Custom/Hangar"))
 						{
 							queenStatusPointer->QueenPlayerBias++;
 						}
@@ -4728,7 +4728,7 @@ void HandleHangarAirlock()
 	//only need to look out for the airlock in hangar
 	int wind_multiplier=0;
 
-	if(!stricmp(LevelName,"hangar"))
+	if(!stricmp(LevelName,"hangar") || !stricmp(LevelName, "Custom/Hangar"))
 	{
 		GLOBALASSERT(UpperAirlockDoorSbptr);
 		GLOBALASSERT(UpperAirlockDoorSbptr->DynPtr);
