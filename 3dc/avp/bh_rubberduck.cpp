@@ -141,19 +141,19 @@ void RubberDuckBehaviour(STRATEGYBLOCK *sbPtr)
 			{
 				level = 3300;
 			}
-			else if (!strcmp(LevelName,"invasion_a"))
+			else if (!strcmp(LevelName,"invasion_a")||!strcmp(LevelName, "Custom/invasion_a"))
 			{
 				level = -35800;
 			}
-			else if (!strcmp(LevelName,"genshd1"))
+			else if (!strcmp(LevelName,"genshd1")||!strcmp(LevelName, "Custom/genshd1"))
 			{
 				level = 2656;
 			}
-			else if (!strcmp(LevelName,"fall")||!strcmp(LevelName,"fall_m"))
+			else if (!strcmp(LevelName,"fall")||!strcmp(LevelName, "Custom/fall")||!strcmp(LevelName,"fall_m")||!strcmp(LevelName, "Custom/fall_m"))
 			{
 				level = 12925;
 			}
-			else if (!strcmp(LevelName,"derelict"))
+			else if (!strcmp(LevelName,"derelict")||!strcmp(LevelName, "Custom/derelict"))
 			{
 				level = 32000;
 			}

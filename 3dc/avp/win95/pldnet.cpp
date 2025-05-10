@@ -3062,11 +3062,21 @@ void AddNetMsg_PlayerKilled(int objectId, DAMAGE_PROFILE *damage)
 				break;
 
 			case AMMO_10MM_CULW_NPC:
+			case AMMO_PULSE_GRENADE:
+			case AMMO_PULSE_GRENADE_STRIKE:
 			case AMMO_FLAMETHROWER:
+			case AMMO_FIREDAMAGE_POSTMAX:
 			case AMMO_SMARTGUN_NPC:
+			case AMMO_SADAR_BLAST:
+			case AMMO_SADAR_TOW:
+			case AMMO_GRENADE:
+			case AMMO_FRAGMENTATION_GRENADE:
+			case AMMO_FLECHETTE_POSTMAX:
+			case AMMO_PROXIMITY_GRENADE:
 			case AMMO_MINIGUN_NPC:
 			case AMMO_MARINE_PISTOL:
 			case AMMO_SHOTGUN:
+			case AMMO_MOLOTOV:
 				messagePtr->killerType = NGCT_AI_Marine;
 				break;
 
@@ -3081,6 +3091,7 @@ void AddNetMsg_PlayerKilled(int objectId, DAMAGE_PROFILE *damage)
 			case AMMO_PLASMACASTER_PCKILL:
 				messagePtr->killerType = NGCT_AI_Predator;
 				break;
+
 			case AMMO_FACEHUGGER:
 				messagePtr->killerType = NGCT_AI_Facehugger;
 				break;
@@ -10561,20 +10572,8 @@ static void Inform_PredatorAiHasDied(NetID killer, predator_npc_weapons type, ch
 			sprintf(weaponSymbol, " %c", weaponIcon);
 		}
 
-		switch (type)
-		{
-		case PNPCW_Pistol:
-		case PNPCW_Wristblade:
-		case PNPCW_PlasmaCaster:
-		case PNPCW_Staff:
-		case PNPCW_Medicomp:
-		case PNPCW_Speargun:
-		case PNPCW_SeriousPlasmaCaster:
-		{
-			NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_PREDATOR_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
-			break;
-		}
-		}
+		NetworkGameConsoleMessageWithWeaponIcon(TEXTSTRING_MULTIPLAYERCONSOLE_PREDATOR_KILLED, netGameData.playerData[killerIndex].name, 0, weaponSymbol);
+
 	}
 }
 

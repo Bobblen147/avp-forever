@@ -1939,7 +1939,7 @@ void PostLandscapeRendering()
 {
 	int numOfObjects = NumOnScreenBlocks;
 
-	if (!strcmp(LevelName,"fall") || !strcmp(LevelName,"fall_m") || !strcmp(LevelName, "Custom/Fall_m"))
+	if (!strcmp(LevelName,"fall")||!strcmp(LevelName, "Custom/fall")||!strcmp(LevelName,"fall_m")||!strcmp(LevelName, "Custom/fall_m"))
 	{
 		bool drawWaterFall = false;
 		bool drawStream    = false;
@@ -2066,7 +2066,7 @@ void PostLandscapeRendering()
 			D3D_DrawWaterPatch(x + MeshXScale * 3, y, z + MeshZScale);
 		}
 	}
-	else if (!_stricmp(LevelName,"invasion_a"))
+	else if (!_stricmp(LevelName,"invasion_a")||!_stricmp(LevelName, "Custom/invasion_a"))
 	{
 		bool drawWater    = false;
 		bool drawEndWater = false;
@@ -2163,7 +2163,7 @@ void PostLandscapeRendering()
 		 	D3D_DrawWaterPatch(x+MeshXScale*3, y, z+MeshZScale);
 		}
 	}
-	else if (!_stricmp(LevelName, "derelict"))
+	else if (!_stricmp(LevelName, "derelict")||!_stricmp(LevelName, "Custom/derelict"))
 	{
 		bool drawMirrorSurfaces = false;
 		bool drawWater = false;
@@ -2221,7 +2221,7 @@ void PostLandscapeRendering()
 		 	D3D_DrawWaterPatch(x+MeshXScale, y, z+MeshZScale);
 		}
 	}
-	else if (!_stricmp(LevelName, "genshd1"))
+	else if (!_stricmp(LevelName, "genshd1")||!_stricmp(LevelName, "Custom/genshd1"))
 	{
 		bool drawWater = false;
 
@@ -2255,7 +2255,7 @@ void PostLandscapeRendering()
 
 void D3D_DrawWaterTest(MODULE *testModulePtr)
 {
-	if (!strcmp(LevelName, "genshd1"))
+	if (!strcmp(LevelName, "genshd1")||!strcmp(LevelName, "Custom/genshd1"))
 	{
 		MODULE *modulePtr = testModulePtr;
 

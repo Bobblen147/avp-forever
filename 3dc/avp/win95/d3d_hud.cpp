@@ -287,16 +287,16 @@ void LoadCommonTextures(void)
 	CloudyImageNumber    = Tex_CreateFromRIM("graphics/Common/cloudy.RIM");
 	BurningImageNumber   = Tex_CreateFromRIM("graphics/Common/burn.RIM");
 
-	if (!strcmp(LevelName,"invasion_a"))
+	if (!strcmp(LevelName,"invasion_a")||!strcmp(LevelName,"Custom/invasion_a"))
 	{
 		ChromeImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/Invasion/water2.RIM");
 		WaterShaftImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/Invasion/water-shaft.RIM");
 	}
-	else if (!strcmp(LevelName,"genshd1"))
+	else if (!strcmp(LevelName,"genshd1")||!strcmp(LevelName,"Custom/genshd1"))
 	{
 		WaterShaftImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/GenShd1/colonywater.RIM");
 	}
-	else if (!strcmp(LevelName,"fall") || !strcmp(LevelName,"fall_m") || !strcmp(LevelName, "Custom/Fall_m"))
+	else if (!strcmp(LevelName,"fall")||!strcmp(LevelName,"Custom/fall")||!strcmp(LevelName,"fall_m")||!strcmp(LevelName,"Custom/fall_m"))
 	{
 		ChromeImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/fall/stream_water.RIM");
 	}
@@ -304,7 +304,7 @@ void LoadCommonTextures(void)
 	{
 		ChromeImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/fall/stream_water.RIM");
 	}
-	else if (!strcmp(LevelName,"derelict"))
+	else if (!strcmp(LevelName,"derelict")||!strcmp(LevelName, "Custom/derelict"))
 	{
 		ChromeImageNumber = Tex_CreateFromRIM("graphics/Envrnmts/Derelict/water.RIM");
 	}
