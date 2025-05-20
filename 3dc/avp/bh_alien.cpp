@@ -2199,9 +2199,9 @@ STRATEGYBLOCK *Alien_GetNewTarget(VECTORCH *alienpos, STRATEGYBLOCK *me) {
 
 					dist=Approximate3dMagnitude(&offset);
 					/* Preferentially ignore predators? */
-					if (candidate->I_SBtype==I_BehaviourPredator) {
-						dist<<=2;
-					}
+					//if (candidate->I_SBtype==I_BehaviourPredator) {
+					//	dist<<=2;
+					//}
 
 					if (dist<neardist) {
 						/* Check visibility? */

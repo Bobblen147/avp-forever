@@ -85,9 +85,13 @@ extern void MakeOpenIPAddressMenu();
 extern int AutoWeaponChangeOn_Temp;
 extern int AutoWeaponChangeOn;
 extern void SetDefaultMultiplayerConfig();
+
+//custom single player level load
 static bool CustomAlienSinglePlayerLevel = false;
 static bool CustomMarineSinglePlayerLevel = false;
 static bool CustomPredatorSinglePlayerLevel = false;
+//avp 99 mode
+static bool DisableGoldEdition = false;
 
 void HandlePostGameFMVs(void);
 void HandlePreGameFMVs(void);
@@ -264,7 +268,10 @@ int AvP_MainMenus(void)
 	TimeStampedMessage("start of menus");
 
 	// start background FMV
-	StartMenuBackgroundFmv();
+	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	if (!DisableGoldEdition) {
+		StartMenuBackgroundFmv();
+	}
 
 	#if PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO
 	if (AvP.LevelCompleted)
@@ -685,6 +692,7 @@ extern void AvP_UpdateMenus(void)
 			break;
 		}
 		case AVPMENU_SKIRMISH_CONFIG:
+		case AVPMENU_SKIRMISH_CONFIG_NOGOLD:
 		case AVPMENU_MULTIPLAYER_CONFIG:
 		case AVPMENU_MULTIPLAYER_CONFIG_JOIN:
 		{
@@ -1005,10 +1013,16 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 			{
 				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu=AVPMENU_MULTIPLAYER_LOBBIEDSERVER;
 			}
-			else if (netGameData.skirmishMode)
+			else if (netGameData.skirmishMode && !DisableGoldEdition)
 			{
 				//for skirmish games , use skirmish config menu instead
 				SetupNewMenu(AVPMENU_SKIRMISH_CONFIG);
+				return;
+			}
+			else if (netGameData.skirmishMode && DisableGoldEdition)
+			{
+				//for skirmish games , use skirmish config menu instead
+				SetupNewMenu(AVPMENU_SKIRMISH_CONFIG_NOGOLD);
 				return;
 			}
 			else
@@ -1223,6 +1237,11 @@ static void RenderMenu(void)
 		char *textPtr = GetTextString(AvPMenusData[AvPMenus.CurrentMenu].MenuTitle);
 		RenderMenuText(textPtr, MENU_CENTREX, 70, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
 	}
+
+	// Render Menu Subtitle
+	if (AvPMenusData[AvPMenus.CurrentMenu].MenuTitle == TEXTSTRING_MAINMENU_TITLE && !DisableGoldEdition)
+		RenderMenuText(GetTextString(TEXTSTRING_MAINMENU_SUBTITLE), MENU_CENTREX, 100, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
+
 }
 
 static void RenderBriefingScreenInfo(void)
@@ -2184,6 +2203,7 @@ static void ActUponUsersInput(void)
 
 				case AVPMENU_MULTIPLAYER_CONFIG :
 				case AVPMENU_SKIRMISH_CONFIG :
+				case AVPMENU_SKIRMISH_CONFIG_NOGOLD :
 				{
 					//reload the previous multiplayer configuration
 					LoadMultiplayerConfiguration(GetTextString(TEXTSTRING_PREVIOUSGAME_FILENAME));
@@ -4286,6 +4306,7 @@ int NumberOfAvailableLevels(I_PLAYER_TYPE playerID)
 				break;
 			}
 			case AVP_DIFFICULTY_LEVEL_HARD:
+			case AVP_DIFFICULTY_LEVEL_IMPOSSIBLE:
 			{
 				MaximumSelectableLevel = maximumLevel;
 				i = maximumLevel;
@@ -4335,7 +4356,7 @@ int MaxDifficultyLevelAllowed(I_PLAYER_TYPE playerID, int level)
 {
 	if (level == 0) 
 	{
-		return 3;
+		return 4;
 	}
 	else
 	{
@@ -4963,7 +4984,7 @@ void HandleCheatModeFeatures(void)
 		}
 		case CHEATMODE_IMPOSSIBLEMISSION:
 		{
-			AvP.Difficulty = I_Hard; // bjd - was 3
+			AvP.Difficulty = I_Impossible; // bjd - was 3
 			break;
 		}
 		case CHEATMODE_UNDERWATER:

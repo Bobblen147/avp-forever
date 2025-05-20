@@ -594,6 +594,7 @@ void LoadIPAddress(const char* name)
 
 extern AVPMENU_ELEMENT AvPMenu_Multiplayer_Config[];
 extern AVPMENU_ELEMENT AvPMenu_Skirmish_Config[];
+extern AVPMENU_ELEMENT AvPMenu_Skirmish_Config_NoGold[];
 extern AVPMENU_ELEMENT AvPMenu_Multiplayer_Config_Join[];
 
 

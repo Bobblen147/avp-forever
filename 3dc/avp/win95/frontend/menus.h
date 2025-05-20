@@ -118,7 +118,8 @@ enum AVPMENU_ID
 	AVPMENU_LOADGAME,
 	AVPMENU_SAVEGAME,
 
-	AVPMENU_INGAMEVIDEOMODE // bjd - added for ingame resolution changing
+	AVPMENU_INGAMEVIDEOMODE, // bjd - added for ingame resolution changing
+	AVPMENU_SKIRMISH_CONFIG_NOGOLD // added to support avp 99 mode
 };
 
 enum AVPMENU_FONT_ID

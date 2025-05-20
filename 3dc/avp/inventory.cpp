@@ -72,6 +72,9 @@ extern int SkeeterCount;
 extern int MarineHealthCount;
 extern int MarineArmourCount;
 
+//avp 99 mode
+static bool DisableGoldEdition = false;
+
 PLAYER_STARTING_EQUIPMENT StartingEquipment;
 
 int RecallDisc_Charge=400000;
@@ -360,6 +363,8 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 	ThisDiscMode=I_Seek_Track;
 	SmartgunMode=I_Track;
 
+	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+
 	/* switch on player type */
 	switch(AvP.PlayerType)
 	{
@@ -374,7 +379,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				{
 
 					case NGSCT_Smartgun :
-						if (SPECIALIST_PISTOLS) {
+						if (SPECIALIST_PISTOLS && !DisableGoldEdition) {
 							/* Conditional pistol! */
 							a=SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 							if (a!=-1) {
@@ -398,7 +403,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 						break;
 
 					case NGSCT_Flamer :
-						if (SPECIALIST_PISTOLS) {
+						if (SPECIALIST_PISTOLS && !DisableGoldEdition) {
 							/* Conditional pistol! */
 							a=SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 							if (a!=-1) {
@@ -422,7 +427,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 						break;
 
 					case NGSCT_Sadar :
-						if (SPECIALIST_PISTOLS) {
+						if (SPECIALIST_PISTOLS && !DisableGoldEdition) {
 							/* Conditional pistol! */
 							a=SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 							if (a!=-1) {
@@ -446,7 +451,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 						break;
 	
 					case NGSCT_GrenadeLauncher :
-						if (SPECIALIST_PISTOLS) {
+						if (SPECIALIST_PISTOLS && !DisableGoldEdition) {
 							/* Conditional pistol! */
 							a=SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 							if (a!=-1) {
@@ -474,7 +479,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 						break;
 
 					case NGSCT_Minigun :
-						if (SPECIALIST_PISTOLS) {
+						if (SPECIALIST_PISTOLS && !DisableGoldEdition) {
 							/* Conditional pistol! */
 							a=SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 							if (a!=-1) {
@@ -498,7 +503,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 						break;
 					
 					case NGSCT_PulseRifle :
-						if (SPECIALIST_PISTOLS) {
+						if (SPECIALIST_PISTOLS && !DisableGoldEdition) {
 							/* Conditional pistol! */
 							a=SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 							if (a!=-1) {
@@ -521,7 +526,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 
 						break;
 					case NGSCT_Frisbee :
-						if (SPECIALIST_PISTOLS) {
+						if (SPECIALIST_PISTOLS && !DisableGoldEdition) {
 							/* Conditional pistol! */
 							a=SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 							if (a!=-1) {
@@ -1337,6 +1342,16 @@ static int AbleToPickupWeapon(enum WEAPON_ID weaponID)
 			
 			if (GRENADE_MODE) {
 				if(weaponID!=WEAPON_PULSERIFLE) {
+					return(0);
+				}
+			}
+
+			DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+			if (DisableGoldEdition) {
+				if (weaponID == WEAPON_MARINE_PISTOL) {
+					return(0);
+				}
+				if (weaponID == WEAPON_FRISBEE_LAUNCHER) {
 					return(0);
 				}
 			}

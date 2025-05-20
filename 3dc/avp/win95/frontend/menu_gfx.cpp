@@ -12,6 +12,7 @@
 #include "menus.h"
 #include <assert.h>
 #include "RimLoader.h"
+#include "ConfigFile.h"
 
 void D3D_Rectangle(int x0, int y0, int x1, int y1, int r, int g, int b, int a);
 extern void DrawMenuTextGlow(uint32_t topLeftX, uint32_t topLeftY, uint32_t size, uint32_t alpha);
@@ -21,6 +22,8 @@ static void LoadMenuFont(void);
 extern int RenderSmallFontString(char *textPtr,int sx,int sy,int alpha, int red, int green, int blue);
 /*static*/ void CalculateWidthsOfAAFont();
 extern bool IsDemoVersion();
+//avp 99 mode
+static bool DisableGoldEdition = false;
 
 texID_t AVPMENUGFX_CLOUDY;
 //texID_t AVPMENUGFX_SMALL_FONT;
@@ -747,6 +750,8 @@ Determine area used by text , so we can draw it centrally
 
 void LoadAllMenuTextures()
 {
+	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+
 	AVPMENUGFX_CLOUDY = Tex_CreateFromRIM("graphics/Menus/fractal.RIM");
 #if 0
 	if (IsDemoVersion()) {
@@ -760,8 +765,9 @@ void LoadAllMenuTextures()
 
 	AVPMENUGFX_PRESENTS        = Tex_CreateFromRIM("graphics/Menus/FIandRD.RIM");
 	AVPMENUGFX_AREBELLIONGAME  = Tex_CreateFromRIM("graphics/Menus/presents.RIM");
-	AVPMENUGFX_ALIENSVPREDATOR = Tex_CreateFromRIM("graphics/Menus/AliensVPredator.RIM");
-
+	if (DisableGoldEdition) { AVPMENUGFX_ALIENSVPREDATOR = Tex_CreateFromRIM("graphics/Menus/OldLogo.RIM"); }
+	else { AVPMENUGFX_ALIENSVPREDATOR = Tex_CreateFromRIM("graphics/Menus/AliensVPredator.RIM"); }
+	
 //	AVPMENUGFX_SLIDERBAR       = Tex_CreateFromRIM("graphics/Menus/SliderBar.RIM");
 //	AVPMENUGFX_SLIDER          = Tex_CreateFromRIM("graphics/Menus/Slider.RIM");
 
@@ -793,7 +799,7 @@ void LoadAllMenuTextures()
 	AVPMENUGFX_PREDATOR_EPISODE3 = Tex_CreateFromRIM("graphics/Menus/PredatorEpisode3.RIM");
 	AVPMENUGFX_PREDATOR_EPISODE4 = Tex_CreateFromRIM("graphics/Menus/PredatorEpisode4.RIM");
 	AVPMENUGFX_PREDATOR_EPISODE5 = Tex_CreateFromRIM("graphics/Menus/PredatorEpisode5.RIM");
-	AVPMENUGFX_PREDATOR_EPISODE6 = Tex_CreateFromRIM("graphics/Menus/PredatorEpisode5.RIM");
+	AVPMENUGFX_PREDATOR_EPISODE6 = Tex_CreateFromRIM("graphics/Menus/PredatorEpisode6.RIM");
 
 	AVPMENUGFX_PREDATOR_EPISODE7  = Tex_CreateFromRIM("graphics/Menus/bonus.RIM");
 	AVPMENUGFX_PREDATOR_EPISODE8  = Tex_CreateFromRIM("graphics/Menus/bonus.RIM");

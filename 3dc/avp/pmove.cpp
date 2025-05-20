@@ -93,6 +93,7 @@ extern DISPLAYBLOCK* Player;
 extern int predHUDSoundHandle;
 extern int predOVision_SoundHandle;
 extern int TauntSoundPlayed;
+extern int PlayerTeleportOutsideEnv;
 
 int FlyModeAvailable = 0;
 static char FlyModeOn = 0;			
@@ -639,6 +640,8 @@ void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr)
 
 			if (FlyModeOn)
 			{
+				PlayerTeleportOutsideEnv = 0;
+
 				dynPtr->LinVelocity.vx = 0;
 				dynPtr->LinVelocity.vy = 0;
 				dynPtr->LinVelocity.vz = forwardSpeed;
@@ -667,11 +670,13 @@ void ExecuteFreeMovement(STRATEGYBLOCK* sbPtr)
 			}
 
 			if (!FlyModeOn){ //disable if toggled
+				PlayerTeleportOutsideEnv = 1;
 				dynPtr->GravityOn = 1;
 				dynPtr->OnlyCollideWithObjects = 0;
 			}
 		}
 		else { //make sure we turn off flying if we disable in the console
+			PlayerTeleportOutsideEnv = 1;
 			dynPtr->GravityOn = 1;
 			dynPtr->OnlyCollideWithObjects = 0;
 		}

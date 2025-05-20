@@ -21,6 +21,8 @@
 #include "BinkPlayback.h"
 #include "SmackerPlayback.h"
 
+#include "ConfigFile.h"
+
 static const int kMaxFMVs = 4;
 SmackerPlayback *fmvList[kMaxFMVs];
 
@@ -57,6 +59,9 @@ bool MenuBackgroundFMV = false;
 
 extern void ThisFramesRenderingHasBegun(void);
 extern void ThisFramesRenderingHasFinished(void);
+
+//avp 99 mode
+static bool DisableGoldEdition = false;
 
 
 void FindLightingValuesFromTriggeredFMV(uint8_t *bufferPtr, FMVTEXTURE *ftPtr)
@@ -284,6 +289,8 @@ void UpdateAllFMVTextures()
 
 extern void StartTriggerPlotFMV(int number)
 {
+	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	
 	uint32_t i = NumberOfFMVTextures;
 	char buffer[25];
 
@@ -291,7 +298,10 @@ extern void StartTriggerPlotFMV(int number)
 		return;
 	}
 
-	sprintf(buffer, "FMVs/message%d.smk", number);
+	if (DisableGoldEdition) {
+		sprintf(buffer, "FMVsOld/message%d.smk", number);
+	}
+	else { sprintf(buffer, "FMVs/message%d.smk", number); }
 
 	FILE *file = avp_fopen(buffer, "rb");
 	if (!file)
@@ -416,13 +426,25 @@ void ReleaseAllFMVTextures()
 // bjd - the below three functions could maybe be moved out of this file altogether as vorbisPlayer can handle it
 void StartMenuMusic()
 {
+	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	
 	menuMusic = new SmackerPlayback;
 
-	if (menuMusic->Open("FMVs/IntroSound.smk", true) != FMV_OK) //looping not handled in libsmackerdec yet
-	{
-		Con_PrintError("Can't open file IntroSound.smk");
-		delete menuMusic;
-		menuMusic = NULL;
+	if (DisableGoldEdition) {
+		if (menuMusic->Open("FMVsOld/IntroSound.smk", true) != FMV_OK) //looping not handled in libsmackerdec yet
+		{
+			Con_PrintError("Can't open file OldIntroSound.smk");
+			delete menuMusic;
+			menuMusic = NULL;
+		}
+	}
+	else {
+		if (menuMusic->Open("FMVs/IntroSound.smk", true) != FMV_OK) //looping not handled in libsmackerdec yet
+		{
+			Con_PrintError("Can't open file IntroSound.smk");
+			delete menuMusic;
+			menuMusic = NULL;
+		}
 	}
 #if 0
 	// we need to load IntroSound.ogg here using vorbisPlayer

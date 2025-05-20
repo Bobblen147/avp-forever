@@ -31,7 +31,7 @@ you should have seen the previous versions. */
 #define UseLocalAssert TRUE
 #include "ourasert.h"
 
-#define TELEPORT_IF_OUTSIDE_ENV 1	   
+//#define TELEPORT_IF_OUTSIDE_ENV 1	   
 #define MINIMUM_BOUNDINGBOX_EXTENT 25
 
 
@@ -59,6 +59,8 @@ extern DAMAGE_PROFILE PredPistol_FlechetteDamage;
 
 int PrintDebuggingText(const char* t, ...);
 void PlayerPheromoneTrail(DYNAMICSBLOCK *dynPtr);
+
+int PlayerTeleportOutsideEnv = 1;
 
 #define AccessNextPolygon()\
 {\
@@ -508,7 +510,8 @@ extern void ObjectDynamics(void)
   //		RelocatedDueToFallout(dynPtr);
 		UpdateDisplayBlockData(sbPtr);
 	}
-	#if TELEPORT_IF_OUTSIDE_ENV
+	//#if TELEPORT_IF_OUTSIDE_ENV
+	if(PlayerTeleportOutsideEnv==1)
 	{
 		DYNAMICSBLOCK *dynPtr = Player->ObStrategyBlock->DynPtr;
 		MODULE *newModule = (ModuleFromPosition(&(dynPtr->Position), playerPherModule));
@@ -557,7 +560,7 @@ extern void ObjectDynamics(void)
 
 		}
 	}
-	#endif
+	//#endif
 	/* KJL 18:50:17 10/11/98 - Falling Damage */
 	if (AvP.PlayerType==I_Marine)
 	{

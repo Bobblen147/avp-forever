@@ -12,10 +12,13 @@
 #include "weapons.h"
 #include "gameflow.h"
 #include "equipment.h"
+#include "ConfigFile.h"
 
 /* Extern for global keyboard buffer */
 extern unsigned char KeyboardInput[];
 extern void LoadAllWeapons(PLAYER_STATUS *playerStatusPtr);
+//avp 99 mode
+static bool DisableGoldEdition = false;
 
 
 void HandleCheatModes(void)
@@ -90,6 +93,8 @@ void HandleCheatModes(void)
 void GiveAllWeaponsCheat(void)
 {
 	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
+	
+	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
 
 	if(AvP.PlayerType == I_Marine)
    	{
@@ -101,6 +106,10 @@ void GiveAllWeaponsCheat(void)
    	 	 	//if (slot == WEAPON_PLASMAGUN || slot == WEAPON_SONICCANNON) continue;
 			  
 			if (wdPtr->WeaponIDNumber==NULL_WEAPON) continue;
+
+			if (wdPtr->WeaponIDNumber==WEAPON_MARINE_PISTOL && DisableGoldEdition) continue;
+			if (wdPtr->WeaponIDNumber == WEAPON_FRISBEE_LAUNCHER && DisableGoldEdition) continue;
+			if (wdPtr->WeaponIDNumber==WEAPON_TWO_PISTOLS && DisableGoldEdition) continue;
 			
 			if (wdPtr->Possessed==-1) continue; /* This weapon not allowed! */
 

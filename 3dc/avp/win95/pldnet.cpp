@@ -39,6 +39,7 @@
 #include "targeting.h"
 #include "iofocus.h"
 #include "Input.h"
+#include "ConfigFile.h"
 
 #define UseLocalAssert TRUE
 #include "ourasert.h"
@@ -239,6 +240,9 @@ int FacehuggerKilled = 0;
 int XenoborgKilled = 0;
 int QueenKilled = 0;
 int SentryGunKilled = 0;
+
+//avp 99 mode
+static bool DisableGoldEdition = false;
 
 static int GameTimeSinceLastSend = 0;
 
@@ -11339,6 +11343,7 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 {
 	int i;
 	int maxMarines = 0;
+	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
 
 	// set limits for disallowed marine types to zero
 	if (!netGameData.allowSmartgun) {
@@ -11361,11 +11366,11 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 		netGameData.maxMarineGrenade = 0;
 	}
 
-	if (!netGameData.allowSmartDisc) {
+	if (!netGameData.allowSmartDisc || DisableGoldEdition) {
 		netGameData.maxMarineSmartDisc = 0;
 	}
 
-	if (!netGameData.allowPistols) {
+	if (!netGameData.allowPistols || DisableGoldEdition) {
 		netGameData.maxMarinePistols = 0;
 	}
 
@@ -11389,12 +11394,12 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 	else if (netGameData.gameType == NGT_Coop)
 	{
 		// no pc aliens allowed in coop games
-		netGameData.maxAlien = 0;
+		netGameData.maxAlien = 8;
 	}
 
 	if (netGameData.skirmishMode)
 	{
-		// Skirmish mode - player can be anything except an alien
+		// Skirmish mode - player can be anything
 		netGameData.maxAlien = 8;
 		netGameData.maxPredator = 8;
 		netGameData.maxMarine = 8;
@@ -11405,8 +11410,14 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 		netGameData.maxMarineSadar = 8;
 		netGameData.maxMarineGrenade = 8;
 		netGameData.maxMarineMinigun = 8;
-		netGameData.maxMarineSmartDisc = 8;
-		netGameData.maxMarinePistols = 8;
+		if (DisableGoldEdition) {
+			netGameData.maxMarineSmartDisc = 0;
+			netGameData.maxMarinePistols = 0;
+		}
+		else {
+			netGameData.maxMarineSmartDisc = 8;
+			netGameData.maxMarinePistols = 8;
+		}
 	}
 
 	CharacterTypesAvailable[NGCT_Marine] = netGameData.maxMarine;
