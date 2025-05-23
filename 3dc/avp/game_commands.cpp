@@ -137,6 +137,10 @@ static void ShowPickupCount(void)
 {
 	ShowDebuggingText.PickupCount = ~ShowDebuggingText.PickupCount;
 }
+static void ShowDifficulty(void)
+{
+	ShowDebuggingText.Difficulty = ~ShowDebuggingText.Difficulty;
+}
 
 
 extern void ChangeToMarine();
@@ -362,6 +366,7 @@ void CreateGameSpecificConsoleCommands(void)
 	ShowDebuggingText.PolyCount = 0;
 	ShowDebuggingText.EnemyCount = 0;
 	ShowDebuggingText.PickupCount = 0;
+	ShowDebuggingText.Difficulty = 0;
 
 	#ifndef AVP_DEBUG_VERSION 
 	bool IsACheat = true;
@@ -520,6 +525,13 @@ void CreateGameSpecificConsoleCommands(void)
 			"PICKUPCOUNT",
 			"DISPLAY THE NUMBER OF PICKUPS IN THE LEVEL",
 			ShowPickupCount
+		);
+
+		ConsoleCommand::Make
+		(
+			"DIFFICULTY",
+			"DISPLAY THE CURRENT DIFFICULTY LEVEL",
+			ShowDifficulty
 		);
 	}
 

@@ -2704,7 +2704,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			{
-				if (AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BASIC)
+				if (AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BASIC || AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BONUS)
 				{
 					AvP.Difficulty = static_cast<I_HARDANUFF>(AvPMenus.CurrentlySelectedElement);
 				}
@@ -4357,6 +4357,10 @@ int MaxDifficultyLevelAllowed(I_PLAYER_TYPE playerID, int level)
 	if (level == 0) 
 	{
 		return 4;
+	}
+	if (UserProfilePtr->LevelCompleted[playerID][level - 1] == 3)
+	{
+		return 4; //hack to get impossible mission to also show when completed on director's cut
 	}
 	else
 	{

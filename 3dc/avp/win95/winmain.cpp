@@ -589,6 +589,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 								if (MarineHealthCount > 0) ReleasePrintDebuggingText("Medikit = %d\n", MarineHealthCount);
 								if (MarineArmourCount > 0) ReleasePrintDebuggingText("Armour = %d\n", MarineArmourCount);
 							}
+
+							if (ShowDebuggingText.Difficulty) ReleasePrintDebuggingText("Difficulty = %d\n", AvP.Difficulty);
 						}
 						//#endif  /* MainTextPrint */
 
