@@ -288,7 +288,7 @@ void StartGame(void)
 		LeanScale=ONE_FIXED;
 	}
 	
-	MotionTrackerScale = DIV_FIXED(ScreenDescriptorBlock.SDB_Width, 640);
+	MotionTrackerScale = DIV_FIXED(ScreenDescriptorBlock.SDB_Width, 960);
 //	MotionTrackerScale = DIV_FIXED(ScreenDescriptorBlock.SDB_Height, 480) - (13107);
 
 	InitialiseTriggeredFMVs();

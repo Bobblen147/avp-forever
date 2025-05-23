@@ -241,7 +241,7 @@ void D3D_InitialiseMarineHUD(void)
 	MotionTrackerCentreX = BlueBar.TopLeftX + (BlueBar.Width/2);
 	MotionTrackerScale  = ONE_FIXED;
 
-	HUDScaleFactor = DIV_FIXED(ScreenDescriptorBlock.SDB_Width, 640);
+	HUDScaleFactor = DIV_FIXED(ScreenDescriptorBlock.SDB_Width, 960);
 //	HUDScaleFactor = DIV_FIXED(ScreenDescriptorBlock.SDB_Height, 480) - (13107);
 
 	#if UseGadgets

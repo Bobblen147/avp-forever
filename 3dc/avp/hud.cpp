@@ -1270,7 +1270,7 @@ void DisplayPredatorHealthAndEnergy(void)
 	PLAYER_WEAPON_DATA *weaponPtr = &(PlayerStatusPtr->WeaponSlot[PlayerStatusPtr->SelectedWeaponSlot]);
 	int value;
 	int i;
-	int scale = DIV_FIXED(ScreenDescriptorBlock.SDB_Width,640);
+	int scale = DIV_FIXED(ScreenDescriptorBlock.SDB_Width,960);
 	int size = MUL_FIXED(51,scale);
 	{
 		NPC_DATA *NpcData = NULL;
