@@ -61,7 +61,8 @@ extern void ThisFramesRenderingHasBegun(void);
 extern void ThisFramesRenderingHasFinished(void);
 
 //avp 99 mode
-static bool DisableGoldEdition = false;
+static bool AvP99InGameFMVs = false;
+static bool AvP99TitleScreen = false;
 
 
 void FindLightingValuesFromTriggeredFMV(uint8_t *bufferPtr, FMVTEXTURE *ftPtr)
@@ -289,7 +290,7 @@ void UpdateAllFMVTextures()
 
 extern void StartTriggerPlotFMV(int number)
 {
-	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	AvP99InGameFMVs = Config_GetBool("[AvP99Features]", "AvP99InGameFMVs", false);
 	
 	uint32_t i = NumberOfFMVTextures;
 	char buffer[25];
@@ -298,7 +299,7 @@ extern void StartTriggerPlotFMV(int number)
 		return;
 	}
 
-	if (DisableGoldEdition) {
+	if (AvP99InGameFMVs) {
 		sprintf(buffer, "FMVsOld/message%d.smk", number);
 	}
 	else { sprintf(buffer, "FMVs/message%d.smk", number); }
@@ -426,11 +427,11 @@ void ReleaseAllFMVTextures()
 // bjd - the below three functions could maybe be moved out of this file altogether as vorbisPlayer can handle it
 void StartMenuMusic()
 {
-	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	AvP99TitleScreen = Config_GetBool("[AvP99Features]", "AvP99TitleScreen", false);
 	
 	menuMusic = new SmackerPlayback;
 
-	if (DisableGoldEdition) {
+	if (AvP99TitleScreen) {
 		if (menuMusic->Open("FMVsOld/IntroSound.smk", true) != FMV_OK) //looping not handled in libsmackerdec yet
 		{
 			Con_PrintError("Can't open file OldIntroSound.smk");

@@ -130,6 +130,7 @@ extern struct DEBUGGINGTEXTOPTIONS ShowDebuggingText;
 
 extern bool bRunning;
 
+bool disableSaving;
 bool unlimitedSaves = false;
 
 extern bool IsDemoVersion();
@@ -452,6 +453,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 	#else
 
 	// support removing limit on number of game saves
+	disableSaving = Config_GetBool("[Misc]", "disableSaving", false);
 	unlimitedSaves = Config_GetBool("[Misc]", "UnlimitedSaves", false);
 
 	while (AvP_MainMenus() && bRunning)

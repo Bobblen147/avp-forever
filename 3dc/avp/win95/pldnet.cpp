@@ -242,7 +242,7 @@ int QueenKilled = 0;
 int SentryGunKilled = 0;
 
 //avp 99 mode
-static bool DisableGoldEdition = false;
+static bool DisableSkeeterPistols = false;
 
 static int GameTimeSinceLastSend = 0;
 
@@ -11343,7 +11343,7 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 {
 	int i;
 	int maxMarines = 0;
-	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	DisableSkeeterPistols = Config_GetBool("[AvP99Features]", "DisableSkeeterPistols", false);
 
 	// set limits for disallowed marine types to zero
 	if (!netGameData.allowSmartgun) {
@@ -11366,11 +11366,11 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 		netGameData.maxMarineGrenade = 0;
 	}
 
-	if (!netGameData.allowSmartDisc || DisableGoldEdition) {
+	if (!netGameData.allowSmartDisc || DisableSkeeterPistols) {
 		netGameData.maxMarineSmartDisc = 0;
 	}
 
-	if (!netGameData.allowPistols || DisableGoldEdition) {
+	if (!netGameData.allowPistols || DisableSkeeterPistols) {
 		netGameData.maxMarinePistols = 0;
 	}
 
@@ -11410,7 +11410,7 @@ int DetermineAvailableCharacterTypes(bool ConsiderUsedCharacters)
 		netGameData.maxMarineSadar = 8;
 		netGameData.maxMarineGrenade = 8;
 		netGameData.maxMarineMinigun = 8;
-		if (DisableGoldEdition) {
+		if (DisableSkeeterPistols) {
 			netGameData.maxMarineSmartDisc = 0;
 			netGameData.maxMarinePistols = 0;
 		}

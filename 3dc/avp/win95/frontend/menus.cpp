@@ -91,7 +91,8 @@ static bool CustomAlienSinglePlayerLevel = false;
 static bool CustomMarineSinglePlayerLevel = false;
 static bool CustomPredatorSinglePlayerLevel = false;
 //avp 99 mode
-static bool DisableGoldEdition = false;
+static bool AvP99TitleScreen = false;
+static bool DisableSkeeterPistols = false;
 
 void HandlePostGameFMVs(void);
 void HandlePreGameFMVs(void);
@@ -268,8 +269,8 @@ int AvP_MainMenus(void)
 	TimeStampedMessage("start of menus");
 
 	// start background FMV
-	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
-	if (!DisableGoldEdition) {
+	AvP99TitleScreen = Config_GetBool("[AvP99Features]", "AvP99TitleScreen", false);
+	if (!AvP99TitleScreen) {
 		StartMenuBackgroundFmv();
 	}
 
@@ -766,6 +767,8 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 	enum AVPMENU_ID previousMenuID = AvPMenus.CurrentMenu;
 	AvPMenus.CurrentMenu = menuID;
 
+	DisableSkeeterPistols = Config_GetBool("[AvP99Features]", "DisableSkeeterPistols", false);
+
 	/* set pointer to the start of the menu's element data */
 	AvPMenus.MenuElements = AvPMenusData[menuID].MenuElements; // could use default
 
@@ -1013,13 +1016,13 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 			{
 				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu=AVPMENU_MULTIPLAYER_LOBBIEDSERVER;
 			}
-			else if (netGameData.skirmishMode && !DisableGoldEdition)
+			else if (netGameData.skirmishMode && !DisableSkeeterPistols)
 			{
 				//for skirmish games , use skirmish config menu instead
 				SetupNewMenu(AVPMENU_SKIRMISH_CONFIG);
 				return;
 			}
-			else if (netGameData.skirmishMode && DisableGoldEdition)
+			else if (netGameData.skirmishMode && DisableSkeeterPistols)
 			{
 				//for skirmish games , use skirmish config menu instead
 				SetupNewMenu(AVPMENU_SKIRMISH_CONFIG_NOGOLD);
@@ -1239,7 +1242,7 @@ static void RenderMenu(void)
 	}
 
 	// Render Menu Subtitle
-	if (AvPMenusData[AvPMenus.CurrentMenu].MenuTitle == TEXTSTRING_MAINMENU_TITLE && !DisableGoldEdition)
+	if (AvPMenusData[AvPMenus.CurrentMenu].MenuTitle == TEXTSTRING_MAINMENU_TITLE && !AvP99TitleScreen)
 		RenderMenuText(GetTextString(TEXTSTRING_MAINMENU_SUBTITLE), MENU_CENTREX, 100, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
 
 }

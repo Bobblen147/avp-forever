@@ -18,7 +18,7 @@
 extern unsigned char KeyboardInput[];
 extern void LoadAllWeapons(PLAYER_STATUS *playerStatusPtr);
 //avp 99 mode
-static bool DisableGoldEdition = false;
+static bool DisableSkeeterPistols = false;
 
 
 void HandleCheatModes(void)
@@ -94,7 +94,7 @@ void GiveAllWeaponsCheat(void)
 {
 	PLAYER_STATUS *playerStatusPtr= (PLAYER_STATUS *) (Player->ObStrategyBlock->SBdataptr);
 	
-	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	DisableSkeeterPistols = Config_GetBool("[AvP99Features]", "DisableSkeeterPistols", false);
 
 	if(AvP.PlayerType == I_Marine)
    	{
@@ -107,9 +107,9 @@ void GiveAllWeaponsCheat(void)
 			  
 			if (wdPtr->WeaponIDNumber==NULL_WEAPON) continue;
 
-			if (wdPtr->WeaponIDNumber==WEAPON_MARINE_PISTOL && DisableGoldEdition) continue;
-			if (wdPtr->WeaponIDNumber == WEAPON_FRISBEE_LAUNCHER && DisableGoldEdition) continue;
-			if (wdPtr->WeaponIDNumber==WEAPON_TWO_PISTOLS && DisableGoldEdition) continue;
+			if (wdPtr->WeaponIDNumber==WEAPON_MARINE_PISTOL && DisableSkeeterPistols) continue;
+			if (wdPtr->WeaponIDNumber == WEAPON_FRISBEE_LAUNCHER && DisableSkeeterPistols) continue;
+			if (wdPtr->WeaponIDNumber==WEAPON_TWO_PISTOLS && DisableSkeeterPistols) continue;
 			
 			if (wdPtr->Possessed==-1) continue; /* This weapon not allowed! */
 

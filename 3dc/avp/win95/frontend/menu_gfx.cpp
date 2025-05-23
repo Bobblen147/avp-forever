@@ -23,7 +23,7 @@ extern int RenderSmallFontString(char *textPtr,int sx,int sy,int alpha, int red,
 /*static*/ void CalculateWidthsOfAAFont();
 extern bool IsDemoVersion();
 //avp 99 mode
-static bool DisableGoldEdition = false;
+static bool AvP99TitleScreen = false;
 
 texID_t AVPMENUGFX_CLOUDY;
 //texID_t AVPMENUGFX_SMALL_FONT;
@@ -750,7 +750,7 @@ Determine area used by text , so we can draw it centrally
 
 void LoadAllMenuTextures()
 {
-	DisableGoldEdition = Config_GetBool("[Misc]", "DisableGoldEdition", false);
+	AvP99TitleScreen = Config_GetBool("[AvP99Features]", "AvP99TitleScreen", false);
 
 	AVPMENUGFX_CLOUDY = Tex_CreateFromRIM("graphics/Menus/fractal.RIM");
 #if 0
@@ -765,7 +765,7 @@ void LoadAllMenuTextures()
 
 	AVPMENUGFX_PRESENTS        = Tex_CreateFromRIM("graphics/Menus/FIandRD.RIM");
 	AVPMENUGFX_AREBELLIONGAME  = Tex_CreateFromRIM("graphics/Menus/presents.RIM");
-	if (DisableGoldEdition) { AVPMENUGFX_ALIENSVPREDATOR = Tex_CreateFromRIM("graphics/Menus/OldLogo.RIM"); }
+	if (AvP99TitleScreen) { AVPMENUGFX_ALIENSVPREDATOR = Tex_CreateFromRIM("graphics/Menus/OldLogo.RIM"); }
 	else { AVPMENUGFX_ALIENSVPREDATOR = Tex_CreateFromRIM("graphics/Menus/AliensVPredator.RIM"); }
 	
 //	AVPMENUGFX_SLIDERBAR       = Tex_CreateFromRIM("graphics/Menus/SliderBar.RIM");
