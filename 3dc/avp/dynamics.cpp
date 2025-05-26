@@ -59,6 +59,7 @@ extern DAMAGE_PROFILE PredPistol_FlechetteDamage;
 
 int PrintDebuggingText(const char* t, ...);
 void PlayerPheromoneTrail(DYNAMICSBLOCK *dynPtr);
+bool fallingDamageDisabled = 0;
 
 int PlayerTeleportOutsideEnv = 1;
 
@@ -282,10 +283,12 @@ extern void ObjectDynamics(void)
 	if (FREEFALL_CHEATMODE)
 	{
 		PlanarGravity = 0;
+		fallingDamageDisabled = 1;
 	}
 	else
 	{
 		PlanarGravity = 1;
+		fallingDamageDisabled = 0;
 	}
 	/* clear previous frame's collision reports */
 	InitialiseCollisionReports();
@@ -593,7 +596,7 @@ extern void ObjectDynamics(void)
 				}
 			}
 			#endif
-			BOOL fallingDamageDisabled = (!netGameData.fallingDamage && AvP.Network!=I_No_Network);
+			fallingDamageDisabled = (!netGameData.fallingDamage && AvP.Network!=I_No_Network);
 			int damage = (PlayersFallingSpeed-15000)*256;
 			int distanceFallen = (dynPtr->Position.vy - PlayersMaxHeightWhilstNotInContactWithGround);
 

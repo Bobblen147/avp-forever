@@ -1165,6 +1165,9 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 				}
 			}
 
+			// highlight medium difficulty to start with
+			AvPMenus.CurrentlySelectedElement = 1;
+
 			SetBriefingTextForEpisode(episodeToPlay, AvP.PlayerType);
 			break;
 		}
@@ -1186,7 +1189,7 @@ static void RenderMenu(void)
 		if    ((AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BASIC)
 			|| (AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BONUS))
 		{
-			y = MENU_BOTTOMYEDGE - AvPMenus.MenuHeight;
+			y = MENU_BOTTOMYEDGE - AvPMenus.MenuHeight + 25; //fudge to fit 'impossible mission' difficulty neatly onto the screen
 			RenderBriefingScreenInfo();
 		}
 		else
