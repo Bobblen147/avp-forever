@@ -498,7 +498,7 @@ static NPC_DATA NpcDataList[I_NPC_End]= {
 	{
 		I_PC_Predator_Impossible,
 		{
-			250,	/* Health */
+			100,	/* Health */
 			0,	/* Armour */
 			0, /* IsOnFire */
 			{
