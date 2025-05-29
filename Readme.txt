@@ -40,6 +40,9 @@ Gameplay
 -Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
 -EXPERIMENTAL - ENEMYCOUNT debug command adds a live kill counter to the top left of the screen (including both placed and generated enemies)
 -EXPERIMENTAL - PICKUPCOUNT debug command adds a live pickup counter to the top left of the screen (includes marine weapons, health, armour and pred field charge)
+-Impossible Mission difficulty level no longer requires a cheat mode to select. Unlocking a level on director's cut will unlock impossible mission too.
+-Bonus levels can now be played on any difficulty level
+-Cheat modes can now be played on any appropriate level
 
 Skirmish
 -Alien now playable in skirmish mode, tail attack can now target other aliens
@@ -62,6 +65,10 @@ Other
 -Enable/disable EAX reverb effects from config
 -Added config file option to disable bilinear filtering
 -Added config file option to skip the copyright and intro logo videos
+-Can now enable the following features to get the game to act more like the original 1999 release
+	AvP99TitleScreen: restores the starfield title screen, original avp logo and intro music (acquire IntroSound.smk and add to new FMVsOld folder)
+	Avp99FMVs: will play the original US actor FMVs instead of the gold edition ones (grab them from moddb and add to new FMVsOld folder)
+	DisableSkeeterPistols: cannot pickup skeeter or pistol weapons, specialists of this type disabled in multiplayer
 
 Bug fixes
 -Partially fixed NPC heavy weapons drop sound repeating bug (needs 60fps or less)
@@ -69,6 +76,7 @@ Bug fixes
 -Fixed a sound bug when breaking armour/light weapon pickups in skirmish
 -Fixed incorrect sound playing in custom maps if correct sound is missing
 -Single player AI alien triggers now work in skirmish (aliens don't stay dormant)
+-Fudged hud scaling to look better at 1920x1080 (still broken on ultrawide / UHD resolutions)
 
 
 Extra credits
@@ -126,6 +134,7 @@ Known (pre-existing) avpx bugs
 * means I've applied a fix or workaround in avpx enhanced
 
 -Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)
+-Can't see starry sky through a window (tyrargo, orbital)
 -Stranded cliff textures have an outline around the transparent section (bad bilinear filtering)*
 -Animated lava texture in Fury 161 (& Earthbound animated lights / Vaults predalien sphere) are broken
 -Getting hit by a xenoborg sometimes breaks the graphics completely

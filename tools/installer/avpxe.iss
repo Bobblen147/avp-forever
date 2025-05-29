@@ -37,6 +37,9 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
+[Dirs]
+Name: {app}\FMVsOld
+
 [Files]
 Source: "..\..\redist\AvPxEnhanced.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\redist\AvPx_License.txt"; DestDir: "{app}"; Flags: ignoreversion
