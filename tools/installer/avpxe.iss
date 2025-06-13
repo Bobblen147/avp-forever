@@ -48,6 +48,7 @@ Source: "..\..\redist\AvPx_Enhanced_Readme.txt"; DestDir: "{app}"; Flags: ignore
 Source: "..\..\redist\langavpx.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\..\redist\fastfile\*"; DestDir: "{app}\fastfile\"; Flags: ignoreversion recursesubdirs
 Source: "..\..\redist\samples\*"; DestDir: "{app}\avp_rifs\Custom\"; Flags: ignoreversion recursesubdirs
+Source: "..\..\redist\graphics\Menus\*"; DestDir: "{app}\graphics\Menus\"; Flags: ignoreversion recursesubdirs
 Source: "..\..\redist\directx\*"; DestDir: "{app}\redist\directx\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "..\..\redist\vcredist_x86.exe"; DestDir: "{app}\redist\vc\"; Flags: ignoreversion
 Source: "..\..\redist\shaders\*"; DestDir: "{app}\shaders\"; Flags: ignoreversion recursesubdirs createallsubdirs

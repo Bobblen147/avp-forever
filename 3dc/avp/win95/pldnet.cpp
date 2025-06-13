@@ -257,6 +257,39 @@ extern STRATEGYBLOCK *Biting;
 extern int Bit;
 extern int StaffAttack;
 
+//debug enemy counters
+extern int PlacedAlienCount;
+extern int PlacedPredAlienCount;
+extern int PlacedPraetorianCount;
+extern int GenAlienCount;
+extern int GenPredAlienCount;
+extern int GenPraetorianCount;
+extern int PlacedMarineCount;
+extern int PlacedCivilianCount;
+extern int PlacedAndroidCount;
+extern int GenMarineCount;
+extern int GenCivilianCount;
+extern int GenAndroidCount;
+extern int PlacedPredCount;
+extern int GenPredCount;
+extern int PlacedHuggerCount;
+extern int PlacedXenoborgCount;
+extern int PlacedSentryCount;
+extern int PlacedQueenCount;
+
+//debug pickup counters
+extern int FieldChargeCount;
+extern int PulseRifleCount;
+extern int SmartGunCount;
+extern int FlameThrowerCount;
+extern int SADARCount;
+extern int GrenadeLauncherCount;
+extern int MinigunCount;
+extern int PistolCount;
+extern int SkeeterCount;
+extern int MarineHealthCount;
+extern int MarineArmourCount;
+
 /*----------------------------------------------------------------------
   External globals (& protoypes)
   ----------------------------------------------------------------------*/
@@ -565,6 +598,39 @@ void InitAVPNetGameForHost(int species, int gamestyle, int level)
 	XenoborgKilled = 0;
 	SentryGunKilled = 0;
 	QueenKilled = 0;
+
+	//also reset debug enemy & pickup counters
+	//reset debug enemy counters
+	PlacedAlienCount = 0;
+	PlacedPredAlienCount = 0;
+	PlacedPraetorianCount = 0;
+	GenAlienCount = 0;
+	GenPredAlienCount = 0;
+	GenPraetorianCount = 0;
+	PlacedMarineCount = 0;
+	PlacedCivilianCount = 0;
+	PlacedAndroidCount = 0;
+	GenMarineCount = 0;
+	GenCivilianCount = 0;
+	GenAndroidCount = 0;
+	PlacedPredCount = 0;
+	GenPredCount = 0;
+	PlacedHuggerCount = 0;
+	PlacedXenoborgCount = 0;
+	PlacedSentryCount = 0;
+	PlacedQueenCount = 0;
+	//reset debug pickup counters
+	FieldChargeCount = 0;
+	PulseRifleCount = 0;
+	SmartGunCount = 0;
+	FlameThrowerCount = 0;
+	SADARCount = 0;
+	GrenadeLauncherCount = 0;
+	MinigunCount = 0;
+	PistolCount = 0;
+	SkeeterCount = 0;
+	MarineHealthCount = 0;
+	MarineArmourCount = 0;
 }
 
 void InitAVPNetGameForJoin(void)
@@ -12374,33 +12440,37 @@ void DoMultiplayerSpecificHud()
 	}
 
 	// show the player's score
-	{
-		int score = CalculateMyScore();
-
-		if (score || IsItPossibleToScore())
+	if (!ShowDebuggingText.PickupCount && !ShowDebuggingText.EnemyCount) {
 		{
-			sprintf(text, "%s : %d", GetTextString(TEXTSTRING_MULTIPLAYER_SCORE), score);
-			RenderString(text, 5, 0, 0xffffffff);
+			int score = CalculateMyScore();
+
+			if (score || IsItPossibleToScore())
+			{
+				sprintf(text, "%s : %d", GetTextString(TEXTSTRING_MULTIPLAYER_SCORE), score);
+				RenderString(text, 5, 0, 0xffffffff);
+			}
 		}
 	}
 
 	// show time left
-	if (netGameData.timeLimit > 0)
-	{
-		int hoursLeft;
-		int minutesLeft;
-		int secondsLeft = (netGameData.timeLimit * 60) - (netGameData.GameTimeElapsed >> 16);
+	if (!ShowDebuggingText.PickupCount && !ShowDebuggingText.EnemyCount) {
+		if (netGameData.timeLimit > 0)
+		{
+			int hoursLeft;
+			int minutesLeft;
+			int secondsLeft = (netGameData.timeLimit * 60) - (netGameData.GameTimeElapsed >> 16);
 
-		if (secondsLeft < 0) {
-			secondsLeft = 0;
+			if (secondsLeft < 0) {
+				secondsLeft = 0;
+			}
+
+			hoursLeft = secondsLeft / 3600;
+			minutesLeft = (secondsLeft / 60) % 60;
+			secondsLeft %= 60;
+			// display time left as hh:mm:ss
+			sprintf(text, "%s : %02d:%02d:%02d", GetTextString(TEXTSTRING_MULTIPLAYER_TIME), hoursLeft, minutesLeft, secondsLeft);
+			RenderString(text, 5, 20, 0xffffffff);
 		}
-
-		hoursLeft = secondsLeft / 3600;
-		minutesLeft = (secondsLeft / 60) % 60;
-		secondsLeft %= 60;
-		// display time left as hh:mm:ss
-		sprintf(text, "%s : %02d:%02d:%02d", GetTextString(TEXTSTRING_MULTIPLAYER_TIME), hoursLeft, minutesLeft, secondsLeft);
-		RenderString(text, 5, 20, 0xffffffff);
 	}
 }
 

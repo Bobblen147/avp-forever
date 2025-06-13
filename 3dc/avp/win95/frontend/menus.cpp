@@ -93,6 +93,11 @@ static bool CustomPredatorSinglePlayerLevel = false;
 //avp 99 mode
 static bool AvP99TitleScreen = false;
 static bool DisableSkeeterPistols = false;
+//campaign
+static bool CampaignMode = false;
+int AlienCampaignEpisodeToPlay = 0;
+int MarineCampaignEpisodeToPlay = 0;
+int PredatorCampaignEpisodeToPlay = 0;
 
 void HandlePostGameFMVs(void);
 void HandlePreGameFMVs(void);
@@ -297,7 +302,73 @@ int AvP_MainMenus(void)
 	}
 	VideoModeNotAvailable = 0;
 
-	if (AvP.LevelCompleted && CheatMode_Active == CHEATMODE_NONACTIVE && !DebuggingCommandsActive)
+	CampaignMode = Config_GetBool("[Gameplay]", "CampaignMode", false);
+	if (AvP.LevelCompleted && CampaignMode) // && !DebuggingCommandsActive
+	{
+		HandlePostGameFMVs();
+		OkayToPlayNextEpisode();
+		AvP.LevelCompleted = 0;
+
+		//which episode is next to play?
+		int episodeToPlay;
+		switch (AvP.PlayerType)
+		{
+		case I_Marine:
+			MarineCampaignEpisodeToPlay = MarineCampaignEpisodeToPlay + 1;
+			episodeToPlay = MarineCampaignEpisodeToPlay;
+
+			SetLevelToLoadForMarine(MarineCampaignEpisodeToPlay);
+			break;
+
+		case I_Alien:
+			AlienCampaignEpisodeToPlay = AlienCampaignEpisodeToPlay + 1;
+			episodeToPlay = AlienCampaignEpisodeToPlay;
+
+			SetLevelToLoadForAlien(AlienCampaignEpisodeToPlay);
+			break;
+
+		case I_Predator:
+			PredatorCampaignEpisodeToPlay = PredatorCampaignEpisodeToPlay + 1;
+			episodeToPlay = PredatorCampaignEpisodeToPlay;
+
+			SetLevelToLoadForPredator(PredatorCampaignEpisodeToPlay);
+			break;
+		}
+
+		SetBriefingTextForEpisode(episodeToPlay, AvP.PlayerType);
+
+		//have we completed the campaign?
+		switch (AvP.PlayerType)
+		{
+		case I_Marine:
+			if (MarineCampaignEpisodeToPlay <= MAX_NO_OF_BASIC_MARINE_EPISODES - 1) {
+				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
+			}
+			else {
+				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
+			}
+			break;
+
+		case I_Alien:
+			if (AlienCampaignEpisodeToPlay <= MAX_NO_OF_BASIC_ALIEN_EPISODES - 1) {
+				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
+			}
+			else {
+				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
+			}
+			break;
+
+		case I_Predator:
+			if (PredatorCampaignEpisodeToPlay <= MAX_NO_OF_BASIC_PREDATOR_EPISODES - 1) {
+				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
+			}
+			else {
+				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
+			}
+			break;
+		}
+	}
+	else if (AvP.LevelCompleted && CheatMode_Active == CHEATMODE_NONACTIVE && !DebuggingCommandsActive)
 	{
 		HandlePostGameFMVs();
 		OkayToPlayNextEpisode();
@@ -2632,6 +2703,10 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				if (AvPMenus.MenusState == MENUSSTATE_INGAMEMENUS)
 				{
 					AvP.MainLoopRunning = 0;
+					//reset campaign
+					AlienCampaignEpisodeToPlay = 0;
+					MarineCampaignEpisodeToPlay = 0;
+					PredatorCampaignEpisodeToPlay = 0;
 				}
 				AvPMenus.MenusState = MENUSSTATE_OUTSIDEMENUS;
 			}
@@ -2734,6 +2809,10 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 					AlienEpisodeToPlay = 0;
 					SetLevelToLoadForAlienCustom();
 				}
+				else if (CampaignMode) {
+					AlienEpisodeToPlay = 0;
+					SetLevelToLoadForAlien(AlienEpisodeToPlay);
+				}
 				else {
 					SetLevelToLoadForAlien(AlienEpisodeToPlay);
 				}
@@ -2762,6 +2841,10 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 					MarineEpisodeToPlay = 0;
 					SetLevelToLoadForMarineCustom();
 				}
+				else if (CampaignMode) {
+					MarineEpisodeToPlay = 0;
+					SetLevelToLoadForMarine(MarineEpisodeToPlay);
+				}
 				else {
 					SetLevelToLoadForMarine(MarineEpisodeToPlay);
 				}
@@ -2786,9 +2869,14 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			{
 				AvP.PlayerType = I_Predator;
 				CustomPredatorSinglePlayerLevel = Config_GetBool("[Custom]", "CustomPredatorSinglePlayerLevel", false);
+
 				if (CustomPredatorSinglePlayerLevel) {
 					PredatorEpisodeToPlay = 0;
 					SetLevelToLoadForPredatorCustom();
+				}
+				else if (CampaignMode) {
+					PredatorEpisodeToPlay = 0;
+					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
 				}
 				else {
 					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
@@ -5205,16 +5293,25 @@ static void CheckForLoadGame()
 			switch (AvP.PlayerType)
 			{
 				case I_Marine :
+					if (CampaignMode) {
+						MarineCampaignEpisodeToPlay = save_slot->Episode;
+					}
 					MarineEpisodeToPlay = save_slot->Episode;
 					SetLevelToLoadForMarine(MarineEpisodeToPlay);
 					break;
 
 				case I_Alien :
+					if (CampaignMode) {
+						AlienCampaignEpisodeToPlay = save_slot->Episode;
+					}
 					AlienEpisodeToPlay = save_slot->Episode;
 					SetLevelToLoadForAlien(AlienEpisodeToPlay);
 					break;
 
 				case I_Predator :
+					if (CampaignMode) {
+						PredatorCampaignEpisodeToPlay = save_slot->Episode;
+					}
 					PredatorEpisodeToPlay = save_slot->Episode;
 					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
 					break;
