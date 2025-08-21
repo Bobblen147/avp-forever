@@ -574,9 +574,9 @@ void InitNPCs(RIFFHANDLE h)
 			i_loaded_npc.delete_current();
 		}
 	}
-#if debug
+//#if debug
 	if(!KeepMainRifFile)
-#endif
+//#endif
 	{
 		//at this point we no longer need the main level rif file
 		unload_rif(h);
@@ -612,13 +612,13 @@ void InitNPCs(RIFFHANDLE h)
 	}
 	Set_Progress_Bar_Position(PBAR_NPC_START+PBAR_NPC_INTERVAL);
 
-#if debug
+//#if debug
 	if(KeepMainRifFile)
 	{
 		Env_Chunk = old_env_chunk; // pop Env_Chunk
 	}
 	else
-#endif
+//#endif
 	{
 		Env_Chunk=0;
 	}

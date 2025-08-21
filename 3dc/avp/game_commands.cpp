@@ -533,6 +533,13 @@ void CreateGameSpecificConsoleCommands(void)
 			"DISPLAY THE CURRENT DIFFICULTY LEVEL",
 			ShowDifficulty
 		);
+
+		ConsoleCommand::Make
+		(
+			"PAINTBALL",
+			"TOGGLES PAINTBALLMODE ON/OFF",
+			TogglePaintBallMode
+		);
 	}
 
 	#if CONSOLE_DEBUGGING_COMMANDS_ACTIVATED
@@ -632,12 +639,6 @@ void CreateGameSpecificConsoleCommands(void)
 		"RESTARTMULTIPLAYER",
 		"RESTARTS A NETWORK GAME FROM SCRATCH",
 		RestartMultiplayer
-	);
-	ConsoleCommand::Make
-	(
-		"PAINTBALL",
-		"TOGGLES PAINTBALLMODE ON/OFF",
-		TogglePaintBallMode
 	);
 
 	ConsoleCommand::Make

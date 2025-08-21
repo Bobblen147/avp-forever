@@ -132,6 +132,7 @@ extern bool bRunning;
 
 bool disableSaving;
 bool unlimitedSaves = false;
+bool debugmodeFromConfig = false;
 
 extern bool IsDemoVersion();
 extern texID_t AAFontImageNumber;
@@ -308,6 +309,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 
 //	#endif //AVP_DEBUG_VERSION
 
+	debugmodeFromConfig = Config_GetBool("[Gameplay]", "DebugMode", false);
 	if (strstr(command_line, "-server"))
 	{
 		//game has been launched by mplayer , we best humour it
@@ -326,7 +328,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 			exit(0x6364);
 		}
 	}
-	else if (strstr(command_line, "-debug"))
+	else if ((strstr(command_line, "-debug")) || debugmodeFromConfig==true)
 	{
 		DebuggingCommandsActive = 1;
 		ForceLoad_Alien = TRUE;

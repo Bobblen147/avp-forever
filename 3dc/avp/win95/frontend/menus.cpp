@@ -95,6 +95,7 @@ static bool AvP99TitleScreen = false;
 static bool DisableSkeeterPistols = false;
 //campaign
 static bool CampaignMode = false;
+static bool CheatCampaignMode = false;
 int AlienCampaignEpisodeToPlay = 0;
 int MarineCampaignEpisodeToPlay = 0;
 int PredatorCampaignEpisodeToPlay = 0;
@@ -302,7 +303,6 @@ int AvP_MainMenus(void)
 	}
 	VideoModeNotAvailable = 0;
 
-	CampaignMode = Config_GetBool("[Gameplay]", "CampaignMode", false);
 	if (AvP.LevelCompleted && CampaignMode) // && !DebuggingCommandsActive
 	{
 		HandlePostGameFMVs();
@@ -345,6 +345,8 @@ int AvP_MainMenus(void)
 				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
 			}
 			else {
+				CampaignMode = false;
+				CheatCampaignMode = false;
 				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
 			}
 			break;
@@ -354,6 +356,8 @@ int AvP_MainMenus(void)
 				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
 			}
 			else {
+				CampaignMode = false;
+				CheatCampaignMode = false;
 				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
 			}
 			break;
@@ -363,6 +367,8 @@ int AvP_MainMenus(void)
 				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
 			}
 			else {
+				CampaignMode = false;
+				CheatCampaignMode = false;
 				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
 			}
 			break;
@@ -392,7 +398,10 @@ int AvP_MainMenus(void)
 		SetupNewMenu(AVPMENU_USERPROFILESELECT);
 	}
 
-	CheatMode_Active = CHEATMODE_NONACTIVE;
+	if (!CheatCampaignMode) {
+		CheatMode_Active = CHEATMODE_NONACTIVE;
+	}
+	
 
 	TimeStampedMessage("starting general menus");
 
@@ -2704,9 +2713,12 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				{
 					AvP.MainLoopRunning = 0;
 					//reset campaign
+					CampaignMode = false;
+					CheatCampaignMode = false;
 					AlienCampaignEpisodeToPlay = 0;
 					MarineCampaignEpisodeToPlay = 0;
 					PredatorCampaignEpisodeToPlay = 0;
+
 				}
 				AvPMenus.MenusState = MENUSSTATE_OUTSIDEMENUS;
 			}
@@ -2804,14 +2816,11 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			  &&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
 			{
 				AvP.PlayerType = I_Alien;
+				CampaignMode = false;
 				CustomAlienSinglePlayerLevel = Config_GetBool("[Custom]", "CustomAlienSinglePlayerLevel", false);
 				if (CustomAlienSinglePlayerLevel) {
 					AlienEpisodeToPlay = 0;
 					SetLevelToLoadForAlienCustom();
-				}
-				else if (CampaignMode) {
-					AlienEpisodeToPlay = 0;
-					SetLevelToLoadForAlien(AlienEpisodeToPlay);
 				}
 				else {
 					SetLevelToLoadForAlien(AlienEpisodeToPlay);
@@ -2836,14 +2845,11 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				&&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
 			{
 				AvP.PlayerType = I_Marine;
+				CampaignMode = false;
 				CustomMarineSinglePlayerLevel = Config_GetBool("[Custom]", "CustomMarineSinglePlayerLevel", false);
 				if (CustomMarineSinglePlayerLevel) {
 					MarineEpisodeToPlay = 0;
 					SetLevelToLoadForMarineCustom();
-				}
-				else if (CampaignMode) {
-					MarineEpisodeToPlay = 0;
-					SetLevelToLoadForMarine(MarineEpisodeToPlay);
 				}
 				else {
 					SetLevelToLoadForMarine(MarineEpisodeToPlay);
@@ -2868,15 +2874,12 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				&&MaximumSelectableLevel>=*elementPtr->SliderValuePtr)
 			{
 				AvP.PlayerType = I_Predator;
+				CampaignMode = false;
 				CustomPredatorSinglePlayerLevel = Config_GetBool("[Custom]", "CustomPredatorSinglePlayerLevel", false);
 
 				if (CustomPredatorSinglePlayerLevel) {
 					PredatorEpisodeToPlay = 0;
 					SetLevelToLoadForPredatorCustom();
-				}
-				else if (CampaignMode) {
-					PredatorEpisodeToPlay = 0;
-					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
 				}
 				else {
 					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
@@ -2983,7 +2986,71 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
 				AvP.PlayerType = static_cast<I_PLAYER_TYPE>(CheatMode_Species);
 				AvP.Difficulty = I_Medium; //bjd - was 1;
+				CampaignMode = false;
 				SetLevelToLoadForCheatMode(CheatMode_Environment);
+			}
+			break;
+		}
+		case AVPMENU_ELEMENT_CHEATCAMPAIGN:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
+			{
+				AvPMenus.MenusState = MENUSSTATE_STARTGAME;
+				AvP.PlayerType = static_cast<I_PLAYER_TYPE>(CheatMode_Species);
+				AvP.Difficulty = I_Medium; //bjd - was 1;
+				CampaignMode = true;
+				CheatCampaignMode = true;
+				if (AvP.PlayerType == I_Marine) {
+					MarineEpisodeToPlay = 0;
+					SetLevelToLoadForCheatMode(0);
+				}
+				if (AvP.PlayerType == I_Predator) {
+					PredatorEpisodeToPlay = 0;
+					SetLevelToLoadForCheatMode(11);
+				}
+				if (AvP.PlayerType == I_Alien) {
+					AlienEpisodeToPlay = 0;
+					SetLevelToLoadForCheatMode(22);
+				}
+			}
+			break;
+		}
+		case AVPMENU_ELEMENT_MARINECAMPAIGN:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
+			{
+				CampaignMode = true;
+				AvP.PlayerType = I_Marine;
+				MarineEpisodeToPlay = 0;
+				SetLevelToLoadForMarine(MarineEpisodeToPlay);
+				SetupNewMenu(AVPMENU_LEVELBRIEFING_BASIC);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_MARINE_GAMETYPE;
+			}
+			break;
+		}
+		case AVPMENU_ELEMENT_ALIENCAMPAIGN:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
+			{
+				CampaignMode = true;
+				AvP.PlayerType = I_Alien;
+				AlienEpisodeToPlay = 0;
+				SetLevelToLoadForAlien(AlienEpisodeToPlay);
+				SetupNewMenu(AVPMENU_LEVELBRIEFING_BASIC);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_ALIEN_GAMETYPE;
+			}
+			break;
+		}
+		case AVPMENU_ELEMENT_PREDATORCAMPAIGN:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
+			{
+				CampaignMode = true;
+				AvP.PlayerType = I_Predator;
+				PredatorEpisodeToPlay = 0;
+				SetLevelToLoadForPredator(PredatorEpisodeToPlay);
+				SetupNewMenu(AVPMENU_LEVELBRIEFING_BASIC);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_PREDATOR_GAMETYPE;
 			}
 			break;
 		}
@@ -2996,6 +3063,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				SaveMultiplayerConfiguration(GetTextString(TEXTSTRING_PREVIOUSGAME_FILENAME));
 				
 				AvP.Difficulty = I_Medium; //bjd - was 1;
+				CampaignMode = false;
 
 				if (Net_HostGame(MP_PlayerName, MP_SessionName, MP_Species, netGameData.gameType, netGameData.levelNumber) != NET_FAIL)
 				{
