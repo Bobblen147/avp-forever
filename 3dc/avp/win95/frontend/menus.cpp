@@ -398,7 +398,7 @@ int AvP_MainMenus(void)
 		SetupNewMenu(AVPMENU_USERPROFILESELECT);
 	}
 
-	if (!CheatCampaignMode) {
+	if (!CheatCampaignMode || LoadGameRequest!=SAVELOAD_REQUEST_NONE) {
 		CheatMode_Active = CHEATMODE_NONACTIVE;
 	}
 	
@@ -490,7 +490,7 @@ void HandlePostGameFMVs(void)
 	{
 		case I_Marine:
 		{
-			if (MarineEpisodeToPlay==MAX_NO_OF_BASIC_MARINE_EPISODES-1)
+			if (MarineEpisodeToPlay==MAX_NO_OF_BASIC_MARINE_EPISODES-1 || (CheatCampaignMode==false && MarineCampaignEpisodeToPlay==MAX_NO_OF_BASIC_MARINE_EPISODES - 1))
 			{
 				PlayFMV("FMVs/marineoutro.bik");
 			}
@@ -498,7 +498,7 @@ void HandlePostGameFMVs(void)
 		}
 		case I_Alien:
 		{
-			if (AlienEpisodeToPlay==MAX_NO_OF_BASIC_ALIEN_EPISODES-1)
+			if (AlienEpisodeToPlay==MAX_NO_OF_BASIC_ALIEN_EPISODES-1 || (CheatCampaignMode == false && AlienCampaignEpisodeToPlay == MAX_NO_OF_BASIC_ALIEN_EPISODES - 1))
 			{
 				PlayFMV("FMVs/alienoutro.bik");
 			}
@@ -506,7 +506,7 @@ void HandlePostGameFMVs(void)
 		}
 		case I_Predator:
 		{
-			if (PredatorEpisodeToPlay==MAX_NO_OF_BASIC_PREDATOR_EPISODES-1)
+			if (PredatorEpisodeToPlay==MAX_NO_OF_BASIC_PREDATOR_EPISODES-1 || (CheatCampaignMode == false && PredatorCampaignEpisodeToPlay == MAX_NO_OF_BASIC_PREDATOR_EPISODES - 1))
 			{
 				PlayFMV("FMVs/predatoroutro.bik");
 			}

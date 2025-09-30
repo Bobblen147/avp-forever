@@ -36,6 +36,7 @@
 #include "bh_track.h"
 #include "scream.h"
 #include "pldnet.h"
+#include "player.h"
 
 /* external global variables used in this file */
 extern int ModuleArraySize;
@@ -70,6 +71,7 @@ static STRATEGYBLOCK* LockerDoorSbptr=0;
 #define QUEEN_MAX_OBJECT 10
 int NumQueenObjects;
 STRATEGYBLOCK* QueenObjectList[QUEEN_MAX_OBJECT];
+STRATEGYBLOCK* Queen_GetNewTarget(VECTORCH* alienpos, STRATEGYBLOCK* me);
 
 
 void SetQueenShapeAnimSequence_Core(STRATEGYBLOCK *sbPtr,HMODEL_SEQUENCE_TYPES type, int subtype, int length, int tweeningtime);
@@ -377,7 +379,7 @@ void CreateQueen(VECTORCH* Position, int type)
 			//int he predator version , make it more likely for the queen to go after the player
 			queenStatus->QueenPlayerBias = 5;
 		}
-		queenStatus->QueenTargetSB = Player->ObStrategyBlock;
+		queenStatus->QueenTargetSB = Queen_GetNewTarget(&sbPtr->DynPtr->Position, sbPtr);
 		queenStatus->QueenTauntTimer = 0;
 		queenStatus->QueenFireTimer = 0;
 
@@ -2569,7 +2571,7 @@ void Queen_Do_Swipe(STRATEGYBLOCK *sbPtr,int side)
 		}
 			
 
-		GetTargetingPointOfObject(Player,&targetpos);
+		GetTargetingPointOfObject(queenStatusPointer->QueenTargetSB->SBdptr,&targetpos);
 		vectohand.vx=targetpos.vx-hand_section->World_Offset.vx;
 		vectohand.vy=0;//targetpos.vy-hand_section->World_Offset.vy;
 		vectohand.vz=targetpos.vz-hand_section->World_Offset.vz;
@@ -2612,7 +2614,7 @@ void Queen_Do_Swipe(STRATEGYBLOCK *sbPtr,int side)
 		if (range_to_player<QueenAttackRange) 
 		{
 			//do from .75 to 1.25 times base damage
-			CauseDamageToObject(Player->ObStrategyBlock,&TemplateAmmo[AMMO_NPC_PAQ_CLAW].MaxDamage[AvP.Difficulty],(ONE_FIXED*.75)+(FastRandom()&0x7fff),NULL);
+			CauseDamageToObject(queenStatusPointer->QueenTargetSB,&TemplateAmmo[AMMO_NPC_PAQ_CLAW].MaxDamage[AvP.Difficulty],(ONE_FIXED*.75)+(FastRandom()&0x7fff),NULL);
 			//set the taunt timer
 			queenStatusPointer->QueenTauntTimer=ONE_FIXED/2;						
 		}
@@ -3146,7 +3148,7 @@ void QueenForceReconsider(STRATEGYBLOCK* sbPtr)
 
 	queenStatusPointer->CurrentQueenObject=-1;
 	queenStatusPointer->QueenState=QBS_Reconsider;
-	queenStatusPointer->QueenTargetSB=Player->ObStrategyBlock;
+	queenStatusPointer->QueenTargetSB=Queen_GetNewTarget(&sbPtr->DynPtr->Position, sbPtr);
 	queenStatusPointer->TempTarget=FALSE;
 	queenStatusPointer->TargetInfoValid=FALSE;
 	queenStatusPointer->TargetPos=queenStatusPointer->QueenTargetSB->DynPtr->Position;					
@@ -3359,7 +3361,7 @@ void QueenPickupTargetObject(STRATEGYBLOCK *sbPtr)
 	queenStatusPointer->QueenStateTimer=0;
 									
 	//now heading for the player
-	queenStatusPointer->QueenTargetSB=Player->ObStrategyBlock;
+	queenStatusPointer->QueenTargetSB=Queen_GetNewTarget(&sbPtr->DynPtr->Position, sbPtr);
 	queenStatusPointer->TargetPos=queenStatusPointer->QueenTargetSB->DynPtr->Position;					
 	queenStatusPointer->TargetInfoValid=FALSE;
 	queenStatusPointer->next_move=QM_Close;
@@ -3885,7 +3887,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 							//player is in the airlock with the queen
 							//splat him
 							queenStatusPointer->QueenState=QBS_Engagement;
-							queenStatusPointer->QueenTargetSB=Player->ObStrategyBlock;
+							queenStatusPointer->QueenTargetSB=Queen_GetNewTarget(&sbPtr->DynPtr->Position, sbPtr);
 							queenStatusPointer->TargetPos=queenStatusPointer->QueenTargetSB->DynPtr->Position;					
 						}
 						else
@@ -3969,7 +3971,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 						//go for the player
 						queenStatusPointer->QueenState=QBS_Engagement;
 						queenStatusPointer->CurrentQueenObject=-1;
-						queenStatusPointer->QueenTargetSB=Player->ObStrategyBlock;
+						queenStatusPointer->QueenTargetSB=Queen_GetNewTarget(&sbPtr->DynPtr->Position, sbPtr);
 						queenStatusPointer->QueenObjectBias++;
 						queenStatusPointer->QueenPlayerBias--;
 						if(queenStatusPointer->QueenPlayerBias==0)queenStatusPointer->QueenPlayerBias=1;
@@ -4105,7 +4107,7 @@ void QueenBehaviour(STRATEGYBLOCK *sbPtr)
 				}
 				//queen will need to choose a new objective
 				queenStatusPointer->QueenState=QBS_Reconsider;
-				queenStatusPointer->QueenTargetSB=Player->ObStrategyBlock;
+				queenStatusPointer->QueenTargetSB=Queen_GetNewTarget(&sbPtr->DynPtr->Position, sbPtr);
 				queenStatusPointer->TargetInfoValid=FALSE;
 				
 			}
@@ -5083,6 +5085,117 @@ static void MakeNonFragable_Recursion(SECTION_DATA *this_section_data)
 static void MakeNonFragable(HMODELCONTROLLER *controller)
 {
 	MakeNonFragable_Recursion(controller->section_data);
+}
+
+int Queen_TargetFilter(STRATEGYBLOCK* candidate) {
+
+	switch (candidate->I_SBtype) {
+	case I_BehaviourMarinePlayer:
+	case I_BehaviourAlienPlayer:
+	case I_BehaviourPredatorPlayer:
+	{
+		if (Observer) {
+			return(0);
+			break;
+		}
+
+		switch (AvP.PlayerType)
+		{
+		case I_Alien:
+			return(0);
+			break;
+		case I_Predator:
+		case I_Marine:
+			return(1);
+			break;
+		default:
+			GLOBALASSERT(0);
+			return(0);
+			break;
+		}
+		break;
+	}
+	case I_BehaviourAlien:
+	case I_BehaviourPredatorAlien:
+	case I_BehaviourQueenAlien:
+	case I_BehaviourFaceHugger:
+	
+	{
+		return(0);
+		break;
+	}	
+	case I_BehaviourPredator:
+	case I_BehaviourSeal:
+	case I_BehaviourMarine:
+	case I_BehaviourXenoborg:
+	case I_BehaviourAutoGun:
+	{
+		if (NPC_IsDead(candidate)) {
+			return(0);
+		}
+		else {
+			return(1);
+		}
+		break;
+	}
+	break;
+	default:
+		return(0);
+		break;
+	}
+}
+
+STRATEGYBLOCK* Queen_GetNewTarget(VECTORCH* xenopos, STRATEGYBLOCK* me)
+{
+
+	int neardist;
+	STRATEGYBLOCK* nearest;
+	int a;
+	STRATEGYBLOCK* candidate;
+	MODULE* dmod;
+
+	dmod = ModuleFromPosition(xenopos, playerPherModule);
+
+	LOCALASSERT(dmod);
+
+	nearest = NULL;
+	neardist = ONE_FIXED;
+
+	for (a = 0; a < NumActiveStBlocks; a++) {
+		candidate = ActiveStBlockList[a];
+		if (candidate != me) {
+			if (candidate->DynPtr) {
+				if (Queen_TargetFilter(candidate)) {
+					VECTORCH offset;
+					int dist;
+
+					offset.vx = xenopos->vx - candidate->DynPtr->Position.vx;
+					offset.vy = xenopos->vy - candidate->DynPtr->Position.vy;
+					offset.vz = xenopos->vz - candidate->DynPtr->Position.vz;
+
+					dist = Approximate3dMagnitude(&offset);
+
+					if (dist < neardist) {
+						/* Check visibility? */
+							if (!NPC_IsDead(candidate)) {
+								if ((IsModuleVisibleFromModule(dmod, candidate->containingModule))) {
+									nearest = candidate;
+								}
+							}
+						
+					}
+				}
+			}
+		}
+	}
+
+	//default to player if no target
+	if (nearest == NULL) {
+		nearest = Player->ObStrategyBlock;
+	}
+
+	return(nearest);
+
 }
 
 

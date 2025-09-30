@@ -244,7 +244,7 @@ static NPC_DATA NpcDataList[I_NPC_End]= {
 		I_NPC_Predator,
 		{
 			450,	/* Health */
-			200,	/* Armour */
+			0,	/* Armour */
 			0, /* IsOnFire */
 			{
 				0,	/* Acid Resistant */
