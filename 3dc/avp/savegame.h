@@ -64,6 +64,8 @@ typedef struct level_save_block
 	unsigned int	ElapsedTime_Seconds;
 	unsigned char	Difficulty;
 	unsigned char 	NumberOfSavesLeft;//For Load/Save menu only (if it gets used)
+	unsigned char   CustomMapEpisode;
+	unsigned char   IsCustomMap;
 
 }LEVEL_SAVE_BLOCK;
 

@@ -5126,31 +5126,25 @@ void SetLevelToLoadForAlien(int episode)
 {
 	strcpy(LevelName,RifNamesForEnvironments[AlienEpisodes[episode]]);
 }
-void SetLevelToLoadForAlienCustom()
+void SetLevelToLoadForAlienCustom(int episode)
 { 
-	std::string customName = "Custom/" + Config_GetString("[Custom]", "CustomAlienLevelName", "noname");
-	const char* customNamechar = customName.c_str();
-	strcpy(LevelName, customNamechar);
+	sprintf(LevelName, "Custom/%s", GetCustomMultiplayerLevelName(episode+MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual));
 }
 void SetLevelToLoadForPredator(int episode)
 {
 	strcpy(LevelName,RifNamesForEnvironments[PredatorEpisodes[episode]]);
 }
-void SetLevelToLoadForPredatorCustom()
+void SetLevelToLoadForPredatorCustom(int episode)
 {
-	std::string customName = "Custom/" + Config_GetString("[Custom]", "CustomPredatorLevelName", "noname");
-	const char* customNamechar = customName.c_str();
-	strcpy(LevelName, customNamechar);
+	sprintf(LevelName, "Custom/%s", GetCustomMultiplayerLevelName(episode + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual));
 }
 void SetLevelToLoadForMarine(int episode)
 {
 	strcpy(LevelName,RifNamesForEnvironments[MarineEpisodes[episode]]);
 }
-void SetLevelToLoadForMarineCustom()
+void SetLevelToLoadForMarineCustom(int episode)
 {
-	std::string customName = "Custom/" + Config_GetString("[Custom]", "CustomMarineLevelName", "noname");
-	const char* customNamechar = customName.c_str();
-	strcpy(LevelName, customNamechar);
+	sprintf(LevelName, "Custom/%s", GetCustomMultiplayerLevelName(episode + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual));
 }
 
 void SetLevelToLoadForMultiplayer(int episode)

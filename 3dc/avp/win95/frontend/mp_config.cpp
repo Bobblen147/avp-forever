@@ -604,6 +604,7 @@ int NumCoopLevels = 0;
 
 char** MultiplayerLevelNames = 0;
 char** CoopLevelNames = 0;
+char** CustomLevelNames = 0;
 
 List<char*> CustomLevelNameList;
 
@@ -714,11 +715,14 @@ void BuildMultiplayerLevelNameArray()
 		}
 	}
 
+	CustomLevelNames = (char**)AllocateMem(sizeof(char*)* NumCustomLevels);
+
 	// now add the custom level names
 	for (int i = 0; i < NumCustomLevels; i++)
 	{
 		CoopLevelNames[i+MAX_NO_OF_COOPERATIVE_EPISODES] = CustomLevelNameList[i];
 		MultiplayerLevelNames[i+MAX_NO_OF_MULTIPLAYER_EPISODES] = CustomLevelNameList[i];
+		CustomLevelNames[i] = CustomLevelNameList[i];
 	}
 
 	// now initialise the environment name entries for the various configuration menus

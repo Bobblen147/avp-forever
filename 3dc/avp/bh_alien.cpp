@@ -1411,9 +1411,9 @@ void AlienIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int multiple, 
 			/* Oh yes, kill them, too. */
 			if (alienStatusPointer->BehaviourState!=ABS_Dying)
 			{
-				if (AvP.PlayerType!=I_Alien) {
+				//if (AvP.PlayerType!=I_Alien) {
 					CurrentGameStats_CreatureKilled(sbPtr,Section);
-				}
+				//}
 				KillAlien(sbPtr,wounds,damage,multiple,incoming);
 			}
 

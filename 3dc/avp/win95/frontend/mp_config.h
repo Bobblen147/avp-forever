@@ -22,6 +22,7 @@ extern int NumCoopLevels;
 // list of all multiplayer level names as they appear in the menus
 extern char** MultiplayerLevelNames;
 extern char** CoopLevelNames;
+extern char** CustomLevelNames;
 
 extern void BuildMultiplayerLevelNameArray();
 void ClearMultiplayerLevelNameArray();

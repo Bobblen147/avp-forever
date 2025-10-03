@@ -86,10 +86,6 @@ extern int AutoWeaponChangeOn_Temp;
 extern int AutoWeaponChangeOn;
 extern void SetDefaultMultiplayerConfig();
 
-//custom single player level load
-static bool CustomAlienSinglePlayerLevel = false;
-static bool CustomMarineSinglePlayerLevel = false;
-static bool CustomPredatorSinglePlayerLevel = false;
 //avp 99 mode
 static bool AvP99TitleScreen = false;
 static bool DisableSkeeterPistols = false;
@@ -99,6 +95,9 @@ static bool CheatCampaignMode = false;
 int AlienCampaignEpisodeToPlay = 0;
 int MarineCampaignEpisodeToPlay = 0;
 int PredatorCampaignEpisodeToPlay = 0;
+//save custom single player levels
+int CustomMapEpisode = 0;
+int IsCustomMap = 0;
 
 void HandlePostGameFMVs(void);
 void HandlePreGameFMVs(void);
@@ -106,7 +105,10 @@ void HandlePreGameFMVs(void);
 static void SetupNewMenu(enum AVPMENU_ID menuID);
 static void RenderMenu(void);
 static void RenderBriefingScreenInfo(void);
+static void RenderBriefingScreenInfoCustom(void);
 static void RenderEpisodeSelectMenu(void);
+static void RenderAchievementsMenu(void);
+static void RenderCustomLevelsMenu(void);
 static void RenderKeyConfigurationMenu(void);
 static void RenderUserProfileSelectMenu(void);
 static void RenderLoadGameMenu(void);
@@ -120,6 +122,7 @@ void DoCredits(void);
 BOOL RollCreditsText(int position, char *textPtr);
 static void TestValidityOfCheatMenu(void);
 void SetBriefingTextForEpisode(int episode, I_PLAYER_TYPE playerID);
+void SetBriefingTextForCustomMap();
 void SetBriefingTextToBlank(void);
 void RenderBriefingText(int centreY, int brightness);
 void CheckForKeysWithMultipleAssignments(void);
@@ -268,6 +271,8 @@ int AvP_MainMenus(void)
 	SoundSys_Management();
 	
 	TimeScale = ONE_FIXED;
+	IsCustomMap = 0; //reset this when we quit a custom map, in case we want to reload a normal map
+	CustomMapEpisode = 0;
 
 	if (!LobbiedGame)  // Edmond
 		CheckForCredits();
@@ -699,6 +704,26 @@ extern void AvP_UpdateMenus(void)
 			RenderEpisodeSelectMenu();
 			break;
 		}
+		case AVPMENU_ACHIEVEMENTS:
+		{
+			RenderAchievementsMenu();
+			break;
+		}
+		case AVPMENU_ALIEN_CUSTOM_LEVELS:
+		{
+			RenderCustomLevelsMenu();
+			break;
+		}
+		case AVPMENU_MARINE_CUSTOM_LEVELS:
+		{
+			RenderCustomLevelsMenu();
+			break;
+		}
+		case AVPMENU_PREDATOR_CUSTOM_LEVELS:
+		{
+			RenderCustomLevelsMenu();
+			break;
+		}
 		case AVPMENU_USERPROFILESELECT:
 		{
 			RenderUserProfileSelectMenu();
@@ -920,7 +945,14 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 		{
 			break;
 		}
-	
+		case AVPMENU_ACHIEVEMENTS:
+		{
+			int MaxNumberOfAchievements = 1;
+			EpisodeSelectScrollOffset = 0;
+			AvPMenus.MenuElements->MaxSliderValue = MaxNumberOfAchievements;
+			*AvPMenus.MenuElements->SliderValuePtr = 0;
+			break;
+		}
 		case AVPMENU_MARINELEVELS:
 		{
 			MarineEpisodeToPlay=0;
@@ -943,6 +975,30 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 			EpisodeSelectScrollOffset=0;
 			AvPMenus.MenuElements->MaxSliderValue = NumberOfAvailableLevels(I_Alien);
 			*AvPMenus.MenuElements->SliderValuePtr = LevelMostLikelyToPlay(I_Alien);
+			break;
+		}
+		case AVPMENU_ALIEN_CUSTOM_LEVELS:
+		{
+			AlienEpisodeToPlay = 0;
+			EpisodeSelectScrollOffset = 0;
+			AvPMenus.MenuElements->MaxSliderValue = NumCustomLevels -1;
+			*AvPMenus.MenuElements->SliderValuePtr = 0;
+			break;
+		}
+		case AVPMENU_MARINE_CUSTOM_LEVELS:
+		{
+			MarineEpisodeToPlay = 0;
+			EpisodeSelectScrollOffset = 0;
+			AvPMenus.MenuElements->MaxSliderValue = NumCustomLevels - 1;
+			*AvPMenus.MenuElements->SliderValuePtr = 0;
+			break;
+		}
+		case AVPMENU_PREDATOR_CUSTOM_LEVELS:
+		{
+			PredatorEpisodeToPlay = 0;
+			EpisodeSelectScrollOffset = 0;
+			AvPMenus.MenuElements->MaxSliderValue = NumCustomLevels - 1;
+			*AvPMenus.MenuElements->SliderValuePtr = 0;
 			break;
 		}
 		case AVPMENU_MULTIPLAYERSELECTSESSION:
@@ -1251,6 +1307,34 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 			SetBriefingTextForEpisode(episodeToPlay, AvP.PlayerType);
 			break;
 		}
+		case AVPMENU_LEVELBRIEFING_CUSTOM:
+		{
+			int episodeToPlay;
+			switch (AvP.PlayerType)
+			{
+			case I_Marine:
+			{
+				episodeToPlay = MarineEpisodeToPlay;
+				break;
+			}
+			case I_Predator:
+			{
+				episodeToPlay = PredatorEpisodeToPlay;
+				break;
+			}
+			case I_Alien:
+			{
+				episodeToPlay = AlienEpisodeToPlay;
+				break;
+			}
+			}
+
+			// highlight medium difficulty to start with
+			AvPMenus.CurrentlySelectedElement = 1;
+
+			SetBriefingTextForCustomMap();
+			break;
+		}
 		default:
 			SetBriefingTextToBlank();
 			break;
@@ -1271,6 +1355,10 @@ static void RenderMenu(void)
 		{
 			y = MENU_BOTTOMYEDGE - AvPMenus.MenuHeight + 25; //fudge to fit 'impossible mission' difficulty neatly onto the screen
 			RenderBriefingScreenInfo();
+		}
+		else if (AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_CUSTOM) {
+			y = MENU_BOTTOMYEDGE - AvPMenus.MenuHeight + 25; //fudge to fit 'impossible mission' difficulty neatly onto the screen
+			RenderBriefingScreenInfoCustom();
 		}
 		else
 		{
@@ -1354,6 +1442,19 @@ static void RenderBriefingScreenInfo(void)
 	RenderMenuText(GetTextString(textID),MENU_LEFTXEDGE,120,ONE_FIXED,AVPMENUFORMAT_LEFTJUSTIFIED);
 
 	RenderBriefingText(/*ScreenDescriptorBlock.SDB_Height*/480 / 2, ONE_FIXED);
+}
+
+static void RenderBriefingScreenInfoCustom(void)
+{
+	texID_t graphicID;
+	graphicID = AVPMENUGFX_MARINE_EPISODE1;
+	int targetBrightness = BRIGHTNESS_OF_HIGHLIGHTED_ELEMENT;
+	
+	RenderMenuText(GetCustomMultiplayerLevelName(CustomMapEpisode + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual), MENU_CENTREX, 120, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
+
+	DrawAvPMenuGfx_Clipped(graphicID, MENU_LEFTXEDGE + 225, MENU_CENTREY - 120, targetBrightness, AVPMENUFORMAT_LEFTJUSTIFIED, MENU_CENTREY - 60 - 100, MENU_CENTREY - 60 + 180);
+
+	//RenderBriefingText(/*ScreenDescriptorBlock.SDB_Height*/480 / 2, ONE_FIXED);
 }
 
 /* KJL 12:11:18 24/09/98 - specialised code to handle episode selection screen, which
@@ -1539,6 +1640,237 @@ static void RenderEpisodeSelectMenu(void)
 		if (EpisodeSelectScrollOffset>0)
 		{
 			EpisodeSelectScrollOffset=0;
+		}
+	}
+}
+
+/* KJL 12:11:18 24/09/98 - specialised code to handle episode selection screen, which
+has features which make it too awkward to add to the general system */
+static void RenderCustomLevelsMenu(void)
+{
+	AVPMENU_ELEMENT* elementPtr = &AvPMenus.MenuElements[AvPMenus.CurrentlySelectedElement];
+	int currentCustomLevel = *(elementPtr->SliderValuePtr);
+	int centrePosition = (currentCustomLevel) * 65536 + EpisodeSelectScrollOffset;
+	texID_t graphicID;
+	int i;
+	I_PLAYER_TYPE playerID;
+	//if alien
+	switch (AvPMenus.CurrentMenu)
+	{
+		default:
+		{
+			LOCALASSERT(0);/* Panic */
+		}
+		case AVPMENU_ALIEN_CUSTOM_LEVELS:
+		{
+			playerID = I_Alien;
+			break;
+		}
+		case AVPMENU_MARINE_CUSTOM_LEVELS:
+		{
+		playerID = I_Marine;
+		break;
+		}
+		case AVPMENU_PREDATOR_CUSTOM_LEVELS:
+		{
+		playerID = I_Predator;
+		break;
+		}
+	}
+		graphicID = AVPMENUGFX_MARINE_EPISODE7; //always use bonus level graphics for now
+	
+
+	// render menu title
+	char* textPtr = GetTextString(TEXTSTRING_SINGLEPLAYER_CUSTOM);
+	RenderMenuText(textPtr, MENU_CENTREX, 70, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
+
+	for (i = 0; i <= elementPtr->MaxSliderValue; i++)
+	{
+		int y;
+
+		y = MUL_FIXED(i * 65536 - centrePosition, 100);
+
+		if (y >= -150 && y <= 150)
+		{
+			char* textPtr = GetCustomMultiplayerLevelName(i + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual);
+			CustomMapEpisode = currentCustomLevel;
+			IsCustomMap = 1;
+			//char* textPtr2 = GetTextString(TEXTSTRING_SINGLEPLAYER_CUSTOM); //no small text for now
+			int b;
+			int targetBrightness;
+
+			if (i == currentCustomLevel)
+			{
+				targetBrightness = BRIGHTNESS_OF_HIGHLIGHTED_ELEMENT;
+			}
+			else
+			{
+				targetBrightness = BRIGHTNESS_OF_DARKENED_ELEMENT;
+			}
+
+			if (targetBrightness > Brightness[i])
+			{
+				Brightness[i] += BRIGHTNESS_CHANGE_SPEED;
+				if (Brightness[i] > targetBrightness)
+				{
+					Brightness[i] = targetBrightness;
+				}
+			}
+			else
+			{
+				Brightness[i] -= BRIGHTNESS_CHANGE_SPEED;
+				if (Brightness[i] < targetBrightness)
+				{
+					Brightness[i] = targetBrightness;
+				}
+			}
+
+			b = Brightness[i];
+			{
+				int yCoord = MENU_CENTREY + y - 60;
+
+				/*
+				 * bjd - hack to handle bonus level graphics with new texture system
+				 * if 'i' is a bonus level index, just set the new adjusted graphic id
+				 * to a bonus level image. otherwise, index like originally
+				 */
+
+				RenderMenuText_Clipped(textPtr, MENU_LEFTXEDGE + 150, yCoord, b, AVPMENUFORMAT_LEFTJUSTIFIED, MENU_CENTREY - 60 - 100, MENU_CENTREY - 60 + 180);
+				DrawAvPMenuGfx_Clipped(graphicID, MENU_LEFTXEDGE, yCoord, b, AVPMENUFORMAT_LEFTJUSTIFIED, MENU_CENTREY - 60 - 100, MENU_CENTREY - 60 + 180);
+
+				//don't need any small text here for now
+				//RenderSmallMenuText
+				//(
+				//	textPtr2,
+				//	MENU_LEFTXEDGE + 150,
+				//	yCoord + 30,
+				//	b,
+				//	AVPMENUFORMAT_LEFTJUSTIFIED
+				//);
+
+				/*
+					,MENU_CENTREY-60-100,
+					MENU_CENTREY-60+180
+				);*/
+			}
+		}
+	}
+
+	if (EpisodeSelectScrollOffset > 0)
+	{
+		EpisodeSelectScrollOffset -= MUL_FIXED(EpisodeSelectScrollOffset * 2 + 8192, RealFrameTime << 1);
+		if (EpisodeSelectScrollOffset < 0)
+		{
+			EpisodeSelectScrollOffset = 0;
+		}
+	}
+	else if (EpisodeSelectScrollOffset < 0)
+	{
+		EpisodeSelectScrollOffset += MUL_FIXED(-EpisodeSelectScrollOffset * 2 + 8192, RealFrameTime << 1);
+		if (EpisodeSelectScrollOffset > 0)
+		{
+			EpisodeSelectScrollOffset = 0;
+		}
+	}
+}
+
+static void RenderAchievementsMenu(void)
+{
+	AVPMENU_ELEMENT* elementPtr = &AvPMenus.MenuElements[AvPMenus.CurrentlySelectedElement];
+	int currentAchievement = *(elementPtr->SliderValuePtr);
+	int centrePosition = (currentAchievement) * 65536 + EpisodeSelectScrollOffset;
+	texID_t graphicID;
+	int i;
+	graphicID = AVPMENUGFX_MARINE_EPISODE1;
+
+	// render menu title
+	char* textPtr = GetTextString(AvPMenusData[AvPMenus.CurrentMenu].MenuTitle);
+	RenderMenuText(textPtr, MENU_CENTREX, 70, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
+
+	for (i = 0; i <= elementPtr->MaxSliderValue; i++)
+	{
+		int y;
+
+		y = MUL_FIXED(i * 65536 - centrePosition, 100);
+
+		if (y >= -150 && y <= 150)
+		{
+			char* textPtr = GetTextString(static_cast<enum TEXTSTRING_ID>(elementPtr->TextDescription + i));
+			char* textPtr2 = GetTextString(static_cast<enum TEXTSTRING_ID>(elementPtr->HelpString + i));
+			int b;
+			int targetBrightness;
+
+			if (i == currentAchievement)
+			{
+				targetBrightness = BRIGHTNESS_OF_HIGHLIGHTED_ELEMENT;
+			}
+			else
+			{
+				targetBrightness = BRIGHTNESS_OF_DARKENED_ELEMENT;
+			}
+
+			if (targetBrightness > Brightness[i])
+			{
+				Brightness[i] += BRIGHTNESS_CHANGE_SPEED;
+				if (Brightness[i] > targetBrightness)
+				{
+					Brightness[i] = targetBrightness;
+				}
+			}
+			else
+			{
+				Brightness[i] -= BRIGHTNESS_CHANGE_SPEED;
+				if (Brightness[i] < targetBrightness)
+				{
+					Brightness[i] = targetBrightness;
+				}
+			}
+
+			b = Brightness[i];
+			{
+				int yCoord = MENU_CENTREY + y - 60;
+
+				/*
+				 * bjd - hack to handle bonus level graphics with new texture system
+				 * if 'i' is a bonus level index, just set the new adjusted graphic id
+				 * to a bonus level image. otherwise, index like originally
+				 */
+				graphicID += i;
+
+				RenderMenuText_Clipped(textPtr, MENU_LEFTXEDGE + 150, yCoord, b, AVPMENUFORMAT_LEFTJUSTIFIED, MENU_CENTREY - 60 - 100, MENU_CENTREY - 60 + 180);
+				DrawAvPMenuGfx_Clipped(graphicID, MENU_LEFTXEDGE, yCoord, b, AVPMENUFORMAT_LEFTJUSTIFIED, MENU_CENTREY - 60 - 100, MENU_CENTREY - 60 + 180);
+
+				RenderSmallMenuText
+						(
+							textPtr2,
+							MENU_LEFTXEDGE + 150,
+							yCoord + 30,
+							b,
+							AVPMENUFORMAT_LEFTJUSTIFIED
+						);
+				
+				/*
+					,MENU_CENTREY-60-100,
+					MENU_CENTREY-60+180
+				);*/
+			}
+		}
+	}
+
+	if (EpisodeSelectScrollOffset > 0)
+	{
+		EpisodeSelectScrollOffset -= MUL_FIXED(EpisodeSelectScrollOffset * 2 + 8192, RealFrameTime << 1);
+		if (EpisodeSelectScrollOffset < 0)
+		{
+			EpisodeSelectScrollOffset = 0;
+		}
+	}
+	else if (EpisodeSelectScrollOffset < 0)
+	{
+		EpisodeSelectScrollOffset += MUL_FIXED(-EpisodeSelectScrollOffset * 2 + 8192, RealFrameTime << 1);
+		if (EpisodeSelectScrollOffset > 0)
+		{
+			EpisodeSelectScrollOffset = 0;
 		}
 	}
 }
@@ -2325,6 +2657,10 @@ static void ActUponUsersInput(void)
 					case AVPMENU_MARINELEVELS:
 					case AVPMENU_PREDATORLEVELS:
 					case AVPMENU_ALIENLEVELS:
+					case AVPMENU_ACHIEVEMENTS:
+					case AVPMENU_ALIEN_CUSTOM_LEVELS:
+					case AVPMENU_MARINE_CUSTOM_LEVELS:
+					case AVPMENU_PREDATOR_CUSTOM_LEVELS:
 					{
 						InteractWithMenuElement(AVPMENU_ELEMENT_INTERACTION_DECREASE);
 						break;
@@ -2368,6 +2704,10 @@ static void ActUponUsersInput(void)
 					case AVPMENU_MARINELEVELS:
 					case AVPMENU_PREDATORLEVELS:
 					case AVPMENU_ALIENLEVELS:
+					case AVPMENU_ACHIEVEMENTS:
+					case AVPMENU_ALIEN_CUSTOM_LEVELS:
+					case AVPMENU_MARINE_CUSTOM_LEVELS:
+					case AVPMENU_PREDATOR_CUSTOM_LEVELS:
 					{
 						InteractWithMenuElement(AVPMENU_ELEMENT_INTERACTION_INCREASE);
 						break;
@@ -2797,7 +3137,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT)
 			{
-				if (AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BASIC || AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BONUS)
+				if (AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BASIC || AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_BONUS || AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_CUSTOM)
 				{
 					AvP.Difficulty = static_cast<I_HARDANUFF>(AvPMenus.CurrentlySelectedElement);
 				}
@@ -2809,6 +3149,63 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			}
 			break;
 		}
+		case AVPMENU_ELEMENT_ALIENCUSTOMLEVEL:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
+				SetupNewMenu(AVPMENU_ALIEN_CUSTOM_LEVELS);
+				break;
+			}
+				
+		}
+		case AVPMENU_ELEMENT_MARINECUSTOMLEVEL:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
+				SetupNewMenu(AVPMENU_MARINE_CUSTOM_LEVELS);
+				break;
+			}
+
+		}
+		case AVPMENU_ELEMENT_PREDATORCUSTOMLEVEL:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
+				SetupNewMenu(AVPMENU_PREDATOR_CUSTOM_LEVELS);
+				break;
+			}
+
+		}
+		case AVPMENU_ELEMENT_ALIENCUSTOMEPISODE:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
+				AvP.PlayerType = I_Alien;
+				CampaignMode = false;
+				AlienEpisodeToPlay = 0;
+				SetLevelToLoadForAlienCustom(*elementPtr->SliderValuePtr);
+				SetupNewMenu(AVPMENU_LEVELBRIEFING_CUSTOM);
+				break;
+			}
+		}
+		case AVPMENU_ELEMENT_MARINECUSTOMEPISODE:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
+				AvP.PlayerType = I_Marine;
+				CampaignMode = false;
+				MarineEpisodeToPlay = 0;
+				SetLevelToLoadForMarineCustom(*elementPtr->SliderValuePtr);
+				SetupNewMenu(AVPMENU_LEVELBRIEFING_CUSTOM);
+				break;
+			}
+		}
+		case AVPMENU_ELEMENT_PREDATORCUSTOMEPISODE:
+		{
+			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
+				AvP.PlayerType = I_Predator;
+				CampaignMode = false;
+				PredatorEpisodeToPlay = 0;
+				SetLevelToLoadForPredatorCustom(*elementPtr->SliderValuePtr);
+				SetupNewMenu(AVPMENU_LEVELBRIEFING_CUSTOM);
+				break;
+			}
+		}
 
 		case AVPMENU_ELEMENT_ALIENEPISODE:
 		{
@@ -2817,15 +3214,8 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			{
 				AvP.PlayerType = I_Alien;
 				CampaignMode = false;
-				CustomAlienSinglePlayerLevel = Config_GetBool("[Custom]", "CustomAlienSinglePlayerLevel", false);
-				if (CustomAlienSinglePlayerLevel) {
-					AlienEpisodeToPlay = 0;
-					SetLevelToLoadForAlienCustom();
-				}
-				else {
-					SetLevelToLoadForAlien(AlienEpisodeToPlay);
-				}
-
+				SetLevelToLoadForAlien(AlienEpisodeToPlay);
+				
 				if (AlienEpisodeToPlay<MAX_NO_OF_BASIC_ALIEN_EPISODES)
 				{
 					SetupNewMenu(AVPMENU_LEVELBRIEFING_BASIC);
@@ -2846,14 +3236,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			{
 				AvP.PlayerType = I_Marine;
 				CampaignMode = false;
-				CustomMarineSinglePlayerLevel = Config_GetBool("[Custom]", "CustomMarineSinglePlayerLevel", false);
-				if (CustomMarineSinglePlayerLevel) {
-					MarineEpisodeToPlay = 0;
-					SetLevelToLoadForMarineCustom();
-				}
-				else {
-					SetLevelToLoadForMarine(MarineEpisodeToPlay);
-				}
+				SetLevelToLoadForMarine(MarineEpisodeToPlay);				
 
 				if (MarineEpisodeToPlay < MAX_NO_OF_BASIC_MARINE_EPISODES)
 				{
@@ -2875,15 +3258,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 			{
 				AvP.PlayerType = I_Predator;
 				CampaignMode = false;
-				CustomPredatorSinglePlayerLevel = Config_GetBool("[Custom]", "CustomPredatorSinglePlayerLevel", false);
-
-				if (CustomPredatorSinglePlayerLevel) {
-					PredatorEpisodeToPlay = 0;
-					SetLevelToLoadForPredatorCustom();
-				}
-				else {
-					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
-				}
+				SetLevelToLoadForPredator(PredatorEpisodeToPlay);
 
 				if (PredatorEpisodeToPlay<MAX_NO_OF_BASIC_PREDATOR_EPISODES)
 				{
@@ -2897,6 +3272,10 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				break;
 			}
 			/* else let it fall through */
+		}
+		case AVPMENU_ELEMENT_ACHIEVEMENT:
+		{
+			/* just let it fall through */
 		}
 		{
 			/* This code is reached when an EPISODE element has been
@@ -4867,6 +5246,11 @@ void SetBriefingTextForEpisode(int episode, I_PLAYER_TYPE playerID)
 	}
 }
 
+void SetBriefingTextForCustomMap()
+{
+	BriefingTextString[0] = GetCustomMultiplayerLevelName(CustomMapEpisode + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual);
+}
+
 static char MultiplayerBriefing[3][100];
 
 static void AddMultiplayerBriefingString(const char* text)
@@ -5273,6 +5657,8 @@ void SaveLevelHeader()
 
 	block->Difficulty = AvP.Difficulty;
 	block->NumberOfSavesLeft = (unsigned char) NumberOfSavesLeft;
+	block->CustomMapEpisode = (unsigned char) CustomMapEpisode;
+	block->IsCustomMap = (unsigned char) IsCustomMap;
 }
 
 void LoadLevelHeader(SAVE_BLOCK_HEADER* header)
@@ -5345,6 +5731,8 @@ static void GetHeaderInfoForSaveSlot(SAVE_SLOT_HEADER* save_slot, const char* fi
 	save_slot->ElapsedTime_Seconds = (block.ElapsedTime_Seconds >> 16);
 	save_slot->Difficulty = block.Difficulty;
 	save_slot->SavesLeft = block.NumberOfSavesLeft;
+	save_slot->CustomMapEpisode = block.CustomMapEpisode;
+	save_slot->IsCustomMap = block.IsCustomMap;
 }
 
 
@@ -5364,27 +5752,50 @@ static void CheckForLoadGame()
 					if (CampaignMode) {
 						MarineCampaignEpisodeToPlay = save_slot->Episode;
 					}
-					MarineEpisodeToPlay = save_slot->Episode;
-					SetLevelToLoadForMarine(MarineEpisodeToPlay);
+					if (save_slot->IsCustomMap == 1) {
+						MarineEpisodeToPlay = 0;
+						SetLevelToLoadForMarineCustom(save_slot->CustomMapEpisode);
+					}
+					else {
+						MarineEpisodeToPlay = save_slot->Episode;
+						SetLevelToLoadForMarine(MarineEpisodeToPlay);
+					}
 					break;
 
 				case I_Alien :
 					if (CampaignMode) {
 						AlienCampaignEpisodeToPlay = save_slot->Episode;
 					}
-					AlienEpisodeToPlay = save_slot->Episode;
-					SetLevelToLoadForAlien(AlienEpisodeToPlay);
+					if (save_slot->IsCustomMap == 1) {
+						AlienEpisodeToPlay = 0;
+						SetLevelToLoadForAlienCustom(save_slot->CustomMapEpisode);
+					}
+					else {
+						AlienEpisodeToPlay = save_slot->Episode;
+						SetLevelToLoadForAlien(AlienEpisodeToPlay);
+					}
 					break;
 
 				case I_Predator :
 					if (CampaignMode) {
 						PredatorCampaignEpisodeToPlay = save_slot->Episode;
 					}
-					PredatorEpisodeToPlay = save_slot->Episode;
-					SetLevelToLoadForPredator(PredatorEpisodeToPlay);
+					if (save_slot->IsCustomMap == 1) {
+						PredatorEpisodeToPlay = 0;
+						SetLevelToLoadForPredatorCustom(save_slot->CustomMapEpisode);
+					}
+					else {
+						PredatorEpisodeToPlay = save_slot->Episode;
+						SetLevelToLoadForPredator(PredatorEpisodeToPlay);
+					}
 					break;
 			}
-			SetBriefingTextForEpisode(save_slot->Episode, AvP.PlayerType);
+			if (save_slot->IsCustomMap == 1) {
+				SetBriefingTextForCustomMap();
+			}
+			else {
+				SetBriefingTextForEpisode(save_slot->Episode, AvP.PlayerType);
+			}
 			AvPMenus.MenusState = MENUSSTATE_STARTGAME;
 		}
 		else
