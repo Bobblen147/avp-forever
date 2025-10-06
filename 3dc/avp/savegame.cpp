@@ -494,6 +494,7 @@ extern SAVE_SLOT_HEADER SaveGameSlot[];
 extern int AlienEpisodeToPlay;
 extern int MarineEpisodeToPlay;
 extern int PredatorEpisodeToPlay;
+extern int CustomMapEpisode;
 
 BOOL ValidateLevelForLoadGameRequest(SAVE_SLOT_HEADER* save_slot)
 {
@@ -502,6 +503,10 @@ BOOL ValidateLevelForLoadGameRequest(SAVE_SLOT_HEADER* save_slot)
 
 	//probably need to reload if in cheat mode
 	if(CheatMode_Active!=CHEATMODE_NONACTIVE) return FALSE;
+
+	//force reload if different custom map
+	if (save_slot->IsCustomMap == 1 && save_slot->CustomMapEpisode != CustomMapEpisode
+		) return FALSE;
 	
 	switch(save_slot->Species)
 	{

@@ -1456,7 +1456,7 @@ static void RenderBriefingScreenInfoCustom(void)
 	
 	RenderMenuText(CustomMapName, MENU_CENTREX, 120, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
 
-	DrawAvPMenuGfx(graphicID, MENU_LEFTXEDGE + 130, MENU_CENTREY - 125, ONE_FIXED + 1, AVPMENUFORMAT_LEFTJUSTIFIED);
+	DrawAvPMenuGfx(graphicID, MENU_LEFTXEDGE + 130, MENU_CENTREY - 120, ONE_FIXED + 1, AVPMENUFORMAT_LEFTJUSTIFIED);
 
 	//RenderBriefingText(/*ScreenDescriptorBlock.SDB_Height*/480 / 2, ONE_FIXED);
 }
@@ -2280,13 +2280,23 @@ static void RenderLoadGameMenu(void)
 			sprintf(buffer, "%s", GetTextString(static_cast<enum TEXTSTRING_ID>(TEXTSTRING_MULTIPLAYER_MARINE + slotPtr->Species)));
 			RenderText(buffer, MENU_LEFTXEDGE+30, y, elementPtr->Brightness, AVPMENUFORMAT_LEFTJUSTIFIED);
 			
-			sprintf(buffer, "%s", GetTextString(static_cast<enum TEXTSTRING_ID>(textID+slotPtr->Episode)));
-			RenderText(buffer, MENU_CENTREX, y, elementPtr->Brightness, AVPMENUFORMAT_CENTREJUSTIFIED);
+			if (slotPtr->IsCustomMap == 1) {
+				sprintf(buffer, "%s", GetCustomMultiplayerLevelName(slotPtr->CustomMapEpisode + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual));
+				RenderText(buffer, MENU_CENTREX, y, elementPtr->Brightness, AVPMENUFORMAT_CENTREJUSTIFIED);
+			}
+			else {
+				sprintf(buffer, "%s", GetTextString(static_cast<enum TEXTSTRING_ID>(textID + slotPtr->Episode)));
+				RenderText(buffer, MENU_CENTREX, y, elementPtr->Brightness, AVPMENUFORMAT_CENTREJUSTIFIED);
+			}
 
-			if (numberOfBasicEpisodes > slotPtr->Episode)
-			{
+			//bonus levels have difficulty too now
+			if (slotPtr->Difficulty == 3) {
+				sprintf(buffer, "%s", GetTextString(static_cast<enum TEXTSTRING_ID>(TEXTSTRING_DIFFICULTY_IMPOSSIBLE)));
+				RenderText(buffer, MENU_RIGHTXEDGE - 30, y, elementPtr->Brightness, AVPMENUFORMAT_RIGHTJUSTIFIED);
+			}
+			else {
 				sprintf(buffer, "%s", GetTextString(static_cast<enum TEXTSTRING_ID>(TEXTSTRING_DIFFICULTY_EASY + slotPtr->Difficulty)));
-				RenderText(buffer, MENU_RIGHTXEDGE-30, y, elementPtr->Brightness, AVPMENUFORMAT_RIGHTJUSTIFIED);
+				RenderText(buffer, MENU_RIGHTXEDGE - 30, y, elementPtr->Brightness, AVPMENUFORMAT_RIGHTJUSTIFIED);
 			}
 
 			sprintf(buffer, "%s %02d:%02d:%02d", GetTextString(TEXTSTRING_GAMESTATS_TIMEELAPSED), slotPtr->ElapsedTime_Hours, slotPtr->ElapsedTime_Minutes, slotPtr->ElapsedTime_Seconds);
@@ -5809,6 +5819,7 @@ static void CheckForLoadGame()
 					break;
 			}
 			if (save_slot->IsCustomMap == 1) {
+				CustomMapEpisode = save_slot->CustomMapEpisode;
 				SetBriefingTextForCustomMap();
 			}
 			else {

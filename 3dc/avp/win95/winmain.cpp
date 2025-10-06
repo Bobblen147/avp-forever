@@ -714,6 +714,37 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 		mainMenu = true;
 
 		FixCheatModesInUserProfile(UserProfilePtr);
+		//reset debug enemy counters
+		PlacedAlienCount = 0;
+		PlacedPredAlienCount = 0;
+		PlacedPraetorianCount = 0;
+		GenAlienCount = 0;
+		GenPredAlienCount = 0;
+		GenPraetorianCount = 0;
+		PlacedMarineCount = 0;
+		PlacedCivilianCount = 0;
+		PlacedAndroidCount = 0;
+		GenMarineCount = 0;
+		GenCivilianCount = 0;
+		GenAndroidCount = 0;
+		PlacedPredCount = 0;
+		GenPredCount = 0;
+		PlacedHuggerCount = 0;
+		PlacedXenoborgCount = 0;
+		PlacedSentryCount = 0;
+		PlacedQueenCount = 0;
+		//reset debug pickup counters
+		FieldChargeCount = 0;
+		PulseRifleCount = 0;
+		SmartGunCount = 0;
+		FlameThrowerCount = 0;
+		SADARCount = 0;
+		GrenadeLauncherCount = 0;
+		MinigunCount = 0;
+		PistolCount = 0;
+		SkeeterCount = 0;
+		MarineHealthCount = 0;
+		MarineArmourCount = 0;
 
 		#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO)
 		TimeStampedMessage("We're out of the main loop");
