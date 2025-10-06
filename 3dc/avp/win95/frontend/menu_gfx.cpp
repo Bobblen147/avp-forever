@@ -91,6 +91,8 @@ texID_t AVPMENUGFX_SPLASH_SCREEN3;
 texID_t AVPMENUGFX_SPLASH_SCREEN4;
 texID_t AVPMENUGFX_SPLASH_SCREEN5;
 
+texID_t AVPMENUGFX_ADDON_IMAGE;
+
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 extern AVPMENU_ELEMENT AvPMenu_SinglePlayer[];
 
@@ -924,6 +926,7 @@ extern void ReleaseAllAvPMenuGfx(void)
 	Tex_Release(AVPMENUGFX_SPLASH_SCREEN3);
 	Tex_Release(AVPMENUGFX_SPLASH_SCREEN4);
 	Tex_Release(AVPMENUGFX_SPLASH_SCREEN5);
+	Tex_Release(AVPMENUGFX_ADDON_IMAGE);
 
 	Tex_Release(IntroFont_Light.textureID);
 }

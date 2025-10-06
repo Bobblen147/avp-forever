@@ -1357,7 +1357,7 @@ static void RenderMenu(void)
 			RenderBriefingScreenInfo();
 		}
 		else if (AvPMenus.CurrentMenu == AVPMENU_LEVELBRIEFING_CUSTOM) {
-			y = MENU_BOTTOMYEDGE - AvPMenus.MenuHeight + 25; //fudge to fit 'impossible mission' difficulty neatly onto the screen
+			y = MENU_BOTTOMYEDGE - AvPMenus.MenuHeight + 32; //fudge to fit 'impossible mission' difficulty neatly onto the screen
 			RenderBriefingScreenInfoCustom();
 		}
 		else
@@ -1447,12 +1447,16 @@ static void RenderBriefingScreenInfo(void)
 static void RenderBriefingScreenInfoCustom(void)
 {
 	texID_t graphicID;
-	graphicID = AVPMENUGFX_MARINE_EPISODE1;
+	char* CustomMapName = GetCustomMultiplayerLevelName(CustomMapEpisode + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual);
+	std::string CustomMapNameStr = CustomMapName;
+
+	AVPMENUGFX_ADDON_IMAGE = Tex_CreateFromRIM("graphics/Menus/" + CustomMapNameStr + "_briefing.rim");
+	graphicID = AVPMENUGFX_ADDON_IMAGE;
 	int targetBrightness = BRIGHTNESS_OF_HIGHLIGHTED_ELEMENT;
 	
-	RenderMenuText(GetCustomMultiplayerLevelName(CustomMapEpisode + MAX_NO_OF_MULTIPLAYER_EPISODES, NGT_Individual), MENU_CENTREX, 120, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
+	RenderMenuText(CustomMapName, MENU_CENTREX, 120, ONE_FIXED, AVPMENUFORMAT_CENTREJUSTIFIED);
 
-	DrawAvPMenuGfx_Clipped(graphicID, MENU_LEFTXEDGE + 225, MENU_CENTREY - 120, targetBrightness, AVPMENUFORMAT_LEFTJUSTIFIED, MENU_CENTREY - 60 - 100, MENU_CENTREY - 60 + 180);
+	DrawAvPMenuGfx(graphicID, MENU_LEFTXEDGE + 130, MENU_CENTREY - 125, ONE_FIXED + 1, AVPMENUFORMAT_LEFTJUSTIFIED);
 
 	//RenderBriefingText(/*ScreenDescriptorBlock.SDB_Height*/480 / 2, ONE_FIXED);
 }
@@ -3153,6 +3157,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
 				SetupNewMenu(AVPMENU_ALIEN_CUSTOM_LEVELS);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_ALIEN_GAMETYPE;
 				break;
 			}
 				
@@ -3161,6 +3166,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
 				SetupNewMenu(AVPMENU_MARINE_CUSTOM_LEVELS);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_MARINE_GAMETYPE;
 				break;
 			}
 
@@ -3169,6 +3175,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 		{
 			if (interactionID == AVPMENU_ELEMENT_INTERACTION_SELECT) {
 				SetupNewMenu(AVPMENU_PREDATOR_CUSTOM_LEVELS);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_PREDATOR_GAMETYPE;
 				break;
 			}
 
@@ -3181,6 +3188,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				AlienEpisodeToPlay = 0;
 				SetLevelToLoadForAlienCustom(*elementPtr->SliderValuePtr);
 				SetupNewMenu(AVPMENU_LEVELBRIEFING_CUSTOM);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_ALIEN_GAMETYPE;
 				break;
 			}
 		}
@@ -3192,6 +3200,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				MarineEpisodeToPlay = 0;
 				SetLevelToLoadForMarineCustom(*elementPtr->SliderValuePtr);
 				SetupNewMenu(AVPMENU_LEVELBRIEFING_CUSTOM);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_MARINE_GAMETYPE;
 				break;
 			}
 		}
@@ -3203,6 +3212,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				PredatorEpisodeToPlay = 0;
 				SetLevelToLoadForPredatorCustom(*elementPtr->SliderValuePtr);
 				SetupNewMenu(AVPMENU_LEVELBRIEFING_CUSTOM);
+				AvPMenusData[AvPMenus.CurrentMenu].ParentMenu = AVPMENU_PREDATOR_GAMETYPE;
 				break;
 			}
 		}
@@ -3807,7 +3817,6 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 		case AVPMENU_ELEMENT_STARTALIENDEMO:
 		case AVPMENU_ELEMENT_STARTLEVELWITHCHEAT:
 		case AVPMENU_ELEMENT_SAVEMPCONFIG:
-		case AVPMENU_ELEMENT_DIFFICULTYLEVEL:
 		case AVPMENU_ELEMENT_JOINLOBBIED:
 		case AVPMENU_ELEMENT_CONNECTIONCHOICE :
 		case AVPMENU_ELEMENT_USERPROFILE_DELETE:
@@ -3832,7 +3841,16 @@ static void RenderMenuElement(AVPMENU_ELEMENT *elementPtr, int e, int y)
 				break;
 			}
 		}
+		case AVPMENU_ELEMENT_DIFFICULTYLEVEL:
+		{
+			char* textPtr = GetTextString(static_cast<enum TEXTSTRING_ID>(elementPtr->TextDescription));
+			//RenderText = RenderSmallMenuText;
 
+			{
+				RenderText(textPtr, MENU_CENTREX, y, elementPtr->Brightness, AVPMENUFORMAT_CENTREJUSTIFIED);
+				break;
+			}
+		}	
 		case AVPMENU_ELEMENT_DUMMYTEXTSLIDER:
 		case AVPMENU_ELEMENT_DUMMYTEXTSLIDER_POINTER:
 		case AVPMENU_ELEMENT_TEXTSLIDER:

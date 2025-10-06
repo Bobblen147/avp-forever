@@ -69,6 +69,8 @@ extern texID_t AVPMENUGFX_SPLASH_SCREEN3;
 extern texID_t AVPMENUGFX_SPLASH_SCREEN4;
 extern texID_t AVPMENUGFX_SPLASH_SCREEN5;
 
+extern texID_t AVPMENUGFX_ADDON_IMAGE;
+
 typedef struct AVPIndexedFont
 {
 	texID_t textureID;
