@@ -12,54 +12,72 @@ Source code can be found here
 https://github.com/Bobblen147/avp-forever/tree/other/avp-source-code-update
 
 
-Most new features can be toggled from the config file found here:
+Features marked as "config file toggle" can be enabled/disabled from the config file found here:
 documents\My Games\Aliens versus Predator\AliensVsPredator.cfg
 
 Marine Weapons
--Start marine levels with any combination of weapons (including none at all)
--Make marine cudgel selectable with key 0 even if you have ammo for other weapons
+-Start marine levels with any combination of weapons (including none at all) "config file toggle"
+-Make marine cudgel selectable with key 0 even if you have ammo for other weapons "config file toggle"
 -Marine weapon reload any time (default key R)
--Marine weapon jamming can be disabled
+-Marine weapon jamming can be disabled "config file toggle"
 
 Predator Weapons
 -Override map specific predator inventory and start with any combination of weapons
-to enable this, first set PredatorWeaponsOverride=true in the config file
+to enable this, first set PredatorWeaponsOverride=true in the config file "config file toggle"
 -Predator weapons can now be collected as pickups (use key cards 11,12,13,14,15,16 in the editor to place them)
 -Predator previous vision mode key (default R)
 -Predator tracking weapons (disc, shoulder cannon) can have their tracking enabled/disabled (default key T)
+-Predator can charge wrist blades indefinitely
 
-Gameplay
--TurnSpeedAdjust config option disables half mouse movement speed when walking (feature added by sirlemonhead)
--all bot types are force loaded automatically when you use debug mode (don't need -lampcrtx anymore)
--Added sentry gun bot spawn command (type SENTRYGUN in debug mode)
--Added facehugger bot spawn command (type FACEHUGGER in debug mode)
--Added alien queen bot spawn command (type QUEENBOT in debug mode)
--Added additional Predator bot subtypes that Rebellion left unused (PREDOBOT 2,3,4 or 5 in debug mode)
--Can enable/disable AI attacking a player of the same species.
--Can force sentry guns to target a human player
--Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
--EXPERIMENTAL - ENEMYCOUNT debug command adds a live kill counter to the top left of the screen (including both placed and generated enemies)
--EXPERIMENTAL - PICKUPCOUNT debug command adds a live pickup counter to the top left of the screen (includes marine weapons, health, armour and pred field charge)
--Impossible Mission difficulty level no longer requires a cheat mode to select. Unlocking a level on director's cut will unlock impossible mission too.
--Bonus levels can now be played on any difficulty level
--Cheat modes can now be played on any appropriate level
-
-Skirmish
+Skirmish Enhancements
 -Alien now playable in skirmish mode, tail attack can now target other aliens
 -All enemy types now supported in skirmish mode, both as placed enemies and spawned in using debug mode
 -TAB high score table now includes kill counts for all enemy types
 -All single player triggers now work in skirmish
+-Water effects (waterfall, rain, water pools) are still loaded if a single player map is moved to the Custom folder to play as a skirmish
 -EXPERIMENTAL - Predator generators added. Enable PredatorGenerators in config file then
-place a marine generator in your map and spawn unarmed, molotov or flamer civilians 
--In game species change in debug mode (use MORPH_ALIEN, MORPH_MARINE and MORPH_PREDATOR)
+place a marine generator in your map and spawn unarmed, molotov or flamer civilians "config file toggle"
 -included a sample skirmish map "Stranded_Preds", to demonstrate these features (remember to enable PredatorGenerators in the config file first)
 
+General Gameplay
+-TurnSpeedAdjust config option disables half mouse movement speed when walking (feature added by sirlemonhead) "config file toggle"
+-Debug Mode can be enabled from the config file (as well as using the shortcut like normal) "config file toggle"
+-all bot types are force loaded automatically when you use debug mode (don't need -lampcrtx anymore)
+-Add a cheat unlock target in the Alien bonus mission Invasion to unlock the Terror cheat mode. (previously only accessibly by hacking your profile)
+-Impossible Mission difficulty level no longer requires a cheat mode to select. Unlocking a level on director's cut will unlock impossible mission too.
+-Bonus levels can now be played on any difficulty level instead of forcing Realistic
+-Cheat modes can now be played on any appropriate map, marine fall damage is disabled for the Free Fall cheat to make it (a bit) fairer
+
+NPC Changes
+-Added sentry gun, facehugger and alien queen bot spawn commands (type SENTRYGUN, FACEHUGGER or QUEENBOT in debug mode)
+-The Queen has modified AI so she will target hostile NPCs as well as the player (EXPERIMENTAL)
+-Added additional Predator bot subtypes that Rebellion left unused (PREDOBOT 2,3,4 or 5 in debug mode)
+-Can enable/disable AI attacking a player of the same species. "config file toggle"
+-Can force sentry guns to target a human player "config file toggle"
+
+Campaign Mode
+-Starting a game in Campaign Mode from the main menu will allow you to play all a species' single player missions consecutively 
+-A campaign can also be started from the Cheat Modes menu, allowing you to play a whole campaign with a cheat
+-Campaigns can be played with health/armour/weapons retained or reset at the start of each level "config file toggle"
+
+Custom Single Player Map
+-A new menu allows you to load any map in your Custom folder as a single player map
+-Some single player maps are supplied with custom graphics which will display when you select them
+
+New Debug Console Commands
+-ENEMYCOUNT debug command adds a live enemy counter to the top left of the screen (including both placed and generated enemies) that decreases as they are killed
+-PICKUPCOUNT debug command adds a live pickup counter to the top left of the screen (includes marine weapons, health, armour and pred field charge)
+-SENTRYGUN, FACEHUGGER, QUEENBOT, PREDOBOT 2,3,4 or 5. New bot spawns (see Gameplay section above)
+-DIFFICULTY debug command shows the current difficulty as a number (0=training,1=realistic,2=directors cut,3=impossible)
+-MORPH_ALIEN, MORPH_MARINE and MORPH_PREDATOR change species in game in skirmish mode
+-FLYMODE, OBSERVER, SHOWMODULE, PAINTBALL debug commands to aid custom map making (see custom map section below)
+
 Custom map making
--Fly mode can be enabled in the console by typing FLYMODE then F6 anytime during play to toggle.
+-Fly mode / no clip mode can be enabled in the console by typing FLYMODE then F6 anytime during play to toggle.
 -Observer mode can be enabled in the console by typing OBSERVER (no longer needs debug EXE)
 -typing SHOWMODULE will show which module the player is in (no longer needs debug EXE)
+-typing PAINTBALL will enable decal placement mode, see the mod tools documentation for how to use it (no longer needs debug EXE)
 -The unused mirror flag is now a 'no collision' flag and can be used to make false walls
--Can play a custom single player level by adding it to the config and just starting a new game as the species you want.
 
 Other
 -Enable/disable EAX reverb effects from config
@@ -133,15 +151,24 @@ I used the latest version
 Known (pre-existing) avpx bugs
 * means I've applied a fix or workaround in avpx enhanced
 
+avpx only
 -Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)
--Can't see starry sky through a window (tyrargo, orbital)
+-Can't see starry sky through a window (eg tyrargo, orbital), also can't see coronas through windows but this is much rarer
+-Animated lava texture in Fury 161 (& Earthbound animated tunnel lights / Vaults predalien sphere) are broken
+-Vertical movement for tracking weapons is very slow (eg waterfall pred, use shoulder cannon on marine below at the start)
+-Tapping the mouse to fire multiple shots is broken (try firing single shots with marine pistol, keyboard is fine, it's just the mouse)
+-Coronas are sometimes drawn in front of the HUD and very thin walls
 -Stranded cliff textures have an outline around the transparent section (bad bilinear filtering)*
--Animated lava texture in Fury 161 (& Earthbound animated lights / Vaults predalien sphere) are broken
--Getting hit by a xenoborg sometimes breaks the graphics completely
 -Walls seem to be a bit stickier than gold edition (easier to snag them)? May be related to high FPS?
 -In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
--When killing an NPC marine with a heavy weapon, the weapon drop sound sometimes rapidly repeats*
--EAX reverb / echo levels are way too high on non surround sound setups.*
--Wireframe debug mode just does nothing
+-Wireframe debug mode doesn't work at all
 -Motionblur and Triptastic cheat modes do not have the blurring effect
--CDSTOP/PLAY in game commands not hooked up, only one cd track is played per level
+-Only one cd track is played (always looping) per level instead of looping through all 5, (also CD console commands not hooked up)
+-EAX reverb / echo levels are way too high on non surround sound setups.*
+
+avp gold & avpx
+-Getting hit by a xenoborg sometimes breaks the graphics completely, resulting in glitching and a black screen
+-When killing an NPC marine with a heavy weapon, the weapon drop sound sometimes rapidly repeats* (fast processor bug?)
+-Collisions with NPCs (and NPC vs NPC collisions) can occasionally cause crashes, also you shouldn't really be able to fling NPCs around by pushing them (fast processor bug?)
+
+

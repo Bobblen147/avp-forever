@@ -97,6 +97,9 @@ STRATEGYBLOCK* CreateGrenadeKernel(AVP_BEHAVIOUR_TYPE behaviourID, VECTORCH *pos
 
 extern int ShowAdj;
 
+PLAYER_CAMPAIGN_SAVE_BLOCK PlayerCampaignSaveBlock;
+void LoadStrategy_PlayerCampaign(player_campaign_save_block& player_campaign_save_block, PLAYER_STATUS* playerStatusPtr);
+
 /*KJL****************************************************************************************
 *                                     F U N C T I O N S	                                    *
 ****************************************************************************************KJL*/
@@ -105,6 +108,7 @@ PLAYER_STATUS* PlayerStatusPtr = NULL;
 static PLAYER_STATUS PlayerStatusBlock;
 int ShowPredoStats=0;
 int Observer=0;
+int PlayerCampaignSaveBlockExists=0;
 
 /* Patrick 22/8/97------------------------------------------------
 Cloaking stuff
@@ -365,6 +369,10 @@ void InitPlayer(STRATEGYBLOCK* sbPtr, int sb_type)
 
 	//restore the number of saves allowed
 	ResetNumberOfSaves();
+
+	if (PlayerCampaignSaveBlockExists == 1) {
+		LoadStrategy_PlayerCampaign(PlayerCampaignSaveBlock, psPtr);
+	}
 
 	//choosing a start position now occurs later on
 //	if(AvP.Network!=I_No_Network) TeleportNetPlayerToAStartingPosition(sbPtr, 1);
@@ -2137,3 +2145,69 @@ void LoadStrategy_Player(SAVE_BLOCK_STRATEGY_HEADER* header)
 
 }
 
+
+void SaveStrategy_PlayerCampaign(PLAYER_CAMPAIGN_SAVE_BLOCK &player_campaign_save_block, STRATEGYBLOCK* sbPtr)
+{
+	
+	PLAYER_STATUS* psPtr = &PlayerStatusBlock;
+	PlayerStatusPtr = psPtr;
+	int i;
+
+	player_campaign_save_block.SelectedWeaponSlot = PlayerStatusPtr->SelectedWeaponSlot;
+	player_campaign_save_block.SwapToWeaponSlot = PlayerStatusPtr->SwapToWeaponSlot;
+	player_campaign_save_block.PreviouslySelectedWeaponSlot = PlayerStatusPtr->PreviouslySelectedWeaponSlot;
+
+	player_campaign_save_block.Health = PlayerStatusPtr->Health;	 /* in 16.16 */
+	player_campaign_save_block.Energy = PlayerStatusPtr->Energy;	 /* in 16.16 */
+	player_campaign_save_block.Armour = PlayerStatusPtr->Armour;	 /* in 16.16 */
+	player_campaign_save_block.FieldCharge = PlayerStatusPtr->FieldCharge;	 /* in 16.16 */
+
+	for (i = 0; i < MAX_NO_OF_WEAPON_SLOTS; i++)
+	{
+		player_campaign_save_block.WeaponSlot[i].WeaponIDNumber = PlayerStatusPtr->WeaponSlot[i].WeaponIDNumber;
+		player_campaign_save_block.WeaponSlot[i].CurrentState = PlayerStatusPtr->WeaponSlot[i].CurrentState;
+		player_campaign_save_block.WeaponSlot[i].StateTimeOutCounter = PlayerStatusPtr->WeaponSlot[i].StateTimeOutCounter;
+		player_campaign_save_block.WeaponSlot[i].PrimaryRoundsRemaining = PlayerStatusPtr->WeaponSlot[i].PrimaryRoundsRemaining;
+		player_campaign_save_block.WeaponSlot[i].SecondaryRoundsRemaining = PlayerStatusPtr->WeaponSlot[i].SecondaryRoundsRemaining;
+		player_campaign_save_block.WeaponSlot[i].PrimaryMagazinesRemaining = PlayerStatusPtr->WeaponSlot[i].PrimaryMagazinesRemaining;
+		player_campaign_save_block.WeaponSlot[i].SecondaryMagazinesRemaining = PlayerStatusPtr->WeaponSlot[i].SecondaryMagazinesRemaining;
+		player_campaign_save_block.WeaponSlot[i].PositionOffset = PlayerStatusPtr->WeaponSlot[i].PositionOffset;
+		player_campaign_save_block.WeaponSlot[i].DirectionOffset = PlayerStatusPtr->WeaponSlot[i].DirectionOffset;
+		player_campaign_save_block.WeaponSlot[i].Possessed = PlayerStatusPtr->WeaponSlot[i].Possessed;
+	}
+	PlayerCampaignSaveBlockExists = 1;
+}
+
+void LoadStrategy_PlayerCampaign(player_campaign_save_block &player_campaign_save_block, PLAYER_STATUS* playerStatusPtr)
+{
+	
+	STRATEGYBLOCK* sbPtr = Player->ObStrategyBlock;
+	int i;
+
+	//playerStatusPtr->SelectedWeaponSlot = player_campaign_save_block.SelectedWeaponSlot;
+	//playerStatusPtr->SwapToWeaponSlot = player_campaign_save_block.SwapToWeaponSlot;
+	//playerStatusPtr->PreviouslySelectedWeaponSlot = player_campaign_save_block.PreviouslySelectedWeaponSlot;
+
+	//for (i = 0; i < MAX_NO_OF_WEAPON_SLOTS; i++)
+	//{
+	//	playerStatusPtr->WeaponSlot[i].WeaponIDNumber = player_campaign_save_block.WeaponSlot[i].WeaponIDNumber;
+	//	playerStatusPtr->WeaponSlot[i].CurrentState = player_campaign_save_block.WeaponSlot[i].CurrentState;
+	//	playerStatusPtr->WeaponSlot[i].StateTimeOutCounter = player_campaign_save_block.WeaponSlot[i].StateTimeOutCounter;
+	//	playerStatusPtr->WeaponSlot[i].PrimaryRoundsRemaining = player_campaign_save_block.WeaponSlot[i].PrimaryRoundsRemaining;
+	//	playerStatusPtr->WeaponSlot[i].SecondaryRoundsRemaining = player_campaign_save_block.WeaponSlot[i].SecondaryRoundsRemaining;
+	//	playerStatusPtr->WeaponSlot[i].PrimaryMagazinesRemaining = player_campaign_save_block.WeaponSlot[i].PrimaryMagazinesRemaining;
+	//	playerStatusPtr->WeaponSlot[i].SecondaryMagazinesRemaining = player_campaign_save_block.WeaponSlot[i].SecondaryMagazinesRemaining;
+	//	playerStatusPtr->WeaponSlot[i].PositionOffset = player_campaign_save_block.WeaponSlot[i].PositionOffset;
+	//	playerStatusPtr->WeaponSlot[i].DirectionOffset = player_campaign_save_block.WeaponSlot[i].DirectionOffset;
+	//	playerStatusPtr->WeaponSlot[i].Possessed = player_campaign_save_block.WeaponSlot[i].Possessed;
+	//}
+
+	Player->ObStrategyBlock->SBDamageBlock.Health = player_campaign_save_block.Health;	 
+	playerStatusPtr->Health = Player->ObStrategyBlock->SBDamageBlock.Health;
+	playerStatusPtr->Energy = player_campaign_save_block.Energy;	
+	Player->ObStrategyBlock->SBDamageBlock.Armour = player_campaign_save_block.Armour;	 
+	playerStatusPtr->Armour = Player->ObStrategyBlock->SBDamageBlock.Armour;
+	playerStatusPtr->FieldCharge = player_campaign_save_block.FieldCharge;
+
+	
+}

@@ -4307,5 +4307,35 @@ END OF JULES BONUS MESSAGES
 # <TEXTSTRING_GAMESTATS_SENTRYGUN>
 "Sentry Gun"
 
+# <TEXTSTRING_DIFFICULTY_IMPOSSIBLE>
+"Impossible Mission"
+
+# <TEXTSTRING_DIFFICULTY_IMPOSSIBLE_HELP>
+"Play on Impossible Mission - Extra hard difficulty."
+
+# <TEXTSTRING_SINGLEPLAYER_CAMPAIGN>
+"New Campaign"
+
+# <TEXTSTRING_SINGLEPLAYER_CUSTOM>
+"Custom Map"
+
+# <TEXTSTRING_MAINMENU_ACHIEVEMENTS>
+"Achievements"
+
+# <TEXTSTRING_MAINMENU_ACHIEVEMENTS_HELP>
+"View achievements progress"
+
+# <TEXTSTRING_ACHIEVEMENT_1>
+"Hive Gang"
+
+# <TEXTSTRING_ACHIEVEMENT_2>
+"The Ultimate Honour"
+
+# <TEXTSTRING_ACHIEVEMENT1_HELP>
+"Keep the NPC alien alive in Fury 161 (Alien)"
+
+# <TEXTSTRING_ACHIEVEMENT2_HELP>
+"Defeat all enemies in Battle using only the wrist blades"
+
 @ This line signifies end of file. Do not delete!
 																			 

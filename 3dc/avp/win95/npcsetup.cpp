@@ -367,23 +367,23 @@ void InitNPCs(RIFFHANDLE h)
 							break;
 						case 2:
 							//if(AvP.Network == I_No_Network)
-								Load_HNPC[HNPC_Predator]=TRUE;
+							Load_HNPC[HNPC_Predator]=TRUE;
 							break;
 						
 						case 3:
 							//if(AvP.Network == I_No_Network)
-								Load_HNPC[HNPC_Hugger]=TRUE;
+							Load_HNPC[HNPC_Hugger]=TRUE;
 							break;
 						case 4:
 							//if(AvP.Network == I_No_Network)
-								Load_HNPC[HNPC_Xenoborg]=TRUE;
+							Load_HNPC[HNPC_Xenoborg]=TRUE;
 							break;
 						case 5:
 							Load_HNPC[HNPC_PredAlien] =TRUE;
 							break;
 						case 6:
 							//if(AvP.Network == I_No_Network)
-								Load_HNPC[HNPC_AlienQueen]=TRUE;
+							Load_HNPC[HNPC_AlienQueen]=TRUE;
 							break;
 						case 7:	//marine or variant of marine
 							//if(AvP.Network == I_No_Network)
@@ -403,8 +403,7 @@ void InitNPCs(RIFFHANDLE h)
 											//noncombatant marines become civilians
 											if(MarineIsNomcombatant(agc))
 											{
-												Load_HNPC[HNPC_Civilian]=TRUE;											
-			
+												Load_HNPC[HNPC_Civilian]=TRUE;
 											}
 										}
 										break;
@@ -421,6 +420,7 @@ void InitNPCs(RIFFHANDLE h)
 									case 110://civilian unarmed
 									case 120://android
 										Load_HNPC[HNPC_Civilian] =TRUE;
+										Load_HNPC[HNPC_Predator] =TRUE; //if predator generators is on
 										break;
 		
 									
@@ -435,7 +435,7 @@ void InitNPCs(RIFFHANDLE h)
 							break;
 						case 9:
 							//if(AvP.Network == I_No_Network)
-								Load_HNPC[HNPC_SentryGun]=TRUE;
+							Load_HNPC[HNPC_SentryGun]=TRUE;
 							break;
 						default:
 							break;
@@ -475,6 +475,7 @@ void InitNPCs(RIFFHANDLE h)
 						   setting->weights->MolotovCiv_Wt)
 						{
 							Load_HNPC[HNPC_Civilian]=TRUE;
+							Load_HNPC[HNPC_Predator]=TRUE; //needed for predator generators
 							all_zero=FALSE;
 						}
 					}

@@ -1787,6 +1787,20 @@ extern void RemovePickedUpObject(STRATEGYBLOCK *objectPtr)
 		case(IOT_FieldCharge):
 			Sound_Play(SID_PREDATOR_PICKUP_FIELDCHARGE,NULL);
 			break;
+		case(IOT_Key):
+			switch (AvP.PlayerType) {
+			case I_Alien:
+			default:
+				Sound_Play(SID_PICKUP, NULL);
+				break;
+			case I_Marine:
+				Sound_Play(SID_PICKUP, NULL);
+				break;
+			case I_Predator:
+				Sound_Play(SID_PREDATOR_PICKUP_FIELDCHARGE, NULL);
+				break;
+			}
+			break;
 		default:
 			Sound_Play(SID_PICKUP,NULL);
 			break;

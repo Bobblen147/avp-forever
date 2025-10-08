@@ -31,6 +31,7 @@
 #include "davehook.h"
 #include "MusicPlayer.h"
 #include "savegame.h"
+#include "Player.h"
 // Added 18/11/97 by DHM: all hooks for my code
 #define UseLocalAssert TRUE
 #include "ourasert.h"
@@ -54,6 +55,7 @@ extern int PlaySounds;
 extern int MotionTrackerScale;
 extern int LeanScale;
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
+extern PLAYER_CAMPAIGN_SAVE_BLOCK PlayerCampaignSaveBlock;
 
 // extern functions
 extern void CreateGameSpecificConsoleVariables(void);
@@ -64,6 +66,7 @@ extern void AssignAllSBNames();
 extern BOOL Current_Level_Requires_Mirror_Image();
 extern void InitialiseTriggeredFMVs();
 void check_preplaced_decal_modules();
+extern void SaveStrategy_PlayerCampaign(PLAYER_CAMPAIGN_SAVE_BLOCK& player_campaign_save_block, STRATEGYBLOCK* sbPtr);
 
 enum GameVersion
 {
@@ -423,6 +426,25 @@ void UpdateGame(void)
 		if (!PlayerStatusPtr->IsAlive) {
 			AvP.LevelCompleted=0;
 		}
+
+		//save player stats for campaign mode
+		
+
+		int i;
+
+		for (i = 0; i < NumActiveStBlocks; i++)
+		{
+			STRATEGYBLOCK* sbPtr = ActiveStBlockList[i];
+
+			switch (sbPtr->I_SBtype)
+			{
+			case I_BehaviourMarinePlayer:
+				SaveStrategy_PlayerCampaign(PlayerCampaignSaveBlock, sbPtr);
+				break;
+			default:;
+			}
+		}
+	
 	}
 
 	if (TRIPTASTIC_CHEATMODE)

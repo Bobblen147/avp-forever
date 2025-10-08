@@ -1574,6 +1574,7 @@ static void WeaponStateIdle(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *w
 static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DATA *weaponPtr)
 {
 	playerStatusPtr->SwappingIsDebounced = 0;
+	MarineCudgelSelectable = Config_GetBool("[MarineGameplay]", "MarineCudgelSelectable", false);
 
 	if (playerStatusPtr->MyFaceHugger) {
 		return(0);
@@ -1613,13 +1614,13 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
 			}
 
 			/* And not if you're the cudgel. */
-			//if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL)
-			//	{
-			//		if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
-			//		{
-			//			slotValidity = 0;
-			//		}
-			//	}
+			if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL)
+				{
+					if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
+					{
+						slotValidity = 0;
+					}
+				}
 			
 			/* But, if you are the cudgel, ignore the pulserifle unless it has ammo. */
 			if (playerStatusPtr->WeaponSlot[playerStatusPtr->SelectedWeaponSlot].WeaponIDNumber==WEAPON_CUDGEL) 
@@ -1707,13 +1708,13 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
 				}
 			}
 			/* And not if you're the cudgel. */
-			//if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL && !MarineCudgelSelectable)
-			//	{
-			//		if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
-			//		{
-			//			slotValidity = 0;
-			//		}
-			//	}
+			if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL && !MarineCudgelSelectable)
+				{
+					if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
+					{
+						slotValidity = 0;
+					}
+				}
 			
 			/* But, if you are the cudgel, ignore the pulserifle unless it has ammo. */
 			if (playerStatusPtr->WeaponSlot[playerStatusPtr->SelectedWeaponSlot].WeaponIDNumber==WEAPON_CUDGEL) 
@@ -1783,7 +1784,11 @@ static int RequestChangeOfWeapon(PLAYER_STATUS *playerStatusPtr,PLAYER_WEAPON_DA
         if( (requestedSlot != playerStatusPtr->SelectedWeaponSlot)
           &&(playerStatusPtr->WeaponSlot[requestedSlot].Possessed == 1) )
         { 
-            // Disallow Gold version weapons with regular version
+            // Disallow selecting Cudgel if you have other weapons (except with MarineCudgelSelectable enabled)
+			if (!MarineCudgelSelectable && (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber == WEAPON_CUDGEL)) {
+				return 0;
+			}
+			// Disallow Gold version weapons with regular version
 			if (!AllowGoldWeapons && ((playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_FRISBEE_LAUNCHER) || 
 			   (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_MARINE_PISTOL) || 
 			   (playerStatusPtr->WeaponSlot[requestedSlot].WeaponIDNumber==WEAPON_TWO_PISTOLS))) {
@@ -1909,13 +1914,13 @@ static int RequestChangeOfWeaponWhilstSwapping(PLAYER_STATUS *playerStatusPtr,PL
 			}
 		
 				/* And not if you're the cudgel. */
-				//if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL && !MarineCudgelSelectable)
-				//{
-				//	if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
-				//	{
-				//		slotValidity = 0;
-				//	}
-				//}
+				if (playerStatusPtr->WeaponSlot[newSlotInt].WeaponIDNumber == WEAPON_CUDGEL && !MarineCudgelSelectable)
+				{
+					if (playerStatusPtr->SelectedWeaponSlot != newSlotInt)
+					{
+						slotValidity = 0;
+					}
+				}
 			
 			/* But, if you are the cudgel, ignore the pulserifle unless it has ammo. */
 			if (playerStatusPtr->WeaponSlot[playerStatusPtr->SelectedWeaponSlot].WeaponIDNumber==WEAPON_CUDGEL) 
@@ -11851,7 +11856,6 @@ static void MarineZeroAmmoFunctionality(PLAYER_STATUS* playerStatusPtr, PLAYER_W
 		return;
 	}
 
-	MarineCudgelSelectable = Config_GetBool("[MarineGameplay]", "MarineCudgelSelectable", false);
 	if (weaponPtr->WeaponIDNumber == WEAPON_CUDGEL && MarineCudgelSelectable) {
 			/* Don't do the zero ammo check if we're selecting the cudgel */
 			return;
