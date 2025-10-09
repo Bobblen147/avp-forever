@@ -97,6 +97,8 @@ STRATEGYBLOCK* CreateGrenadeKernel(AVP_BEHAVIOUR_TYPE behaviourID, VECTORCH *pos
 
 extern int ShowAdj;
 
+//campaign mode functions
+extern bool CampaignMode;
 PLAYER_CAMPAIGN_SAVE_BLOCK PlayerCampaignSaveBlock;
 void LoadStrategy_PlayerCampaign(player_campaign_save_block& player_campaign_save_block, PLAYER_STATUS* playerStatusPtr);
 
@@ -108,7 +110,6 @@ PLAYER_STATUS* PlayerStatusPtr = NULL;
 static PLAYER_STATUS PlayerStatusBlock;
 int ShowPredoStats=0;
 int Observer=0;
-int PlayerCampaignSaveBlockExists=0;
 
 /* Patrick 22/8/97------------------------------------------------
 Cloaking stuff
@@ -370,7 +371,8 @@ void InitPlayer(STRATEGYBLOCK* sbPtr, int sb_type)
 	//restore the number of saves allowed
 	ResetNumberOfSaves();
 
-	if (PlayerCampaignSaveBlockExists == 1) {
+	//load current player health/armour/weapons if in a campaign
+	if (CampaignMode) {
 		LoadStrategy_PlayerCampaign(PlayerCampaignSaveBlock, psPtr);
 	}
 
@@ -2153,10 +2155,6 @@ void SaveStrategy_PlayerCampaign(PLAYER_CAMPAIGN_SAVE_BLOCK &player_campaign_sav
 	PlayerStatusPtr = psPtr;
 	int i;
 
-	player_campaign_save_block.SelectedWeaponSlot = PlayerStatusPtr->SelectedWeaponSlot;
-	player_campaign_save_block.SwapToWeaponSlot = PlayerStatusPtr->SwapToWeaponSlot;
-	player_campaign_save_block.PreviouslySelectedWeaponSlot = PlayerStatusPtr->PreviouslySelectedWeaponSlot;
-
 	player_campaign_save_block.Health = PlayerStatusPtr->Health;	 /* in 16.16 */
 	player_campaign_save_block.Energy = PlayerStatusPtr->Energy;	 /* in 16.16 */
 	player_campaign_save_block.Armour = PlayerStatusPtr->Armour;	 /* in 16.16 */
@@ -2175,39 +2173,70 @@ void SaveStrategy_PlayerCampaign(PLAYER_CAMPAIGN_SAVE_BLOCK &player_campaign_sav
 		player_campaign_save_block.WeaponSlot[i].DirectionOffset = PlayerStatusPtr->WeaponSlot[i].DirectionOffset;
 		player_campaign_save_block.WeaponSlot[i].Possessed = PlayerStatusPtr->WeaponSlot[i].Possessed;
 	}
-	PlayerCampaignSaveBlockExists = 1;
+
+	player_campaign_save_block.GrenadeLauncherData = GrenadeLauncherData;
+
+	player_campaign_save_block.IsActive = 1; //only active after first use, otherwise we'd load player stats on level 1
 }
 
 void LoadStrategy_PlayerCampaign(player_campaign_save_block &player_campaign_save_block, PLAYER_STATUS* playerStatusPtr)
 {
 	
-	STRATEGYBLOCK* sbPtr = Player->ObStrategyBlock;
-	int i;
+	if (player_campaign_save_block.IsActive == 1) {
+		STRATEGYBLOCK* sbPtr = Player->ObStrategyBlock;
 
-	//playerStatusPtr->SelectedWeaponSlot = player_campaign_save_block.SelectedWeaponSlot;
-	//playerStatusPtr->SwapToWeaponSlot = player_campaign_save_block.SwapToWeaponSlot;
-	//playerStatusPtr->PreviouslySelectedWeaponSlot = player_campaign_save_block.PreviouslySelectedWeaponSlot;
+		//health,armour,field charge (all species)
+		Player->ObStrategyBlock->SBDamageBlock.Health = player_campaign_save_block.Health;
+		playerStatusPtr->Health = Player->ObStrategyBlock->SBDamageBlock.Health;
+		playerStatusPtr->Energy = player_campaign_save_block.Energy;
+		Player->ObStrategyBlock->SBDamageBlock.Armour = player_campaign_save_block.Armour;
+		playerStatusPtr->Armour = Player->ObStrategyBlock->SBDamageBlock.Armour;
+		playerStatusPtr->FieldCharge = player_campaign_save_block.FieldCharge;
 
-	//for (i = 0; i < MAX_NO_OF_WEAPON_SLOTS; i++)
-	//{
-	//	playerStatusPtr->WeaponSlot[i].WeaponIDNumber = player_campaign_save_block.WeaponSlot[i].WeaponIDNumber;
-	//	playerStatusPtr->WeaponSlot[i].CurrentState = player_campaign_save_block.WeaponSlot[i].CurrentState;
-	//	playerStatusPtr->WeaponSlot[i].StateTimeOutCounter = player_campaign_save_block.WeaponSlot[i].StateTimeOutCounter;
-	//	playerStatusPtr->WeaponSlot[i].PrimaryRoundsRemaining = player_campaign_save_block.WeaponSlot[i].PrimaryRoundsRemaining;
-	//	playerStatusPtr->WeaponSlot[i].SecondaryRoundsRemaining = player_campaign_save_block.WeaponSlot[i].SecondaryRoundsRemaining;
-	//	playerStatusPtr->WeaponSlot[i].PrimaryMagazinesRemaining = player_campaign_save_block.WeaponSlot[i].PrimaryMagazinesRemaining;
-	//	playerStatusPtr->WeaponSlot[i].SecondaryMagazinesRemaining = player_campaign_save_block.WeaponSlot[i].SecondaryMagazinesRemaining;
-	//	playerStatusPtr->WeaponSlot[i].PositionOffset = player_campaign_save_block.WeaponSlot[i].PositionOffset;
-	//	playerStatusPtr->WeaponSlot[i].DirectionOffset = player_campaign_save_block.WeaponSlot[i].DirectionOffset;
-	//	playerStatusPtr->WeaponSlot[i].Possessed = player_campaign_save_block.WeaponSlot[i].Possessed;
-	//}
+		//Marine weapons and ammo
+		//Don't do the Pred as the weapons carry over anyway (and spear ammo should be reset each level)
+		if (AvP.PlayerType == I_Marine)
+		{
+			int slot = MAX_NO_OF_WEAPON_SLOTS;
+			while (slot--)
+			{
+				PLAYER_WEAPON_DATA* wdPtr = &playerStatusPtr->WeaponSlot[slot];
 
-	Player->ObStrategyBlock->SBDamageBlock.Health = player_campaign_save_block.Health;	 
-	playerStatusPtr->Health = Player->ObStrategyBlock->SBDamageBlock.Health;
-	playerStatusPtr->Energy = player_campaign_save_block.Energy;	
-	Player->ObStrategyBlock->SBDamageBlock.Armour = player_campaign_save_block.Armour;	 
-	playerStatusPtr->Armour = Player->ObStrategyBlock->SBDamageBlock.Armour;
-	playerStatusPtr->FieldCharge = player_campaign_save_block.FieldCharge;
+				//if (slot == WEAPON_PLASMAGUN || slot == WEAPON_SONICCANNON) continue;
 
-	
+				if (wdPtr->WeaponIDNumber == NULL_WEAPON) continue;
+
+				if (wdPtr->Possessed == -1) continue; /* This weapon not allowed! */
+
+				wdPtr->Possessed = player_campaign_save_block.WeaponSlot[slot].Possessed;
+
+				/* KJL 21:49:47 05/15/97 - give ammo for weapons, apart from
+				experimental weapons */
+				if (slot <= WEAPON_SLOT_10) {
+					if (wdPtr->WeaponIDNumber == WEAPON_CUDGEL) {
+						wdPtr->PrimaryMagazinesRemaining = 0;
+					}
+					else {
+						wdPtr->PrimaryMagazinesRemaining = player_campaign_save_block.WeaponSlot[slot].PrimaryMagazinesRemaining;
+					}
+				}
+				else wdPtr->PrimaryMagazinesRemaining = 0;
+
+				if (wdPtr->WeaponIDNumber == WEAPON_PULSERIFLE) {
+					wdPtr->SecondaryRoundsRemaining = player_campaign_save_block.WeaponSlot[slot].SecondaryRoundsRemaining;
+				}
+				if (wdPtr->WeaponIDNumber == WEAPON_TWO_PISTOLS) {
+					wdPtr->SecondaryMagazinesRemaining = player_campaign_save_block.WeaponSlot[slot].SecondaryMagazinesRemaining;
+				}
+
+				wdPtr->PrimaryRoundsRemaining = player_campaign_save_block.WeaponSlot[slot].PrimaryRoundsRemaining;
+			}
+			GrenadeLauncherData.StandardMagazinesRemaining = player_campaign_save_block.GrenadeLauncherData.StandardMagazinesRemaining;
+			GrenadeLauncherData.StandardRoundsRemaining = player_campaign_save_block.GrenadeLauncherData.StandardRoundsRemaining;
+			GrenadeLauncherData.ProximityMagazinesRemaining = player_campaign_save_block.GrenadeLauncherData.ProximityMagazinesRemaining;
+			GrenadeLauncherData.ProximityRoundsRemaining = player_campaign_save_block.GrenadeLauncherData.ProximityRoundsRemaining;
+			GrenadeLauncherData.FragmentationMagazinesRemaining = player_campaign_save_block.GrenadeLauncherData.FragmentationMagazinesRemaining;
+			GrenadeLauncherData.FragmentationRoundsRemaining = player_campaign_save_block.GrenadeLauncherData.FragmentationRoundsRemaining;
+		}
+	}
 }

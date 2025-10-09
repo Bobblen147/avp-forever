@@ -56,6 +56,7 @@ extern int MotionTrackerScale;
 extern int LeanScale;
 extern SCREENDESCRIPTORBLOCK ScreenDescriptorBlock;
 extern PLAYER_CAMPAIGN_SAVE_BLOCK PlayerCampaignSaveBlock;
+extern bool CampaignMode;
 
 // extern functions
 extern void CreateGameSpecificConsoleVariables(void);
@@ -427,24 +428,23 @@ void UpdateGame(void)
 			AvP.LevelCompleted=0;
 		}
 
-		//save player stats for campaign mode
-		
+		//save player health/armour/weapons for campaign mode
+		if (CampaignMode) {
+			int i;
 
-		int i;
-
-		for (i = 0; i < NumActiveStBlocks; i++)
-		{
-			STRATEGYBLOCK* sbPtr = ActiveStBlockList[i];
-
-			switch (sbPtr->I_SBtype)
+			for (i = 0; i < NumActiveStBlocks; i++)
 			{
-			case I_BehaviourMarinePlayer:
-				SaveStrategy_PlayerCampaign(PlayerCampaignSaveBlock, sbPtr);
-				break;
-			default:;
+				STRATEGYBLOCK* sbPtr = ActiveStBlockList[i];
+
+				switch (sbPtr->I_SBtype)
+				{
+				case I_BehaviourMarinePlayer:
+					SaveStrategy_PlayerCampaign(PlayerCampaignSaveBlock, sbPtr);
+					break;
+				default:;
+				}
 			}
 		}
-	
 	}
 
 	if (TRIPTASTIC_CHEATMODE)

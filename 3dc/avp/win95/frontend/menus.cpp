@@ -30,6 +30,7 @@
 #include "d3d_render.h"
 #include "OnScreenKeyboard.h"
 #include "ConfigFile.h"
+#include "player.h"
 
 #if defined(_MSC_VER)
 #define stricmp		_stricmp
@@ -89,9 +90,10 @@ extern void SetDefaultMultiplayerConfig();
 //avp 99 mode
 static bool AvP99TitleScreen = false;
 static bool DisableSkeeterPistols = false;
-//campaign
-static bool CampaignMode = false;
+//campaign mode
+bool CampaignMode = false;
 static bool CheatCampaignMode = false;
+extern PLAYER_CAMPAIGN_SAVE_BLOCK PlayerCampaignSaveBlock;
 int AlienCampaignEpisodeToPlay = 0;
 int MarineCampaignEpisodeToPlay = 0;
 int PredatorCampaignEpisodeToPlay = 0;
@@ -352,6 +354,7 @@ int AvP_MainMenus(void)
 			else {
 				CampaignMode = false;
 				CheatCampaignMode = false;
+				PlayerCampaignSaveBlock.IsActive = 0; //reset this so player can start a new campaign with fresh stats
 				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
 			}
 			break;
@@ -363,6 +366,7 @@ int AvP_MainMenus(void)
 			else {
 				CampaignMode = false;
 				CheatCampaignMode = false;
+				PlayerCampaignSaveBlock.IsActive = 0; //reset this so player can start a new campaign with fresh stats
 				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
 			}
 			break;
@@ -374,6 +378,7 @@ int AvP_MainMenus(void)
 			else {
 				CampaignMode = false;
 				CheatCampaignMode = false;
+				PlayerCampaignSaveBlock.IsActive = 0; //reset this so player can start a new campaign with fresh stats
 				AvPMenus.MenusState = MENUSSTATE_MAINMENUS;
 			}
 			break;
@@ -3066,9 +3071,10 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				if (AvPMenus.MenusState == MENUSSTATE_INGAMEMENUS)
 				{
 					AvP.MainLoopRunning = 0;
-					//reset campaign
+					//reset campaign flags
 					CampaignMode = false;
 					CheatCampaignMode = false;
+					PlayerCampaignSaveBlock.IsActive = 0; //reset this so player can start a new campaign with fresh stats
 					AlienCampaignEpisodeToPlay = 0;
 					MarineCampaignEpisodeToPlay = 0;
 					PredatorCampaignEpisodeToPlay = 0;
