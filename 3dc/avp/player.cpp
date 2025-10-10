@@ -30,6 +30,7 @@ so player.c is looking a bit bare at the moment. */
 #include "pldghost.h"
 #include "showcmds.h"
 #include "bonusabilities.h"
+#include "ConfigFile.h"
 
 #define PLAYER_HMODEL 0
 
@@ -371,8 +372,10 @@ void InitPlayer(STRATEGYBLOCK* sbPtr, int sb_type)
 	//restore the number of saves allowed
 	ResetNumberOfSaves();
 
-	//load current player health/armour/weapons if in a campaign
-	if (CampaignMode) {
+	//load current player health/armour/weapons if in a campaign and retaining stats
+	bool CampaignRetainPlayerStats = true;
+	CampaignRetainPlayerStats = Config_GetBool("[Gameplay]", "CampaignRetainPlayerStats", true);
+	if (CampaignMode==true && CampaignRetainPlayerStats==true) {
 		LoadStrategy_PlayerCampaign(PlayerCampaignSaveBlock, psPtr);
 	}
 

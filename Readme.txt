@@ -58,11 +58,15 @@ NPC Changes
 Campaign Mode
 -Starting a game in Campaign Mode from the main menu will allow you to play all a species' single player missions consecutively 
 -A campaign can also be started from the Cheat Modes menu, allowing you to play a whole campaign with a cheat
--Campaigns can be played with health/armour/weapons retained or reset at the start of each level "config file toggle"
+-Campaigns can be played with health/armour/weapons retained or reset at the start of each level by setting CampaignRetainPlayerStats in the config file. "config file toggle"
+-The default setting is that weapons/armour/health are retained 
+-Saves are supported in campaign mode. If you load a save after starting a new campaign, you will continue the campaign from the loaded level. 
+-Any save can be loaded this way, it doesn't have to be a save you made in campaign mode.
 
 Custom Single Player Map
 -A new menu allows you to load any map in your Custom folder as a single player map
 -Some single player maps are supplied with custom graphics which will display when you select them
+-Saving is supported for custom single player maps (with the same rules as saving the normal game)
 
 New Debug Console Commands
 -ENEMYCOUNT debug command adds a live enemy counter to the top left of the screen (including both placed and generated enemies) that decreases as they are killed
@@ -158,6 +162,7 @@ avpx only
 -Vertical movement for tracking weapons is very slow (eg waterfall pred, use shoulder cannon on marine below at the start)
 -Tapping the mouse to fire multiple shots is broken (try firing single shots with marine pistol, keyboard is fine, it's just the mouse)
 -Coronas are sometimes drawn in front of the HUD and very thin walls
+-Some placed decals are missing (Pred waterfall, there should be a big puddle of blood at the start, not just spatter)
 -Stranded cliff textures have an outline around the transparent section (bad bilinear filtering)*
 -Walls seem to be a bit stickier than gold edition (easier to snag them)? May be related to high FPS?
 -In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
