@@ -1770,7 +1770,12 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                 }                               
                 case IOT_Key:
                 {
-                        /* do nothing */
+                        if (sbPtr->SBDamageBlock.Health <= 0 && (objectstatusptr->subType>=11 && objectstatusptr->subType <= 16))//only pred weapons breakable
+                        {
+                                FragmentInanimateObject(sbPtr);
+                                if (AvP.Network == I_No_Network) DestroyAnyStrategyBlock(sbPtr);
+                                else KillInanimateObjectForRespawn(sbPtr);
+                        }
                         break;
                 }                               
                 case IOT_BoxedSentryGun:

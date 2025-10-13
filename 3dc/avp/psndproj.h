@@ -20,106 +20,107 @@
   of these corresponds to a data slot in the GameSounds[] array, and to the Id
   number specified for each sound in the sound data file
   ----------------------------------------------------------------------------*/
+//all wavs loaded from common.ffl
 typedef enum soundindex
 {
-	SID_PRED_LAUNCHER, // 0  //Used, plasmacaster fire
-	SID_PRED_FRISBEE,	 // TRUE!
-	SID_PRED_PISTOL,  // TRUE, pistol (Duh!)
-	SID_PRED_SNARL,	//FALSE
-	SID_PRED_SCREAM1, //FALSE
-	SID_PRED_LASER, //TRUE, speargun (!)
-	SID_PULSE_START,  //TRUE
-	SID_PULSE_LOOP, //TRUE
-	SID_PULSE_END, //TRUE
-	SID_LIFT_START, //Remove?
+	SID_PRED_LAUNCHER,  //TRUE launcher.wav (plasmacaster)
+	SID_PRED_FRISBEE,	//TRUE wil_pred_disc_throw.wav (disc)
+	SID_PRED_PISTOL,	//TRUE Pred_pistol_fire.wav (pred pistol)
+	SID_PRED_SNARL,		//FALSE
+	SID_PRED_SCREAM1,	//FALSE
+	SID_PRED_LASER,		//TRUE wil_pred_speargun_fire.wav (speargun)
+	SID_PULSE_START,	//TRUE pulsesrt.wav (pulse rifle)
+	SID_PULSE_LOOP,		//TRUE pulsemid.wav (pulse rifle)
+	SID_PULSE_END,		//TRUE pulseend.wav (pulse rifle)
+	SID_LIFT_START,		//FALSE
 
-	SID_LIFT_LOOP,		//10 //Remove?
-	SID_LIFT_END, //Remove?
-	SID_SWITCH1,		//Remove?
-	SID_SWITCH2,		// not loaded
-	SID_ALIEN_SCREAM,  // 14  //FALSE
-	SID_SWIPE,//FALSE
-	SID_SWISH,//FALSE
-	SID_TAIL, //FALSE
-	SID_VISION_ON, //TRUE
-	SID_VISION_LOOP,   // not loaded (Continuous pred background)
+	SID_LIFT_LOOP,		//FALSE
+	SID_LIFT_END,		//FALSE
+	SID_SWITCH1,		//FALSE
+	SID_SWITCH2,		//FALSE
+	SID_ALIEN_SCREAM,	//FALSE
+	SID_SWIPE,			//FALSE
+	SID_SWISH,			//FALSE
+	SID_TAIL,			//FALSE
+	SID_VISION_ON,		//TRUE visionon.wav (pred vision)
+	SID_VISION_LOOP,	//FALSE
 
-	SID_SWIPE2,			// 20 //FALSE
-	SID_SWIPE3,		//FALSE
-	SID_SWIPE4,		//FALSE
-	SID_PRED_HISS,	//FALSE
-	SID_HIT_FLESH,	//FALSE
-	SID_ALIEN_HIT,			//FALSE
-	SID_ALIEN_KILL, // Only used for queen death!
-	SID_ALIEN_HISS, //FALSE
-	SID_ALIEN_HISS1,//FALSE
-	SID_FIRE,			// 29 //TRUE
+	SID_SWIPE2,			//FALSE
+	SID_SWIPE3,			//FALSE
+	SID_SWIPE4,			//FALSE
+	SID_PRED_HISS,		//FALSE
+	SID_HIT_FLESH,		//FALSE
+	SID_ALIEN_HIT,		//FALSE
+	SID_ALIEN_KILL,		//TRUE alienkil.wav (queen death)
+	SID_ALIEN_HISS,		//FALSE
+	SID_ALIEN_HISS1,	//FALSE
+	SID_FIRE,			//TRUE fire1.wav (on fire)
 
-	SID_BUGDIE1,		// 30 //FALSE
-	SID_BUGDIE2,			  //FALSE
-	SID_BUGDIE3,			  //FALSE
-	SID_MARINE_DEATH1,		  //FALSE
-	SID_MARINE_DEATH2,		  //FALSE
-	SID_PRED_LOUDROAR,	 // 35 not loaded //FALSE
+	SID_BUGDIE1,		//FALSE
+	SID_BUGDIE2,		//FALSE
+	SID_BUGDIE3,		//FALSE
+	SID_MARINE_DEATH1,	//FALSE
+	SID_MARINE_DEATH2,	//FALSE
+	SID_PRED_LOUDROAR,	//FALSE
 	SID_MARINE_HIT, 	//FALSE
 	SID_ALIEN_HIT2,		//FALSE
-	SID_PICKUP, // TRUE, misc pickups, e.g. security pass
-	SID_RICOCH1, //TRUE
+	SID_PICKUP,			//TRUE Ed_MarinePickUp_Health.wav (health pickup)
+	SID_RICOCH1,		//TRUE wil_bullet_ricochet_01.wav (bullets hitting walls)
 
-	SID_RICOCH2,		// 40 //TRUE
-	SID_RICOCH3,//TRUE
-	SID_RICOCH4,//TRUE
-	SID_ARMSTART,		 // 43 //Xenoborg
-	SID_ARMMID, //Xenoborg, sentrygun
-	SID_ARMEND, //Xenoborg
-	SID_PRED_SHORTROAR,	  // 46 not loaded
-	SID_PRED_SLASH,		  // 47 not loaded
-	SID_RIP,			  // 48 not loaded
-	SID_PRED_NEWROAR, 	  // Medicomp stab!
+	SID_RICOCH2,		//TRUE wil_bullet_ricochet_02.wav (bullets hitting walls)
+	SID_RICOCH3,		//TRUE wil_bullet_ricochet_03.wav (bullets hitting walls)
+	SID_RICOCH4,		//TRUE wil_bullet_ricochet_04.wav (bullets hitting walls)
+	SID_ARMSTART,		//TRUE ArmStart.wav (xenoborg attack)
+	SID_ARMMID,			//TRUE ArmMid.wav (xenoborg attack)
+	SID_ARMEND,			//TRUE ArmEnd.wav (xenoborg attack)
+	SID_PRED_SHORTROAR,	//FALSE
+	SID_PRED_SLASH,		//FALSE
+	SID_RIP,			//FALSE
+	SID_PRED_NEWROAR, 	//TRUE predroar01.wav (medicomp stab)
 
-	SID_SPLASH1,		  // 50 //TRUE
-	SID_SPLASH2, //TRUE
-	SID_SPLASH3, //yes
-	SID_SPLASH4, //TRUE
-	SID_POWERUP, //Xenoborg
-	SID_POWERDN, //Xenoborg
-	SID_TELETEXT,//TRUE
-	SID_TRACKER_CLICK,//TRUE
-	SID_TRACKER_WHEEP,//TRUE
-	SID_ACID_SPRAY, //Facehugger damaged
+	SID_SPLASH1,		//TRUE splash1.wav (water)
+	SID_SPLASH2,		//TRUE splash2.wav (water)
+	SID_SPLASH3,		//TRUE splash3.wav (water)
+	SID_SPLASH4,		//TRUE splash4.wav (water)
+	SID_POWERUP,		//TRUE PowerUp.wav (xenoborg activate)
+	SID_POWERDN,		//TRUE PowerDn.wav (xenoborg deactivate)
+	SID_TELETEXT,		//TRUE teletext.wav (console text print)
+	SID_TRACKER_CLICK,	//TRUE martracker.wav (motion tracker)
+	SID_TRACKER_WHEEP,	//TRUE trackwep.wav (motion tracker)
+	SID_ACID_SPRAY,		//TRUE acdspray.wav (facehugger hurt, commented out?)
 
-	SID_DOORSTART,       // 60 //TRUE
-	SID_DOORMID, //TRUE
-	SID_DOOREND,	//TRUE
-	SID_BORGON,			// 63
-	SID_SPARKS, //TRUE
-	SID_STOMP, //Xenoborg
-	SID_LOADMOVE, //Xenoborg
-	SID_FHUG_ATTACKLOOP, //TRUE (FHug!)
-	SID_FHUG_MOVE, //TRUE (FHug!)
-	SID_NOAMMO, //TRUE (Smartgun click, sentrygun slick)
+	SID_DOORSTART,      //TRUE doorstat.wav (door)
+	SID_DOORMID,		//TRUE doormid.wav (door)
+	SID_DOOREND,		//TRUE doorend.wav (door)
+	SID_BORGON,			//TRUE BorgOn.wav (xenoborg activate?)
+	SID_SPARKS,			//TRUE Ed_Common_Sparks.wav (xenoborg damaged, broken lights etc)
+	SID_STOMP,			//TRUE Stomp.wav (Xenoborg)
+	SID_LOADMOVE,		//TRUE loadmove.wav (Xenoborg)
+	SID_FHUG_ATTACKLOOP,//TRUE faceattk.wav (facehugger)
+	SID_FHUG_MOVE,		//TRUE facemve.wav (facehugger)
+	SID_NOAMMO,			//TRUE noammo.wav (Smartgun click, sentrygun slick)
 
-	SID_LONGLOAD,		  //70 //FALSE
-	SID_NADELOAD,//FALSE
-	SID_NADEFIRE,//TRUE
-	SID_NADEEXPLODE,//TRUE
-	SID_SHRTLOAD,	//FALSE
-	SID_INCIN_START, //TRUE
-	SID_INCIN_LOOP, //TRUE
-	SID_INCIN_END, //TRUE
-	SID_ROCKFIRE, //TRUE (Grenade launcher)
-	SID_SHOTGUN,		//TRUE (pistols)
+	SID_LONGLOAD,		//FALSE
+	SID_NADELOAD,		//FALSE
+	SID_NADEFIRE,		//TRUE Ed_PulseGrenade_Launch.wav (pulse grenade fire)
+	SID_NADEEXPLODE,	//TRUE Ed_PulseGrenade_Explode.wav (pulse grenade hit, barrels explode)
+	SID_SHOTGUN_OLD,	//FALSE (formerly unused SID_SHRTLOAD, now shotgun_old.wav - used by avpx for avp 99 shotgun sound)
+	SID_INCIN_START,	//TRUE incinsrt.wav (flamethrower)
+	SID_INCIN_LOOP,		//TRUE incinmid.wav (flamethrower)
+	SID_INCIN_END,		//TRUE incinend.wav (flamethrower)
+	SID_ROCKFIRE,		//TRUE Ed_Grenade_Launch.wav (Grenade launcher fire)
+	SID_SHOTGUN,		//TRUE shotgun2.wav (pistols & civie shotgun in gold edition)
 
-	SID_SMART1,			  //80 //TRUE
-	SID_SMART2, //TRUE
-	SID_SMART3, //TRUE
-	SID_SENTRY_GUN, //TRUE
-	SID_SENTRY_END, //TRUE
-	SID_NICE_EXPLOSION, //TRUE (SADARS etc)
-	SID_EXPLOSION, //TRUE (inanimates)
-	SID_MINIGUN_END, //TRUE
-	SID_MINIGUN_LOOP, //TRUE
-	SID_SPEARGUN_HITTING_WALL, //TRUE
+	SID_SMART1,			//TRUE Ed_smart_fire_1.wav (Smartgun fire)
+	SID_SMART2,			//TRUE Ed_smart_fire_2.wav (Smartgun fire)
+	SID_SMART3,			//TRUE Ed_smart_fire_3.wav (Smartgun fire)
+	SID_SENTRY_GUN,		//TRUE Ed_SentryGun_Fire_Mid_Lp.wav (sentry gun fire)
+	SID_SENTRY_END,		//TRUE Ed_SentryGun_Fire_End.wav (sentry gun fire)
+	SID_NICE_EXPLOSION, //TRUE Ed_sadar_explosion01.wav (SADARS, big bangs)
+	SID_EXPLOSION,		//TRUE explo1.wav (breaking non flammable objects)
+	SID_MINIGUN_END,	//TRUE Ed_minigun_end.wav (minigun fire)
+	SID_MINIGUN_LOOP,	//TRUE Ed_minigun_fire.wav (minigun fire)
+	SID_SPEARGUN_HITTING_WALL, //TRUE wil_pred_speargun_hit_wall.wav (speargun hits wall)
 
 	SID_FRAG_RICOCHETS,      //90  //TRUE
 	SID_PLASMABOLT_DISSIPATE, //TRUE
@@ -154,11 +155,11 @@ typedef enum soundindex
 	SID_MARINE_PICKUP_AMMO,	 //TRUE
 	SID_MARINE_PICKUP_ARMOUR,//TRUE
 
-	SID_PREDATOR_PICKUP_FIELDCHARGE, //120 //TRUE
-	SID_PREDATOR_PICKUP_WEAPON, // In code, but never happens
-	SID_PREDATOR_CLOAKING_ACTIVE,//TRUE (vision modes)
-	SID_PREDATOR_CLOAKING_DAMAGED,//Not yet!
-	SID_PREDATOR_SPEARGUN_EMPTY,//In code, but never happens
+	SID_PREDATOR_PICKUP_FIELDCHARGE,	//TRUE wil_pickup_predator_fieldcharge.wav (field charge pickup)
+	SID_PREDATOR_PICKUP_WEAPON,			//FALSE (added pickup1.wav in avpx enhanced to use this)
+	SID_PREDATOR_CLOAKING_ACTIVE,		//TRUE Pred_vision_active_lp.wav (pred vision background hum)
+	SID_PREDATOR_CLOAKING_DAMAGED,		//FALSE
+	SID_PREDATOR_SPEARGUN_EMPTY,		//FALSE
 	SID_PREDATOR_PLASMACASTER_TARGET_FOUND,//TRUE
 	SID_PREDATOR_PLASMACASTER_TARGET_LOCKED,//TRUE
 	SID_PREDATOR_PLASMACASTER_TARGET_LOST,//TRUE

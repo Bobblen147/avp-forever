@@ -256,7 +256,7 @@ void DoPlayerSounds(void)
 	{
 		if (weaponPtr->CurrentState == WEAPONSTATE_FIRING_PRIMARY)
 		{
-			Sound_Play(SID_SHOTGUN, "h");
+			Sound_Play(SID_SHOTGUN_OLD, "h");
 			playerNoise = 1;
 		}
 		break;

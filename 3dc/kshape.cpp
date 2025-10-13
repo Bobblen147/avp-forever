@@ -473,6 +473,14 @@ void ShapePipeline(SHAPEHEADER *shapePtr)
 								break;
 							}
 
+							case IOT_Key: { //placed pred weapons
+								if (objStatPtr->subType >= 11 && objStatPtr->subType <= 16) {
+									useVision = true;
+								}
+
+								break;
+							}
+
 							default:
 								break;
 						}

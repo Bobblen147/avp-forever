@@ -155,9 +155,33 @@ void MaintainPlayersInventory(void)
 					}
 					case(IOT_Key):
 					{
-						if (AvP.PlayerType==I_Predator && AbleToPickupWeapon(static_cast<enum WEAPON_ID>(objStatPtr->subType)))
+						if (AvP.PlayerType==I_Predator)
 						{
-							RemovePickedUpObject(collidedWith);
+							if (objStatPtr->subType == 11 && AbleToPickupWeapon(WEAPON_PRED_WRISTBLADE)) //Wrist Blades
+							{ 
+									RemovePickedUpObject(collidedWith);
+							}
+							if (objStatPtr->subType == 12 && AbleToPickupWeapon(WEAPON_PRED_RIFLE)) //Speargun
+							{
+								RemovePickedUpObject(collidedWith);
+							}
+							if (objStatPtr->subType == 13 && AbleToPickupWeapon(WEAPON_PRED_SHOULDERCANNON)) //Shoulder Cannon
+							{
+								RemovePickedUpObject(collidedWith);
+							}
+							if (objStatPtr->subType == 14 && AbleToPickupWeapon(WEAPON_PRED_MEDICOMP)) //Medicomp
+							{
+								RemovePickedUpObject(collidedWith);
+							}
+							if (objStatPtr->subType == 15 && AbleToPickupWeapon(WEAPON_PRED_PISTOL)) //Pistol
+							{
+								RemovePickedUpObject(collidedWith);
+							}
+							if (objStatPtr->subType == 16 && AbleToPickupWeapon(WEAPON_PRED_DISC)) //Wrist Blades
+							{
+								RemovePickedUpObject(collidedWith);
+							}
+							
 							/*Message now done in able to pickup function*/
 						 //	NewOnScreenMessage(GetTextString(TemplateWeapon[objStatPtr->subType].Name));
 						}
@@ -1797,7 +1821,7 @@ extern void RemovePickedUpObject(STRATEGYBLOCK *objectPtr)
 				Sound_Play(SID_PICKUP, NULL);
 				break;
 			case I_Predator:
-				Sound_Play(SID_PREDATOR_PICKUP_FIELDCHARGE, NULL);
+				Sound_Play(SID_PREDATOR_PICKUP_WEAPON, NULL);
 				break;
 			}
 			break;

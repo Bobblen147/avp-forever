@@ -2977,7 +2977,7 @@ void HandlePlayerGhostWeaponSound(STRATEGYBLOCK *sbPtr, int weapon, int firingPr
 			LOCALASSERT(type==I_BehaviourMarinePlayer);
 			/* stop sound if we've got it */
 			if(ghostData->SoundHandle != SOUND_NOACTIVEINDEX) Sound_Stop(ghostData->SoundHandle);
-			if(firingPrimary) Sound_Play(SID_SHOTGUN,"hd",&(sbPtr->DynPtr->Position));						
+			if(firingPrimary) Sound_Play(SID_SHOTGUN_OLD,"hd",&(sbPtr->DynPtr->Position));						
 			break;
 		}
 		case(WEAPON_SMARTGUN):

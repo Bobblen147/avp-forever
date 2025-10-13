@@ -510,7 +510,7 @@ MARINE_WEAPON_DATA NPC_Marine_Weapons[] = {
 		8,									/* clip_size */
 		MSSS_Reload,						/* Reload_Sequence */
 		0,									/* TargetCallibrationShift */
-		SID_SHOTGUN,						/* StartSound */
+		SID_SHOTGUN_OLD,					/* StartSound */
 		SID_NOSOUND,						/* LoopSound */
 		SID_NOSOUND,						/* EndSound */
 		0,									/* Enable Grenades */
@@ -679,7 +679,7 @@ MARINE_WEAPON_DATA NPC_Marine_Weapons[] = {
 		8,									/* clip_size */
 		MSSS_Reload,						/* Reload_Sequence */
 		0,									/* TargetCallibrationShift */
-		SID_SHOTGUN,						/* StartSound */
+		SID_SHOTGUN_OLD,					/* StartSound */
 		SID_NOSOUND,						/* LoopSound */
 		SID_NOSOUND,						/* EndSound */
 		0,									/* Enable Grenades */
@@ -713,7 +713,7 @@ MARINE_WEAPON_DATA NPC_Marine_Weapons[] = {
 		8,									/* clip_size */
 		MSSS_Reload,						/* Reload_Sequence */
 		0,									/* TargetCallibrationShift */
-		SID_SHOTGUN,						/* StartSound */
+		SID_SHOTGUN_OLD,					/* StartSound */
 		SID_NOSOUND,						/* LoopSound */
 		SID_NOSOUND,						/* EndSound */
 		0,									/* Enable Grenades */
@@ -14056,7 +14056,7 @@ int Marine_SoundInterest(SOUNDINDEX soundIndex)
 		case SID_NADELOAD:
 		case SID_NADEFIRE:
 		case SID_NADEEXPLODE:
-		case SID_SHRTLOAD:
+		case SID_SHOTGUN_OLD:
 		case SID_INCIN_START:
 		case SID_INCIN_LOOP:
 		case SID_INCIN_END:
@@ -14338,7 +14338,7 @@ int Marine_SoundCourageBonus(SOUNDINDEX soundIndex) {
 		case SID_NADELOAD:
 		case SID_NADEFIRE:
 		case SID_NADEEXPLODE:
-		case SID_SHRTLOAD:
+		case SID_SHOTGUN_OLD:
 		case SID_SENTRY_GUN:
 		case SID_SENTRY_END:
 		case SID_NICE_EXPLOSION:
