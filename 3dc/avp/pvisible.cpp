@@ -65,6 +65,8 @@ extern int GlobalFrameCounter;
 
 //pickup counters
 extern int FieldChargeCount;
+extern int MarineHealthCount;
+extern int MarineArmourCount;
 extern int PulseRifleCount;
 extern int SmartGunCount;
 extern int FlameThrowerCount;
@@ -73,8 +75,14 @@ extern int GrenadeLauncherCount;
 extern int MinigunCount;
 extern int PistolCount;
 extern int SkeeterCount;
-extern int MarineHealthCount;
-extern int MarineArmourCount;
+extern int PulseRifleAmmoCount;
+extern int SmartGunAmmoCount;
+extern int FlameThrowerAmmoCount;
+extern int SADARAmmoCount;
+extern int GrenadeLauncherAmmoCount;
+extern int MinigunAmmoCount;
+extern int PulseGrenadeAmmoCount;
+extern int SpeargunAmmoCount;
 
 extern void ActivateSelfDestructSequence(int seconds);
 
@@ -1438,6 +1446,17 @@ void InitInanimateObject(void* bhdata, STRATEGYBLOCK *sbPtr)
             if (objectstatusptr->subType == WEAPON_MINIGUN) { MinigunCount++ ;}
             if (objectstatusptr->subType == WEAPON_MARINE_PISTOL) { PistolCount++ ;}
             if (objectstatusptr->subType == WEAPON_FRISBEE_LAUNCHER) { SkeeterCount++ ;}
+        }
+        if (objectstatusptr->typeId == IOT_Ammo)
+        {
+            if (objectstatusptr->subType == AMMO_10MM_CULW) { PulseRifleAmmoCount++; }
+            if (objectstatusptr->subType == AMMO_SMARTGUN) { SmartGunAmmoCount++; }
+            if (objectstatusptr->subType == AMMO_FLAMETHROWER) { FlameThrowerAmmoCount++; }
+            if (objectstatusptr->subType == AMMO_SADAR_TOW) { SADARAmmoCount++; }
+            if (objectstatusptr->subType == AMMO_GRENADE) { GrenadeLauncherAmmoCount++; }
+            if (objectstatusptr->subType == AMMO_MINIGUN) { MinigunAmmoCount++; }
+            if (objectstatusptr->subType == AMMO_PULSE_GRENADE) { PulseGrenadeAmmoCount++; }
+            if (objectstatusptr->subType == AMMO_PRED_RIFLE) { SpeargunAmmoCount++; }
         }
 }
 

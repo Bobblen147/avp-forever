@@ -90,6 +90,14 @@ int PistolCount = 0;
 int SkeeterCount = 0;
 int MarineHealthCount = 0;
 int MarineArmourCount = 0;
+int PulseRifleAmmoCount = 0;
+int SmartGunAmmoCount = 0;
+int FlameThrowerAmmoCount = 0;
+int SADARAmmoCount = 0;
+int GrenadeLauncherAmmoCount = 0;
+int MinigunAmmoCount = 0;
+int PulseGrenadeAmmoCount = 0;
+int SpeargunAmmoCount = 0;
 
 BOOL UseMouseCentreing = FALSE;
 BOOL KeepMainRifFile = FALSE;
@@ -578,6 +586,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 							}
 
 							if (ShowDebuggingText.PickupCount) {
+								//Marine pickups
+								if (MarineHealthCount > 0) ReleasePrintDebuggingText("Medikit = %d\n", MarineHealthCount);
+								if (MarineArmourCount > 0) ReleasePrintDebuggingText("Armour = %d\n", MarineArmourCount);
 								//field charge
 								if (FieldChargeCount > 0) ReleasePrintDebuggingText("Field Charge = %d\n", FieldChargeCount);
 								//Marine weapons
@@ -589,9 +600,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 								if (MinigunCount > 0) ReleasePrintDebuggingText("Minigun = %d\n", MinigunCount);
 								if (PistolCount > 0) ReleasePrintDebuggingText("Pistol = %d\n", PistolCount);
 								if (SkeeterCount > 0) ReleasePrintDebuggingText("Skeeter = %d\n", SkeeterCount);
-								//Marine pickups
-								if (MarineHealthCount > 0) ReleasePrintDebuggingText("Medikit = %d\n", MarineHealthCount);
-								if (MarineArmourCount > 0) ReleasePrintDebuggingText("Armour = %d\n", MarineArmourCount);
+								//Marine & Pred ammo
+								if (PulseRifleAmmoCount > 0) ReleasePrintDebuggingText("Ammo Pulse Rifle = %d\n", PulseRifleAmmoCount);
+								if (SmartGunAmmoCount > 0) ReleasePrintDebuggingText("Ammo Smart Gun = %d\n", SmartGunAmmoCount);
+								if (FlameThrowerAmmoCount > 0) ReleasePrintDebuggingText("Ammo Flame Thrower = %d\n", FlameThrowerAmmoCount);
+								if (SADARAmmoCount > 0) ReleasePrintDebuggingText("Ammo SADAR = %d\n", SADARAmmoCount);
+								if (GrenadeLauncherAmmoCount > 0) ReleasePrintDebuggingText("Ammo Grenade Launcher = %d\n", GrenadeLauncherAmmoCount);
+								if (MinigunAmmoCount > 0) ReleasePrintDebuggingText("Ammo Minigun = %d\n", MinigunAmmoCount);
+								if (PulseGrenadeAmmoCount > 0) ReleasePrintDebuggingText("Ammo Pulse Grenade = %d\n", PulseGrenadeAmmoCount);
+								if (SpeargunAmmoCount > 0) ReleasePrintDebuggingText("Ammo Speargun = %d\n", SpeargunAmmoCount);
 							}
 
 							if (ShowDebuggingText.Difficulty) ReleasePrintDebuggingText("Difficulty = %d\n", AvP.Difficulty);
@@ -705,6 +722,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 				SkeeterCount = 0;
 				MarineHealthCount = 0;
 				MarineArmourCount = 0;
+				PulseRifleAmmoCount = 0;
+				SmartGunAmmoCount = 0;
+				FlameThrowerAmmoCount = 0;
+				SADARAmmoCount = 0;
+				GrenadeLauncherAmmoCount = 0;
+				MinigunAmmoCount = 0;
+				PulseGrenadeAmmoCount = 0;
+				SpeargunAmmoCount = 0;
 				RestartLevel();
 			}
 		} 
@@ -745,6 +770,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 		SkeeterCount = 0;
 		MarineHealthCount = 0;
 		MarineArmourCount = 0;
+		PulseRifleAmmoCount = 0;
+		SmartGunAmmoCount = 0;
+		FlameThrowerAmmoCount = 0;
+		SADARAmmoCount = 0;
+		GrenadeLauncherAmmoCount = 0;
+		MinigunAmmoCount = 0;
+		PulseGrenadeAmmoCount = 0;
+		SpeargunAmmoCount = 0;
 
 		#if !(PREDATOR_DEMO||MARINE_DEMO||ALIEN_DEMO)
 		TimeStampedMessage("We're out of the main loop");

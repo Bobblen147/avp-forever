@@ -279,6 +279,8 @@ extern int PlacedQueenCount;
 
 //debug pickup counters
 extern int FieldChargeCount;
+extern int MarineHealthCount;
+extern int MarineArmourCount;
 extern int PulseRifleCount;
 extern int SmartGunCount;
 extern int FlameThrowerCount;
@@ -287,8 +289,14 @@ extern int GrenadeLauncherCount;
 extern int MinigunCount;
 extern int PistolCount;
 extern int SkeeterCount;
-extern int MarineHealthCount;
-extern int MarineArmourCount;
+extern int PulseRifleAmmoCount;
+extern int SmartGunAmmoCount;
+extern int FlameThrowerAmmoCount;
+extern int SADARAmmoCount;
+extern int GrenadeLauncherAmmoCount;
+extern int MinigunAmmoCount;
+extern int PulseGrenadeAmmoCount;
+extern int SpeargunAmmoCount;
 
 /*----------------------------------------------------------------------
   External globals (& protoypes)
@@ -621,6 +629,8 @@ void InitAVPNetGameForHost(int species, int gamestyle, int level)
 	PlacedQueenCount = 0;
 	//reset debug pickup counters
 	FieldChargeCount = 0;
+	MarineHealthCount = 0;
+	MarineArmourCount = 0;
 	PulseRifleCount = 0;
 	SmartGunCount = 0;
 	FlameThrowerCount = 0;
@@ -629,8 +639,14 @@ void InitAVPNetGameForHost(int species, int gamestyle, int level)
 	MinigunCount = 0;
 	PistolCount = 0;
 	SkeeterCount = 0;
-	MarineHealthCount = 0;
-	MarineArmourCount = 0;
+	PulseRifleAmmoCount = 0;
+	SmartGunAmmoCount = 0;
+	FlameThrowerAmmoCount = 0;
+	SADARAmmoCount = 0;
+	GrenadeLauncherAmmoCount = 0;
+	MinigunAmmoCount = 0;
+	PulseGrenadeAmmoCount = 0;
+	SpeargunAmmoCount = 0;
 }
 
 void InitAVPNetGameForJoin(void)

@@ -61,6 +61,8 @@ static bool PredatorDiscStart = false;
 
 //pickup counters
 extern int FieldChargeCount;
+extern int MarineHealthCount;
+extern int MarineArmourCount;
 extern int PulseRifleCount;
 extern int SmartGunCount;
 extern int FlameThrowerCount;
@@ -69,8 +71,15 @@ extern int GrenadeLauncherCount;
 extern int MinigunCount;
 extern int PistolCount;
 extern int SkeeterCount;
-extern int MarineHealthCount;
-extern int MarineArmourCount;
+extern int PulseRifleAmmoCount;
+extern int SmartGunAmmoCount;
+extern int FlameThrowerAmmoCount;
+extern int SADARAmmoCount;
+extern int GrenadeLauncherAmmoCount;
+extern int MinigunAmmoCount;
+extern int PulseGrenadeAmmoCount;
+extern int SpeargunAmmoCount;
+
 
 //avp 99 mode
 static bool DisableSkeeterPistols = false;
@@ -132,6 +141,15 @@ void MaintainPlayersInventory(void)
 						{
 							RemovePickedUpObject(collidedWith);
 							NewOnScreenMessage(GetTextString(TemplateAmmo[objStatPtr->subType].ShortName));
+							//update pickup counters
+							if (objStatPtr->subType == AMMO_10MM_CULW) { PulseRifleAmmoCount--; }
+							if (objStatPtr->subType == AMMO_SMARTGUN) { SmartGunAmmoCount--; }
+							if (objStatPtr->subType == AMMO_FLAMETHROWER) { FlameThrowerAmmoCount--; }
+							if (objStatPtr->subType == AMMO_SADAR_TOW) { SADARAmmoCount--; }
+							if (objStatPtr->subType == AMMO_GRENADE) { GrenadeLauncherAmmoCount--; }
+							if (objStatPtr->subType == AMMO_MINIGUN) { MinigunAmmoCount--; }
+							if (objStatPtr->subType == AMMO_PULSE_GRENADE) { PulseGrenadeAmmoCount--; }
+							if (objStatPtr->subType == AMMO_PRED_RIFLE) { SpeargunAmmoCount--; }
 						}
 						break;
 					}
@@ -751,9 +769,26 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 			//If override is set force the weapons chosen in the config
 			if (PredatorWeaponsOverride) {
 				
-				if (PredatorWristBladesStart)
+				if (PredatorMedicompStart)
 				{
-					a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
+					a = SlotForThisWeapon(WEAPON_PRED_MEDICOMP);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
+					playerStatusPtr->WeaponSlot[a].PrimaryRoundsRemaining = MEDICOMP_MAX_AMMO;
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				if (PredatorShoulderCannonStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_SHOULDERCANNON);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 5;
+					playerStatusPtr->WeaponSlot[a].Possessed = 1;
+				}
+				if (PredatorDiscStart)
+				{
+					a = SlotForThisWeapon(WEAPON_PRED_DISC);
+					assert(a != -1);
+					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 1;
 					playerStatusPtr->WeaponSlot[a].Possessed = 1;
 				}
 				if (PredatorPistolStart)
@@ -772,37 +807,23 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
 					playerStatusPtr->WeaponSlot[a].Possessed = 1;
 				}
-				if (PredatorShoulderCannonStart)
-				{
-					a = SlotForThisWeapon(WEAPON_PRED_SHOULDERCANNON);
-					assert(a != -1);
-					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 5;
+				// make sure you restart with alternate weapon if no wrist blades
+				if (!PredatorWristBladesStart) {
+					playerStatusPtr->PreviouslySelectedWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
+					playerStatusPtr->SwapToWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
+				}
+				// Otherwise standard wrist blades start
+				else {
+					a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
 					playerStatusPtr->WeaponSlot[a].Possessed = 1;
 				}
-				if (PredatorDiscStart)
-				{
-					a = SlotForThisWeapon(WEAPON_PRED_DISC);
-					assert(a != -1);
-					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 1;
-					playerStatusPtr->WeaponSlot[a].Possessed = 1;
-				}
-				if (PredatorMedicompStart)
-				{
-					a = SlotForThisWeapon(WEAPON_PRED_MEDICOMP);
-					assert(a != -1);
-					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
-					playerStatusPtr->WeaponSlot[a].PrimaryRoundsRemaining = MEDICOMP_MAX_AMMO;
-					playerStatusPtr->WeaponSlot[a].Possessed = 1;
-				}
-
-				playerStatusPtr->PreviouslySelectedWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
-				playerStatusPtr->SwapToWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
-				a = SlotForThisWeapon(WEAPON_PRED_STAFF);
+				
+				//a = SlotForThisWeapon(WEAPON_PRED_STAFF);
 				// bjd - big crash. 08/02/10
 				/* bjd - below line added. MUST break here or else we index WeaponSlot array at index -1! */
-				if (a < 0) break;
-				playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
-				playerStatusPtr->WeaponSlot[a].Possessed = 0;
+				//if (a < 0) break;
+				//playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
+				//playerStatusPtr->WeaponSlot[a].Possessed = 0;
 
 				break;
 			}
@@ -849,12 +870,12 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
             	playerStatusPtr->WeaponSlot[a].PrimaryRoundsRemaining=MEDICOMP_MAX_AMMO;
 				playerStatusPtr->WeaponSlot[a].Possessed=1;
 			}
-			a=SlotForThisWeapon(WEAPON_PRED_STAFF);
+			//a=SlotForThisWeapon(WEAPON_PRED_STAFF);
 			// bjd - big crash. 08/02/10
 			/* bjd - below line added. MUST break here or else we index WeaponSlot array at index -1! */
-			if (a < 0) break;
-			playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining=0;
-			playerStatusPtr->WeaponSlot[a].Possessed=0;
+			//if (a < 0) break;
+			//playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining=0;
+			//playerStatusPtr->WeaponSlot[a].Possessed=0;
 
 			break;
 		}
