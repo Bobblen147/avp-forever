@@ -1753,7 +1753,16 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                         {
                                 FragmentInanimateObject(sbPtr);
                                 if(AvP.Network==I_No_Network) DestroyAnyStrategyBlock(sbPtr);
-                                else KillInanimateObjectForRespawn(sbPtr);                      
+                                else KillInanimateObjectForRespawn(sbPtr);
+                                //update pickup counters
+                                if (objectstatusptr->subType == WEAPON_PULSERIFLE) { PulseRifleCount--; }
+                                if (objectstatusptr->subType == WEAPON_SMARTGUN) { SmartGunCount--; }
+                                if (objectstatusptr->subType == WEAPON_FLAMETHROWER) { FlameThrowerCount--; }
+                                if (objectstatusptr->subType == WEAPON_SADAR) { SADARCount--; }
+                                if (objectstatusptr->subType == WEAPON_GRENADELAUNCHER) { GrenadeLauncherCount--; }
+                                if (objectstatusptr->subType == WEAPON_MINIGUN) { MinigunCount--; }
+                                if (objectstatusptr->subType == WEAPON_MARINE_PISTOL) { PistolCount--; }
+                                if (objectstatusptr->subType == WEAPON_FRISBEE_LAUNCHER) { SkeeterCount--; }
                         }
                         break;
                 }                               
@@ -1763,7 +1772,16 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                         {
                                 FragmentInanimateObject(sbPtr);
                                 if(AvP.Network==I_No_Network) DestroyAnyStrategyBlock(sbPtr);
-                                else KillInanimateObjectForRespawn(sbPtr);                      
+                                else KillInanimateObjectForRespawn(sbPtr);  
+                                //update pickup counters
+                                if (objectstatusptr->subType == AMMO_10MM_CULW) { PulseRifleAmmoCount--; }
+                                if (objectstatusptr->subType == AMMO_SMARTGUN) { SmartGunAmmoCount--; }
+                                if (objectstatusptr->subType == AMMO_FLAMETHROWER) { FlameThrowerAmmoCount--; }
+                                if (objectstatusptr->subType == AMMO_SADAR_TOW) { SADARAmmoCount--; }
+                                if (objectstatusptr->subType == AMMO_GRENADE) { GrenadeLauncherAmmoCount--; }
+                                if (objectstatusptr->subType == AMMO_MINIGUN) { MinigunAmmoCount--; }
+                                if (objectstatusptr->subType == AMMO_PULSE_GRENADE) { PulseGrenadeAmmoCount--; }
+                                if (objectstatusptr->subType == AMMO_PRED_RIFLE) { SpeargunAmmoCount--; }
                         }
                         break;
                 }                               
@@ -1773,7 +1791,9 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                         {
                                 FragmentInanimateObject(sbPtr);
                                 if(AvP.Network==I_No_Network) DestroyAnyStrategyBlock(sbPtr);
-                                else KillInanimateObjectForRespawn(sbPtr);                      
+                                else KillInanimateObjectForRespawn(sbPtr);
+                                //update pickup counters
+                                MarineHealthCount--;
                         }
                         break;
                 }                               
@@ -1783,7 +1803,9 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                         {
                                 FragmentInanimateObject(sbPtr);
                                 if(AvP.Network==I_No_Network) DestroyAnyStrategyBlock(sbPtr);
-                                else KillInanimateObjectForRespawn(sbPtr);                      
+                                else KillInanimateObjectForRespawn(sbPtr); 
+                                //update pickup counters
+                                MarineArmourCount--;
                         }
                         break;
                 }                               
@@ -1884,6 +1906,8 @@ void InanimateObjectIsDamaged(STRATEGYBLOCK *sbPtr, DAMAGE_PROFILE *damage, int 
                                 FragmentInanimateObject(sbPtr);
                                 if(AvP.Network==I_No_Network) DestroyAnyStrategyBlock(sbPtr);
                                 else KillInanimateObjectForRespawn(sbPtr);
+                                //update pickup counters
+                                FieldChargeCount--;
                         }
                         break;
                 }

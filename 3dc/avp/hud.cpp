@@ -47,6 +47,7 @@
 #include "language.h"
 #include "tables.h"
 #include "assert.h"
+#include "ConfigFile.h"
 
 #define DO_PREDATOR_OVERLAY FALSE
 #define DO_ALIEN_OVERLAY FALSE
@@ -120,6 +121,7 @@ extern bool AlienBiteAttackInProgress;
 static int DrawScanlineOverlay;
 static float ScanlineLevel;
 
+static bool PredatorHUDShowExtraTicks = false;
 
 /*KJL****************************************************************************************
 *                                    P R O T O T Y P E S	                                *
@@ -1269,7 +1271,15 @@ void DisplayPredatorHealthAndEnergy(void)
 {
 	PLAYER_WEAPON_DATA *weaponPtr = &(PlayerStatusPtr->WeaponSlot[PlayerStatusPtr->SelectedWeaponSlot]);
 	int value;
+	PredatorHUDShowExtraTicks = Config_GetBool("[Gameplay]", "PredatorHUDShowExtraTicks", false);
 	int i;
+	int maxdigitgroups;
+	if (PredatorHUDShowExtraTicks) {
+		maxdigitgroups = 7; //extended pred hud with all health/charge ticks displayed
+	}
+	else {
+		maxdigitgroups = 6; //normal pred hud (with some of the health/charge hidden)
+	}
 	int scale = DIV_FIXED(ScreenDescriptorBlock.SDB_Width,960);
 	int size = MUL_FIXED(51,scale);
 	{
@@ -1292,7 +1302,7 @@ void DisplayPredatorHealthAndEnergy(void)
 		LOCALASSERT(NpcData);
 		value=MUL_FIXED(PlayerStatusPtr->Health/NpcData->StartingStats.Health,59);
 	}
-	for (i=0; i<6; i++)
+	for (i=0; i<maxdigitgroups; i++)
 	{
 		HUDCharDesc charDesc;
 		charDesc.X = 0;
@@ -1313,7 +1323,7 @@ void DisplayPredatorHealthAndEnergy(void)
 		D3D_DrawHUDPredatorDigit(&charDesc,scale);
 	}
 	value= MUL_FIXED(DIV_FIXED(PlayerStatusPtr->FieldCharge,PLAYERCLOAK_MAXENERGY),59);
-	for (i=0; i<6; i++)
+	for (i=0; i<maxdigitgroups; i++)
 	{
 		HUDCharDesc charDesc;
 		charDesc.X = ScreenDescriptorBlock.SDB_Width-size;
@@ -1336,7 +1346,7 @@ void DisplayPredatorHealthAndEnergy(void)
 	if (weaponPtr->WeaponIDNumber == WEAPON_PRED_RIFLE)
 	{
 		value = weaponPtr->PrimaryRoundsRemaining>>16;
-		for (i=0; i<4; i++)
+		for (i=0; i<15; i++)//up to 99 spears
 		{
 			HUDCharDesc charDesc;
 			charDesc.X = i*size/2;
