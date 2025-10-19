@@ -27,6 +27,7 @@ struct DEBUGGINGTEXTOPTIONS
 	unsigned int EnemyCount : 1;
 	unsigned int PickupCount : 1;
 	unsigned int Difficulty : 1;
+	unsigned int HealthArmour : 1;
 };
 
 extern struct DEBUGGINGTEXTOPTIONS ShowDebuggingText;

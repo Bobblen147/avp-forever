@@ -131,6 +131,7 @@ static uint32_t orthoVBOffset = 0;
 static uint32_t NumberOfRenderedTriangles = 0;
 
 RenderList *particleList = 0;
+RenderList *starparticleList = 0; //separate particle list for stars as they have to be rendered before the main list
 RenderList *mainList  = 0;
 RenderList *orthoList = 0;
 RenderList *decalList  = 0;
@@ -144,6 +145,7 @@ void RenderListInit()
 	mainList     = new RenderList("mainList",     400, &d3d.mainVB,  &d3d.mainIB,  &d3d.mainDecl);
 	orthoList    = new RenderList("orthoList",    50,  &d3d.orthoVB, &d3d.orthoIB, &d3d.orthoDecl);
 	particleList = new RenderList("particleList", 200, &d3d.particleVB, &d3d.particleIB, &d3d.particleDecl);
+	starparticleList = new RenderList("starparticleList", 200, &d3d.particleVB, &d3d.particleIB, &d3d.particleDecl);
 	decalList    = new RenderList("decalList",    200, &d3d.decalVB, &d3d.decalIB, &d3d.decalDecl);
 	weaponList   = new RenderList("weaponList",   80,  &d3d.mainVB,  &d3d.mainIB,  &d3d.mainDecl);
 }
@@ -152,6 +154,9 @@ void RenderListDeInit()
 {
 	delete particleList;
 	particleList = 0;
+
+	delete starparticleList;
+	starparticleList = 0;
 
 	delete mainList;
 	mainList = 0;
@@ -318,6 +323,7 @@ static bool LockExecuteBuffer()
 
 	// reset lists to empty state
 	particleList->Reset();
+	starparticleList->Reset();
 	mainList->Reset();
 	orthoList->Reset();
 	decalList->Reset();
@@ -367,6 +373,7 @@ static bool ExecuteBuffer()
 {
 	// sort the list of render objects
 	particleList->Sort();
+	starparticleList->Sort();
 	decalList->Sort();
 //	mainList->Sort();
 
@@ -375,6 +382,18 @@ static bool ExecuteBuffer()
 	DrawParticles();
 	DrawCoronas();
 
+	// render the star field first so clipping / transparency works properly
+	if (starparticleList->GetSize())
+	{
+		// set main shaders to active
+		d3d.effectSystem->SetActive(d3d.particleEffect);
+
+		d3d.effectSystem->SetVertexShaderConstant(d3d.particleEffect, 0, CONST_MATRIX, &d3d.matProjection);
+
+		// Draw the particles in the list
+		starparticleList->Draw();
+	}
+	
 	if (mainList->GetSize())
 	{
 		// set main shaders to active
@@ -1350,6 +1369,7 @@ void DrawParticles()
 
 	// set command to disable z-writes
 	particleList->AddCommand(kCommandZWriteDisable);
+	starparticleList->AddCommand(kCommandZWriteDisable);
 
 	// loop particles and add them to vertex buffer
 	for (size_t i = 0; i < NUM_TRANSLUCENCY_TYPES; i++)
@@ -1362,6 +1382,7 @@ void DrawParticles()
 
 	// set command to disable z-writes
 	particleList->AddCommand(kCommandZWriteEnable);
+	starparticleList->AddCommand(kCommandZWriteEnable);
 
 	for (size_t i = 0; i < NUM_TRANSLUCENCY_TYPES; i++)
 	{
@@ -1857,7 +1878,13 @@ static void D3D_Particle_Output(PARTICLE *particlePtr, PARTICLEVERTEX *renderVer
 	float RecipW = 1.0f / (float) texWidth;
 	float RecipH = 1.0f / (float) texHeight;
 
-	particleList->AddItem(4, SpecialFXImageNumber, (enum TRANSLUCENCY_TYPE)particleDescPtr->TranslucencyType, FILTERING_BILINEAR_ON, TEXTURE_CLAMP);
+	if (particlePtr->ParticleID == PARTICLE_STAR) {
+		starparticleList->AddItem(4, SpecialFXImageNumber, (enum TRANSLUCENCY_TYPE)particleDescPtr->TranslucencyType, FILTERING_BILINEAR_ON, TEXTURE_CLAMP);
+	}
+	else {
+		particleList->AddItem(4, SpecialFXImageNumber, (enum TRANSLUCENCY_TYPE)particleDescPtr->TranslucencyType, FILTERING_BILINEAR_ON, TEXTURE_CLAMP);
+	}
+
 
 	RCOLOR colour;
 
@@ -1932,7 +1959,12 @@ static void D3D_Particle_Output(PARTICLE *particlePtr, PARTICLEVERTEX *renderVer
 	}
 
 	// 3: Create Indices
-	particleList->CreateIndices(particleIndex, 4);
+	if (particlePtr->ParticleID == PARTICLE_STAR) {
+		starparticleList->CreateIndices(particleIndex, 4);
+	}
+	else {
+		particleList->CreateIndices(particleIndex, 4);
+	}
 }
 
 void PostLandscapeRendering()

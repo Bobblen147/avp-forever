@@ -612,6 +612,16 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLin
 							}
 
 							if (ShowDebuggingText.Difficulty) ReleasePrintDebuggingText("Difficulty = %d\n", AvP.Difficulty);
+
+							if (ShowDebuggingText.HealthArmour) {
+								PLAYER_STATUS* playerStatusPtr = (PLAYER_STATUS*)(Player->ObStrategyBlock->SBdataptr);
+								//convert from fixed point to int
+								int HealthInt = (playerStatusPtr->Health / 65536);
+								int ArmourInt = (playerStatusPtr->Armour / 65536);
+
+								ReleasePrintDebuggingText("Health = %d %d\n", playerStatusPtr->Health, HealthInt);
+								ReleasePrintDebuggingText("Armour = %d %d\n", playerStatusPtr->Armour, ArmourInt);
+							}
 						}
 						//#endif  /* MainTextPrint */
 

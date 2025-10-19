@@ -141,6 +141,10 @@ static void ShowDifficulty(void)
 {
 	ShowDebuggingText.Difficulty = ~ShowDebuggingText.Difficulty;
 }
+static void ShowHealthArmour(void)
+{
+	ShowDebuggingText.HealthArmour = ~ShowDebuggingText.HealthArmour;
+}
 
 
 extern void ChangeToMarine();
@@ -367,6 +371,7 @@ void CreateGameSpecificConsoleCommands(void)
 	ShowDebuggingText.EnemyCount = 0;
 	ShowDebuggingText.PickupCount = 0;
 	ShowDebuggingText.Difficulty = 0;
+	ShowDebuggingText.HealthArmour = 0;
 
 	#ifndef AVP_DEBUG_VERSION 
 	bool IsACheat = true;
@@ -533,6 +538,14 @@ void CreateGameSpecificConsoleCommands(void)
 			"DISPLAY THE CURRENT DIFFICULTY LEVEL",
 			ShowDifficulty
 		);
+
+		ConsoleCommand::Make
+		(
+			"HEALTHARMOUR",
+			"DISPLAY THE CURRENT PLAYER HEALTH & ARMOUR",
+			ShowHealthArmour
+		);
+
 
 		ConsoleCommand::Make
 		(
