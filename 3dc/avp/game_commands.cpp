@@ -29,6 +29,7 @@
 #include "menus.h"
 #include "detaillevels.h"
 #include "savegame.h"
+#include "MusicPlayer.h"
 
 extern void NewOnScreenMessage(char* messagePtr);
 int DebuggingCommandsActive=0;
@@ -82,6 +83,12 @@ extern void CastXenoborg(void);
 extern void CastSentrygun(void);
 extern void CastFaceHugger(void);
 extern void CastQueen(void);
+
+//for music player related console commands
+extern void PlaySpecificTrack(int track, bool looping);
+extern void StopCurrentTrack();
+extern int SetStreamingMusicVolume(int volume);
+extern int musicVolume;
 
 extern int ShowMultiplayerScoreTimer;
 
@@ -242,42 +249,30 @@ static void ForceAssertionFailure(void)
 		
 static void CDCommand_Play(int track)
 {
-/* FIXME
-	if(!CDDA_IsOn()) CDDA_SwitchOn();
-
-	CDDA_Stop();
-	CDDA_Play(track);
-*/
+	PlaySpecificTrack(track, false); //set looping to false
 }
-void CDCommand_PlayLoop(int track)
-{
-/* FIXME
-	if(!CDDA_IsOn()) CDDA_SwitchOn();
 
-	CDDA_Stop();
-	CDDA_PlayLoop(track);
-*/
+static void CDCommand_PlayLoop(int track)
+{
+	PlaySpecificTrack(track, true); //set looping to true
 }
 
 static void CDCommand_Stop(void)
 {
-/* FIXME
-	CDDA_Stop();
-*/
+	StopCurrentTrack();
 }
 
 static void CDCommand_Volume(int volume)
 {
-/* FIXME
 	if (volume>=0 && volume<=127)
 	{
-		CDDA_ChangeVolume(volume);
+		musicVolume = volume;
+		SetStreamingMusicVolume(volume);
 	}
 	else
 	{
-		// say the volume setting is incorrect
+		NewOnScreenMessage("MUST BE A VALUE BETWEEN 0 AND 127");
 	}
-*/
 }
 
 

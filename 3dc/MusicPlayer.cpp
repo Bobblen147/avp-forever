@@ -25,8 +25,10 @@ static bool musicAvailable = false;
 static int LastTrackChosen=-1;
 static uint32_t TrackSelectCounter=0;
 int musicVolume = 0;
+bool musicLooping = false;
 
 extern int NumberForCurrentLevel();
+extern void PauseVorbisTrack();
 
 bool Music_Init()
 {
@@ -86,7 +88,7 @@ void Music_Stop()
 	if (!musicAvailable) {
 		return; // silently fail
 	}
-
+	musicLooping = false; //reset the loop flag
 	Vorbis_CloseSystem();
 }
 
@@ -184,6 +186,33 @@ static bool PickTrack(List<int>& track_list)
 	LastTrackChosen = track_list[index];
 
 	return true;
+}
+
+void PlaySpecificTrack(int track, bool looping)
+{
+	if (!musicAvailable) {
+		return; // silently fail
+	}
+
+	if (looping) {
+		musicLooping = true;
+	}
+	else {
+		musicLooping = false;
+	}
+	
+	// this is used by the CDPLAY and CDPLAYLOOP console commands to override the track list
+	LoadVorbisTrack(track);
+}
+
+void StopCurrentTrack()
+{
+	if (!musicAvailable) {
+		return; // silently fail
+	}
+	
+	// this is used by the CDSTOP console command to stop the music
+	PauseVorbisTrack();
 }
 
 static void ExtractTracksForLevel(char* &buffer, List<int> &track_list)

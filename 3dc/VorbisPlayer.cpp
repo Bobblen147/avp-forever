@@ -43,7 +43,8 @@ static DWORD kQuantum = 1000 / 60;
 void *VorbisUpdateThread(void *args);
 
 extern int SetStreamingMusicVolume(int volume);
-extern int musicVolume; // volume control from menus
+extern int musicVolume; // volume control from menus and console command
+extern bool musicLooping; //music looping from console command
 
 std::vector<std::string> TrackList;
 
@@ -140,8 +141,18 @@ uint32_t VorbisPlayback::GetVorbisData(uint32_t sizeToRead)
 		{
 			LogErrorString("ov_read encountered an error", __LINE__, __FILE__);
 		}
-		// if we reach the end of the file, go back to start
-		else if (bytesReadPerLoop == 0)
+		// if we reach the end of the file, stop playback and release the ogg file ready for the next track
+		else if (bytesReadPerLoop == 0 && musicLooping == false)
+		{
+			if (_isPlaying)
+			{
+				_audioStream->Stop();
+				_isPlaying = false;
+			}
+			ov_clear(&_oggFile);
+		}
+		//unless the player has requested the track be played on loop
+		else if (bytesReadPerLoop == 0 && musicLooping == true)
 		{
 			ov_raw_seek(&_oggFile, 0);
 		}
@@ -222,6 +233,13 @@ void LoadVorbisTrack(size_t track)
 	{
 		delete inGameMusic;
 		inGameMusic = NULL;
+	}
+}
+
+void PauseVorbisTrack() 
+{
+	if (inGameMusic) {
+		inGameMusic->_audioStream->_isPaused = true;
 	}
 }
 
