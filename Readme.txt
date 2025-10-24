@@ -24,7 +24,7 @@ Marine Weapons
 Predator Weapons
 -Override map specific predator inventory and start with any combination of weapons
 to enable this, first set PredatorWeaponsOverride=true in the config file "config file toggle"
--Predator weapons can now be collected as pickups (use key cards 11,12,13,14,15,16 in the editor to place them)
+-Predator weapons can now be collected as pickups (use key cards 11,12,13,14,15,16 in the editor to place them), pred weapon pickups will glow white when using pred tech vision
 -Predator previous vision mode key (default R)
 -Predator tracking weapons (disc, shoulder cannon) can have their tracking enabled/disabled (default key T)
 -Predator can charge wrist blades indefinitely
@@ -47,6 +47,7 @@ General Gameplay
 -Impossible Mission difficulty level no longer requires a cheat mode to select. Unlocking a level on director's cut will unlock impossible mission too.
 -Bonus levels can now be played on any difficulty level instead of forcing Realistic
 -Cheat modes can now be played on any appropriate map, marine fall damage is disabled for the Free Fall cheat to make it (a bit) fairer
+-Predator HUD now shows the extra ticks of health and field charge that were previously hidden, can be toggled with PredatorHUDShowExtraTicks "config file toggle"
 
 NPC Changes
 -Added sentry gun, facehugger and alien queen bot spawn commands (type SENTRYGUN, FACEHUGGER or QUEENBOT in debug mode)
@@ -93,10 +94,11 @@ Other
 	DisableSkeeterPistols: cannot pickup skeeter or pistol weapons, specialists of this type disabled in multiplayer
 
 Bug fixes
+-Starry sky now correctly renders behind the scenery and can be seen through windows
+-ogg music correctly loops through the 5 tracks for your species + CD player console commands work
 -Partially fixed NPC heavy weapons drop sound repeating bug (needs 60fps or less)
 -Work around bad bilinear filtering by slightly altering a couple of textures (thanks Olde)
--Fixed a sound bug when breaking armour/light weapon pickups in skirmish
--Fixed incorrect sound playing in custom maps if correct sound is missing
+-Fixed incorrect sound playing if the correct sound file is missing
 -Single player AI alien triggers now work in skirmish (aliens don't stay dormant)
 -Fudged hud scaling to look better at 1920x1080 (still broken on ultrawide / UHD resolutions)
 
@@ -156,8 +158,9 @@ Known (pre-existing) avpx bugs
 * means I've applied a fix or workaround in avpx enhanced
 
 avpx only
--Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)
--Can't see starry sky through a window (eg tyrargo, orbital), also can't see coronas through windows but this is much rarer
+-Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)*
+-Can't see starry sky through a window (eg tyrargo, orbital)* 
+-Can't see particles/coronas/auras through windows (eg temple, in the labs)
 -Animated lava texture in Fury 161 (& Earthbound animated tunnel lights / Vaults predalien sphere) are broken
 -Vertical movement for tracking weapons is very slow (eg waterfall pred, use shoulder cannon on marine below at the start)
 -Tapping the mouse to fire multiple shots is broken (try firing single shots with marine pistol, keyboard is fine, it's just the mouse)
@@ -168,7 +171,7 @@ avpx only
 -In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
 -Wireframe debug mode doesn't work at all
 -Motionblur and Triptastic cheat modes do not have the blurring effect
--Only one cd track is played (always looping) per level instead of looping through all 5, (also CD console commands not hooked up)
+-Only one cd track is played (always looping) per level instead of looping through all 5, (also CD console commands not hooked up)*
 -EAX reverb / echo levels are way too high on non surround sound setups.*
 
 avp gold & avpx

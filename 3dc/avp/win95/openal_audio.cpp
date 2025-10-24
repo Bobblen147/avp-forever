@@ -575,9 +575,13 @@ int PlatStartSoundSys()
 			Con_PrintMessage("ALC_EXT_EFX is supported for OpenAL");
 			efxAvailable = true;
 		}
+		else {
+			Con_PrintMessage("ALC_EXT_EFX not supported for OpenAL");
+			efxAvailable = false;
+		}
 	}
 	else {
-		Con_PrintMessage("ALC_EXT_EFX not supported for OpenAL");
+		Con_PrintMessage("EAX effects disabled by the user");
 		efxAvailable = false;
 	}
 

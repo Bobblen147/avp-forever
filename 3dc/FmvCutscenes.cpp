@@ -307,7 +307,7 @@ extern void StartTriggerPlotFMV(int number)
 	FILE *file = avp_fopen(buffer, "rb");
 	if (!file)
 	{
-		Con_PrintError("Couldn't open triggered plot fmv file");
+		Con_PrintError("Couldn't open triggered plot fmv file message" + Util::IntToString(number));
 		return;
 	}
 	fclose(file);

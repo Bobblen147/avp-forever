@@ -880,29 +880,17 @@ void CreateScreenShotImage()
 	SYSTEMTIME systemTime;
 	LPDIRECT3DSURFACE9 frontBuffer = NULL;
 
-	std::ostringstream fileName(GetSaveFolderPath());
-
 	// get current system time
 	GetSystemTime(&systemTime);
 
-	//	creates filename from date and time, adding a prefix '0' to seconds value
-	//	otherwise 9 seconds appears as '9' instead of '09'
-	bool prefixSeconds = false;
-	if (systemTime.wYear < 10) {
-		prefixSeconds = true;
-	}
+	//build time stamp string
+	std::string timestampStr = std::to_string(systemTime.wDay) + '-' + std::to_string(systemTime.wMonth) + '-' + std::to_string(systemTime.wYear)
+		+ '_' + std::to_string(systemTime.wHour) + '-' + std::to_string(systemTime.wMinute) + '-' + std::to_string(systemTime.wSecond);
 
-	fileName << "AvP_" << systemTime.wDay << "-" << systemTime.wMonth << "-" << systemTime.wYear << "_" << systemTime.wHour << "-" << systemTime.wMinute << "-";
-
-	if (systemTime.wSecond < 10) {
-		fileName << "0" << systemTime.wSecond;
-	}
-	else {
-		fileName << systemTime.wSecond;
-	}
-
-	fileName << ".jpg";
-
+	//build file name
+	std::string fileName = GetSaveFolderPath();
+	fileName = fileName + "AvP_" + timestampStr + ".bmp";
+	
 	// create surface to copy screen to
 	if (FAILED(d3d.lpD3DDevice->CreateOffscreenPlainSurface(ScreenDescriptorBlock.SDB_Width, ScreenDescriptorBlock.SDB_Height, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &frontBuffer, NULL)))
 	{
@@ -921,7 +909,7 @@ void CreateScreenShotImage()
 	}
 
 	// save surface to image file
-	if (FAILED(D3DXSaveSurfaceToFile(fileName.str().c_str(), D3DXIFF_JPG, frontBuffer, NULL, NULL)))
+	if (FAILED(D3DXSaveSurfaceToFile(fileName.c_str(), D3DXIFF_BMP, frontBuffer, NULL, NULL)))
 	{
 		LogDxError(LastError, __LINE__, __FILE__);
 		LogErrorString("Save Surface to file failed");
@@ -2674,7 +2662,7 @@ void ChangeTranslucencyMode(enum TRANSLUCENCY_TYPE translucencyRequired)
 	{
 	 	case TRANSLUCENCY_OFF:
 		{
-			if (TRIPTASTIC_CHEATMODE || MOTIONBLUR_CHEATMODE)
+			if ((TRIPTASTIC_CHEATMODE || MOTIONBLUR_CHEATMODE) && GetAvPMenuState() == MENUSSTATE_STARTGAME) //otherwise the menu background stops rendering
 			{
 				if (D3DAlphaBlendEnable != TRUE)
 				{
@@ -2683,7 +2671,7 @@ void ChangeTranslucencyMode(enum TRANSLUCENCY_TYPE translucencyRequired)
 				}
 				if (D3DSrcBlend != D3DBLEND_INVSRCALPHA)
 				{
-					d3d.lpD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_INVSRCALPHA);
+					d3d.lpD3DDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_INVSRCALPHA); //back to front alpha blending, is this how the blur effect works on DX6?
 					D3DSrcBlend = D3DBLEND_INVSRCALPHA;
 				}
 				if (D3DDestBlend != D3DBLEND_SRCALPHA)
