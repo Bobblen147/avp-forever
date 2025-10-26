@@ -852,7 +852,7 @@ void HandleDecalSystem(void)
 		dummyDecal.UOffset = fixedDecalPtr->UOffset;
 
 		RenderDecal(&dummyDecal);
-		fixedDecalPtr++;;
+		fixedDecalPtr++;
 	}
 
 	if (AvP.PlayerType == I_Predator && PredatorLaserTarget.ShouldBeDrawn)
