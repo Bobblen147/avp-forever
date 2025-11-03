@@ -811,11 +811,17 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				// make sure you restart with alternate weapon if no wrist blades
 				if (!PredatorWristBladesStart) {
 
-					// work around a crash by forcing wristblades if only shoulder cannon, medicomp (or nothing) are chosen
+					// work around a crash by forcing wristblades if only shoulder cannon, medicomp are chosen
 					if (a == SlotForThisWeapon(WEAPON_PRED_SHOULDERCANNON) ||
-						a == SlotForThisWeapon(WEAPON_PRED_MEDICOMP) ||
-						a == 8188224) //-1
+						a == SlotForThisWeapon(WEAPON_PRED_MEDICOMP))
 					{
+						a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+
+					//you can't have no weapons at all!
+					if (!PredatorSpearGunStart && !PredatorShoulderCannonStart && !PredatorMedicompStart &&
+						!PredatorPistolStart && !PredatorDiscStart) {
 						a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
 					}
