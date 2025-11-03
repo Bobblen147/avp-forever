@@ -807,17 +807,27 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 					playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 0;
 					playerStatusPtr->WeaponSlot[a].Possessed = 1;
 				}
+				
 				// make sure you restart with alternate weapon if no wrist blades
 				if (!PredatorWristBladesStart) {
+
+					// work around a crash by forcing wristblades if only shoulder cannon, medicomp (or nothing) are chosen
+					if (a == SlotForThisWeapon(WEAPON_PRED_SHOULDERCANNON) ||
+						a == SlotForThisWeapon(WEAPON_PRED_MEDICOMP) ||
+						a == 8188224) //-1
+					{
+						a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
+						playerStatusPtr->WeaponSlot[a].Possessed = 1;
+					}
+						
 					playerStatusPtr->PreviouslySelectedWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
 					playerStatusPtr->SwapToWeaponSlot = static_cast<enum WEAPON_SLOT>(a);
 				}
-				// Otherwise standard wrist blades start
 				else {
 					a = SlotForThisWeapon(WEAPON_PRED_WRISTBLADE);
 					playerStatusPtr->WeaponSlot[a].Possessed = 1;
 				}
-				
+
 				//a = SlotForThisWeapon(WEAPON_PRED_STAFF);
 				// bjd - big crash. 08/02/10
 				/* bjd - below line added. MUST break here or else we index WeaponSlot array at index -1! */

@@ -190,6 +190,8 @@ static bool PickTrack(List<int>& track_list)
 
 void PlaySpecificTrack(int track, bool looping)
 {
+	// used by the CDPLAY and CDPLAYLOOP console commands to override the track list
+
 	if (!musicAvailable) {
 		return; // silently fail
 	}
@@ -200,9 +202,16 @@ void PlaySpecificTrack(int track, bool looping)
 	else {
 		musicLooping = false;
 	}
+
 	
-	// this is used by the CDPLAY and CDPLAYLOOP console commands to override the track list
-	LoadVorbisTrack(track);
+	// if the player doesn't supply a track number, just default to the next track for that species
+	if (track == 0) {
+		PickTrack(MultiplayerCDTracks[AvP.PlayerType]);
+	}
+	else {
+		LoadVorbisTrack(track);
+	}
+	
 }
 
 void StopCurrentTrack()
@@ -211,7 +220,7 @@ void StopCurrentTrack()
 		return; // silently fail
 	}
 	
-	// this is used by the CDSTOP console command to stop the music
+	// Used by the CDSTOP console command to stop the music
 	PauseVorbisTrack();
 }
 

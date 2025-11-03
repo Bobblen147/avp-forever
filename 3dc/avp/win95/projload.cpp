@@ -3097,7 +3097,7 @@ void setup_preplaced_decals(File_Chunk* fc,Environment_Data_Chunk* edc)
 			fd->Vertices[j].vz=ad->Vertices[j].z;
 		}
 
-		fd->UOffset=ad->UOffset / 65536.0; //convert from 16 16 fixed to unpacked int as that's what avpx is expecting;
+		fd->UOffset=ad->UOffset / 65536.0; //D3D_ZBufferedGouraudTexturedPolygon_Output no longer expects fixed point texture coordinates so convert them here;
 		if (int(ad->UOffset) <= 128) { //hideous workaround for paintball mode decals which for whatever reason are already unpacked into an int in the rif
 			fd->UOffset = ad->UOffset;
 		}
