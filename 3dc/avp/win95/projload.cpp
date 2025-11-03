@@ -3098,9 +3098,6 @@ void setup_preplaced_decals(File_Chunk* fc,Environment_Data_Chunk* edc)
 		}
 
 		fd->UOffset=ad->UOffset / 65536.0; //D3D_ZBufferedGouraudTexturedPolygon_Output no longer expects fixed point texture coordinates so convert them here;
-		if (int(ad->UOffset) <= 128) { //hideous workaround for paintball mode decals which for whatever reason are already unpacked into an int in the rif
-			fd->UOffset = ad->UOffset;
-		}
 		fd->ModuleIndex=module->program_object_index+2;
 
 		NumFixedDecals++;
@@ -3233,7 +3230,7 @@ void save_preplaced_decals()
 				ad->Vertices[j].z=fd->Vertices[j].vz;
 			}
 
-			ad->UOffset=fd->UOffset;
+			ad->UOffset=fd->UOffset*65536.0; //rif expects this to be 16 16 fixed point
 
 			ad->object_index=get_object_index_from_module_index(ob_list,fd->ModuleIndex-2);
 		}
