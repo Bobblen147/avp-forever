@@ -240,10 +240,12 @@ static void HandleWaitingAnimations(STRATEGYBLOCK *sbPtr);
 static void HandleMovingAnimations(STRATEGYBLOCK *sbPtr);
 int MakeModifiedTargetNum(int targetnum,int dist);
 
+int TougherNPCs;
 
 /* Console Variables */
 
 int Marine_Skill=20000;
+int Marine_Increased_Skill=131072;
 int Marine_Terminal_Velocity=20000;
 
 /* Console Variables */
@@ -1417,7 +1419,13 @@ void CreateMarineBot(VECTORCH *Position, int weapon)
 		marineStatus->weapon_variable=0;
 		marineStatus->weapon_variable2=0;
 
-		marineStatus->Skill=Marine_Skill;
+		TougherNPCs = Config_GetBool("[Gameplay]", "TougherNPCs", false);
+		if (TougherNPCs) {
+			marineStatus->Skill = Marine_Increased_Skill;
+		}
+		else {
+			marineStatus->Skill = Marine_Skill;
+		}
 		marineStatus->Courage=ONE_FIXED;
 
 		marineStatus->FiringAnim=0;
@@ -1619,7 +1627,12 @@ void CreateMarineBot(VECTORCH *Position, int weapon)
 		if (marineStatus->My_Weapon->WeaponFireFunction==NULL) {
 			InitMission(sbPtr,MM_NonCom);
 		} else {
-			InitMission(sbPtr,MM_Wander);
+			if (TougherNPCs) {
+				InitMission(sbPtr, MM_Guard);
+			}
+			else {
+				InitMission(sbPtr, MM_Wander);
+			}
 		}
 
 		MakeMarineNear(sbPtr);
@@ -1721,7 +1734,13 @@ void InitMarineBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		marineStatus->weapon_variable=0;
 		marineStatus->weapon_variable2=0;
 
-		marineStatus->Skill=Marine_Skill;
+		TougherNPCs = Config_GetBool("[Gameplay]", "TougherNPCs", false);
+		if (TougherNPCs) {
+			marineStatus->Skill = Marine_Increased_Skill;
+		}
+		else {
+			marineStatus->Skill = Marine_Skill;
+		}
 		marineStatus->Courage=ONE_FIXED;
 
 		marineStatus->FiringAnim=0;
@@ -1929,7 +1948,12 @@ void InitMarineBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
 		if (marineStatus->My_Weapon->WeaponFireFunction==NULL) {
 			InitMission(sbPtr,MM_NonCom);
 		} else {
-			InitMission(sbPtr,toolsData->Mission);
+			if (TougherNPCs) {
+				InitMission(sbPtr, MM_Guard);
+			}
+			else {
+				InitMission(sbPtr, toolsData->Mission);
+			}	
 		}
 
 		//keep count of placed enemies
@@ -2063,7 +2087,13 @@ void CreateMarineDynamic(STRATEGYBLOCK *Generator, MARINE_NPC_WEAPONS weapon_for
 		marineStatus->weapon_variable=0;
 		marineStatus->weapon_variable2=0;
 
-		marineStatus->Skill=Marine_Skill;
+		TougherNPCs = Config_GetBool("[Gameplay]", "TougherNPCs", false);
+		if (TougherNPCs) {
+			marineStatus->Skill = Marine_Increased_Skill;
+		}
+		else {
+			marineStatus->Skill = Marine_Skill;
+		}
 		marineStatus->Courage=ONE_FIXED;
 
 		marineStatus->FiringAnim=0;
@@ -2229,13 +2259,26 @@ void CreateMarineDynamic(STRATEGYBLOCK *Generator, MARINE_NPC_WEAPONS weapon_for
 
 		ProveHModel_Far(&marineStatus->HModelController,sbPtr);
 
-		if (marineStatus->My_Weapon->WeaponFireFunction==NULL) {
-			InitMission(sbPtr,MM_NonCom);
-		} else if ( (marineStatus->path!=-1)&&(marineStatus->stepnumber!=-1)) {
-			InitMission(sbPtr,MM_Pathfinder);
-		} else {
-			InitMission(sbPtr,MM_Wander);
+		if (TougherNPCs) {
+			if (marineStatus->My_Weapon->WeaponFireFunction == NULL) {
+				InitMission(sbPtr, MM_NonCom);
+			}
+			else {
+				InitMission(sbPtr, MM_Guard);
+			}
 		}
+		else {
+			if (marineStatus->My_Weapon->WeaponFireFunction == NULL) {
+				InitMission(sbPtr, MM_NonCom);
+			}
+			else if ((marineStatus->path != -1) && (marineStatus->stepnumber != -1)) {
+				InitMission(sbPtr, MM_Pathfinder);
+			}
+			else {
+				InitMission(sbPtr, MM_Wander);
+			}
+		}
+
 
 		//keep count of placed enemies
 		if (marineStatus->My_Weapon->Android) {
@@ -17711,6 +17754,12 @@ void SendRequestToMarine(STRATEGYBLOCK* sbPtr,BOOL state,int extended_data)
 		if(marineStatusPointer->Mission==MM_NonCom ||
 		   marineStatusPointer->Mission==MM_RunAroundOnFire)
 			return;
+
+		//on difficult mode marines always guard
+		TougherNPCs = Config_GetBool("[Gameplay]", "TougherNPCs", false);
+		if (TougherNPCs && marineStatusPointer->Mission == MM_Guard) {
+			return;
+		}
 
 		switch((extended_data>>7)&0xff)
 		{

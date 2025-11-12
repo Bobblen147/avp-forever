@@ -536,7 +536,7 @@ void CreateGameSpecificConsoleCommands(void)
 
 		ConsoleCommand::Make
 		(
-			"HEALTHARMOUR",
+			"SHOWHEALTH",
 			"DISPLAY THE CURRENT PLAYER HEALTH & ARMOUR",
 			ShowHealthArmour
 		);
@@ -547,6 +547,13 @@ void CreateGameSpecificConsoleCommands(void)
 			"PAINTBALL",
 			"TOGGLES PAINTBALLMODE ON/OFF",
 			TogglePaintBallMode
+		);
+
+		ConsoleCommand::Make
+		(
+			"SHOWCOORDS",
+			"DISPLAY THE PLAYERS CURRENT POSITION",
+			ShowCoords
 		);
 	}
 

@@ -10212,7 +10212,8 @@ DYNAMICSBLOCK PlayersMirrorDynBlock;
 
 BOOL Current_Level_Requires_Mirror_Image()
 {
-	if ((!_stricmp(LevelName, "e3demo")) || (!_stricmp(LevelName, "e3demosp")) || (!_stricmp(LevelName, "derelict")) || (!_stricmp(LevelName, "Custom/Derelict"))) {
+	if ((!_stricmp(LevelName, "e3demo")) || (!_stricmp(LevelName, "e3demosp")) || (!_stricmp(LevelName, "Custom/E3demo")) || (!_stricmp(LevelName, "Custom/E3demoSP"))
+		|| (!_stricmp(LevelName, "derelict")) || (!_stricmp(LevelName, "Custom/Derelict"))) {
 		return TRUE;
 	}
 

@@ -31,6 +31,7 @@
 #include "tables.h"
 #include "pldnet.h"
 #include "player.h"
+#include "ConfigFile.h"
 
 #define HUGGER_STATE_PRINT	0
 
@@ -61,6 +62,8 @@ static void KillFaceHugger(STRATEGYBLOCK *sbPtr,DAMAGE_PROFILE *damage);
 static void JumpAtPlayer(STRATEGYBLOCK *sbPtr);
 
 extern SECTION *GetHierarchyFromLibrary(const char *rif_name);
+
+int TougherNPCHuggers;
 void CreateFaceHugger(VECTORCH* Position, int type);
 
 void CastFaceHugger(void) {
@@ -659,12 +662,17 @@ static void Execute_FHNS_Approach(STRATEGYBLOCK *sbPtr)
 		Sound_Stop(fhugStatusPointer->soundHandle);
 	}
 
-	/* Start the hugger movement sound if needed */
-	if (fhugStatusPointer->soundHandle == SOUND_NOACTIVEINDEX)
-	{
+	TougherNPCHuggers = Config_GetBool("[Gameplay]", "TougherNPCs", false);
 
-		Sound_Play(SID_FHUG_MOVE,"ed",&fhugStatusPointer->soundHandle,&dynPtr->Position);
+	/* Start the hugger movement sound if needed */
+	if (!TougherNPCHuggers) {
+		if (fhugStatusPointer->soundHandle == SOUND_NOACTIVEINDEX)
+		{
+
+			Sound_Play(SID_FHUG_MOVE, "ed", &fhugStatusPointer->soundHandle, &dynPtr->Position);
+		}
 	}
+	
 
 	/* do climb on walls, etc */
 	dynPtr->UseStandardGravity=1;
@@ -973,9 +981,11 @@ static void Execute_FHNS_Avoidance(STRATEGYBLOCK *sbPtr)
 	}
 
 	/* Start the hugger movement sound if needed */
-	if (fhugStatusPointer->soundHandle == SOUND_NOACTIVEINDEX)
-	{
-		Sound_Play(SID_FHUG_MOVE,"ed",&fhugStatusPointer->soundHandle,&dynPtr->Position);
+	if (!TougherNPCHuggers) {
+		if (fhugStatusPointer->soundHandle == SOUND_NOACTIVEINDEX)
+		{
+			Sound_Play(SID_FHUG_MOVE, "ed", &fhugStatusPointer->soundHandle, &dynPtr->Position);
+		}
 	}
 
 	/* set velocity */

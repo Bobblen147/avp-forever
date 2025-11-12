@@ -745,6 +745,22 @@ void CheckIfMirroringIsRequired(void)
 			}
 		}
 	}
+
+	if (!stricmp(LevelName, "E3demo") || !stricmp(LevelName, "E3demoSP")
+		|| !stricmp(LevelName, "Custom/E3demo") || !stricmp(LevelName, "Custom/E3demoSP"))
+	{
+		if (playerPherModule && playerPherModule->name)
+		{
+			if ((!stricmp(playerPherModule->name, "Marine01A"))
+				|| (!stricmp(playerPherModule->name, "Marine01B")) 
+				|| (!stricmp(playerPherModule->name, "Marine03"))
+				|| (!stricmp(playerPherModule->name, "Marine05")))
+			{
+				MirroringActive = true;
+				MirroringAxis = -149 * 2;
+			}
+		}
+	}
 }
 #endif
 

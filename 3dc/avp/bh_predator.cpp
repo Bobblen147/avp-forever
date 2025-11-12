@@ -122,6 +122,8 @@ static int PredatorCanSeeTarget(STRATEGYBLOCK *sbPtr);
 static int PredatorCanSeeObject(STRATEGYBLOCK *sbPtr,STRATEGYBLOCK *target);
 static int PredatorIsAwareOfTarget(STRATEGYBLOCK *sbPtr);
 
+int TougherNPCPreds;
+
 void Predator_Enter_Swapping_State(STRATEGYBLOCK *sbPtr);
 void Predator_Enter_Avoidance_State(STRATEGYBLOCK *sbPtr);
 void Predator_Enter_Attacking_State(STRATEGYBLOCK *sbPtr);
@@ -1025,8 +1027,21 @@ void InitPredatorBehaviour(void* bhdata, STRATEGYBLOCK *sbPtr)
                 predatorStatus->PrimaryWeapon=PNPCW_Pistol;
                 predatorStatus->SecondaryWeapon=PNPCW_Wristblade;
                 #else
-                predatorStatus->PrimaryWeapon=toolsData->primary;
-                predatorStatus->SecondaryWeapon=toolsData->secondary;
+                TougherNPCPreds = Config_GetBool("[Gameplay]", "TougherNPCs", false);
+                if (TougherNPCPreds) {
+                    if (toolsData->primary == PNPCW_PlasmaCaster || toolsData->primary == PNPCW_Pistol) {
+                        predatorStatus->PrimaryWeapon = PNPCW_SeriousPlasmaCaster;
+                        predatorStatus->SecondaryWeapon = PNPCW_Speargun;
+                    }
+                    else {
+                        predatorStatus->PrimaryWeapon = PNPCW_Speargun;
+                        predatorStatus->SecondaryWeapon = PNPCW_SeriousPlasmaCaster;
+                    }
+                }
+                else {
+                    predatorStatus->PrimaryWeapon = toolsData->primary;
+                    predatorStatus->SecondaryWeapon = toolsData->secondary;
+                }
                 #endif
                 predatorStatus->ChangeToWeapon=PNPCW_End;
                 predatorStatus->Selected_Weapon=GetThisNPCPredatorWeapon(predatorStatus->PrimaryWeapon);
