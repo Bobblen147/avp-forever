@@ -75,6 +75,8 @@ extern int NumActiveBlocks;
 
 extern DISPLAYBLOCK *ActiveBlockList[];
 
+extern bool translucentLayer;
+
 bool MirroringActive = false;
 
 int MirroringAxis = -149 * 2;
@@ -4076,7 +4078,9 @@ void OutputTranslucentPolyList(void)
 		RenderAllParticlesFurtherAwayThan(TranslucentPolygons[maxFound].MaxZ);
 		RenderPolygon.NumberOfVertices = TranslucentPolygons[maxFound].NumberOfVertices;
 		RenderPolygon.TranslucencyMode = TRANSLUCENCY_NORMAL;
+		translucentLayer = true; //need to draw translucent polys after particles / decals so send them to a separate display list
 		D3D_ZBufferedGouraudTexturedPolygon_Output(&TranslucentPolygonHeaders[maxFound], TranslucentPolygons[maxFound].Vertices);
+		translucentLayer = false;
 		TranslucentPolygons[maxFound].MaxZ = 0;
 	}
 

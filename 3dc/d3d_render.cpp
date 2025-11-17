@@ -36,6 +36,7 @@
 
 bool frustumCull = false;
 bool gunLayer = false;
+bool translucentLayer = false;
 static bool NoBilinearFilter = false;
 
 #define FMV_ON 0
@@ -136,6 +137,7 @@ RenderList *mainList  = 0;
 RenderList *orthoList = 0;
 RenderList *decalList  = 0;
 RenderList *weaponList = 0;
+RenderList *translucentList = 0;
 
 static HRESULT LastError; // remove me eventually (when no more D3D calls exist in this file)
 
@@ -148,6 +150,7 @@ void RenderListInit()
 	starparticleList = new RenderList("starparticleList", 200, &d3d.particleVB, &d3d.particleIB, &d3d.particleDecl);
 	decalList    = new RenderList("decalList",    200, &d3d.decalVB, &d3d.decalIB, &d3d.decalDecl);
 	weaponList   = new RenderList("weaponList",   80,  &d3d.mainVB,  &d3d.mainIB,  &d3d.mainDecl);
+	translucentList = new RenderList("translucentList", 80, &d3d.mainVB, &d3d.mainIB, &d3d.mainDecl);
 }
 
 void RenderListDeInit()
@@ -169,6 +172,9 @@ void RenderListDeInit()
 
 	delete weaponList;
 	weaponList = 0;
+
+	delete translucentList;
+	translucentList = 0;
 }
 
 struct renderParticle
@@ -328,6 +334,7 @@ static bool LockExecuteBuffer()
 	orthoList->Reset();
 	decalList->Reset();
 	weaponList->Reset();
+	translucentList->Reset();
 
 	// reset counters and indexes
 	vb = 0;
@@ -437,6 +444,21 @@ static bool ExecuteBuffer()
 
 		// Draw the particles in the list
 		particleList->Draw();
+	}
+
+	//draw translucent polys after particles & decals
+	if (translucentList->GetSize())
+	{
+		// set main shaders to active
+		d3d.effectSystem->SetActive(d3d.mainEffect);
+
+		// we don't need world matrix here as avp has done all the world transforms itself
+		R_MATRIX matWorldViewProj = /*d3d.matView **/ d3d.matProjection;
+
+		d3d.effectSystem->SetVertexShaderConstant(d3d.mainEffect, 0, CONST_MATRIX, &matWorldViewProj);
+
+		// draw our main list (level geometry, player weapon etc)
+		translucentList->Draw();
 	}
 
 	// draw player weapon
@@ -1408,10 +1430,12 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	float RecipH = 1.0f / /*(float)*/ texHeight;
 
 	NoBilinearFilter = Config_GetBool("[VideoMode]", "NoBilinearFilter", false);
-
 	if (NoBilinearFilter) {
 		if (gunLayer) {
 			weaponList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode, FILTERING_BILINEAR_OFF);
+		}
+		else if (translucentLayer) {
+			translucentList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode, FILTERING_BILINEAR_OFF);
 		}
 		else {
 			mainList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode, FILTERING_BILINEAR_OFF);
@@ -1420,6 +1444,9 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 	else {
 		if (gunLayer) {
 			weaponList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode);
+		}
+		else if (translucentLayer) {
+			translucentList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode);
 		}
 		else {
 			mainList->AddItem(RenderPolygon.NumberOfVertices, textureID, RenderPolygon.TranslucencyMode);
@@ -2225,8 +2252,10 @@ void PostLandscapeRendering()
 		{
 			// dirt on mirror in marines room
 			RenderParticlesInMirror();
+			translucentLayer = true; //need to draw translucent polys after particles / decals so send them to a separate display list
 			RenderMirrorSurface();
 			RenderMirrorSurface2();
+			translucentLayer = false;
 		}
 		if (drawWater)
 		{
