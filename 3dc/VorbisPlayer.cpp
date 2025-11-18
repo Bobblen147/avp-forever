@@ -137,12 +137,8 @@ uint32_t VorbisPlayback::GetVorbisData(uint32_t sizeToRead)
 			0
 		);
 
-		if (bytesReadPerLoop < 0)
-		{
-			LogErrorString("ov_read encountered an error", __LINE__, __FILE__);
-		}
 		// if we reach the end of the file, stop playback and release the ogg file ready for the next track
-		else if (bytesReadPerLoop == 0 && musicLooping == false)
+		if (bytesReadPerLoop == 0 && musicLooping == false)
 		{
 			if (_isPlaying)
 			{
