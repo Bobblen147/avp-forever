@@ -150,7 +150,7 @@ void RenderListInit()
 	starparticleList = new RenderList("starparticleList", 200, &d3d.particleVB, &d3d.particleIB, &d3d.particleDecl);
 	decalList    = new RenderList("decalList",    200, &d3d.decalVB, &d3d.decalIB, &d3d.decalDecl);
 	weaponList   = new RenderList("weaponList",   80,  &d3d.mainVB,  &d3d.mainIB,  &d3d.mainDecl);
-	translucentList = new RenderList("translucentList", 80, &d3d.mainVB, &d3d.mainIB, &d3d.mainDecl);
+	translucentList = new RenderList("translucentList", 160, &d3d.mainVB, &d3d.mainIB, &d3d.mainDecl);
 }
 
 void RenderListDeInit()

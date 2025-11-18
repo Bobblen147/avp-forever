@@ -6,6 +6,8 @@ https://github.com/dreamer/avp-forever
 
 The goal of the project is to add additional customisation and quality of life features to the single player experience without changing any of the actual gameplay. This is intended to be an enhancement of Avp Gold, not a total conversion.
 
+The mod can be installed into a retail copy of avp gold or a steam/gog classic 2000 install. Only the data is required, the mod uses its own EXE. Multiplayer is sadly not supported but skirmish very much is.
+
 Note that this is a learning project for a novice c++ developer. As such pull requests that add amazing/complicated new features can't be merged as I cannot review them. I suggest making your own fork if you wish to work with the codebase.
 
 Source code can be found here
@@ -55,6 +57,8 @@ NPC Changes
 -Added additional Predator bot subtypes that Rebellion left unused (PREDOBOT 2,3,4 or 5 in debug mode)
 -Can enable/disable AI attacking a player of the same species. "config file toggle"
 -Can force sentry guns to target a human player "config file toggle"
+-Added a TougherNPCs config file toggle which makes marines fire on sight & almost never miss. It also gives every pred NPC a speargun and a rapid fire 
+shoulder cannon, and facehuggers now move silently for an extra challenge. "config file toggle"
 
 Campaign Mode
 -Starting a game in Campaign Mode from the main menu will allow you to play all a species' single player missions consecutively 
@@ -74,13 +78,15 @@ New Debug Console Commands
 -PICKUPCOUNT debug command adds a live pickup counter to the top left of the screen (includes marine weapons, health, armour and pred field charge)
 -SENTRYGUN, FACEHUGGER, QUEENBOT, PREDOBOT 2,3,4 or 5. New bot spawns (see Gameplay section above)
 -DIFFICULTY debug command shows the current difficulty as a number (0=training,1=realistic,2=directors cut,3=impossible)
+-SHOWHEALTH debug command shows your current health and armour (in fixed point and converted to a readable value)
 -MORPH_ALIEN, MORPH_MARINE and MORPH_PREDATOR change species in game in skirmish mode
--FLYMODE, OBSERVER, SHOWMODULE, PAINTBALL debug commands to aid custom map making (see custom map section below)
+-FLYMODE, OBSERVER, SHOWMODULE, SHOWCOORDS, PAINTBALL debug commands to aid custom map making (see custom map section below)
 
 Custom map making
 -Fly mode / no clip mode can be enabled in the console by typing FLYMODE then F6 anytime during play to toggle.
 -Observer mode can be enabled in the console by typing OBSERVER (no longer needs debug EXE)
 -typing SHOWMODULE will show which module the player is in (no longer needs debug EXE)
+-typing SHOWCOORDS will show the game coordinates of the player (no longer needs debug EXE)
 -typing PAINTBALL will enable decal placement mode, see the mod tools documentation for how to use it (no longer needs debug EXE)
 -The unused mirror flag is now a 'no collision' flag and can be used to make false walls
 
@@ -92,16 +98,18 @@ Other
 	AvP99TitleScreen: restores the starfield title screen, original avp logo and intro music (acquire IntroSound.smk and add to new FMVsOld folder)
 	Avp99FMVs: will play the original US actor FMVs instead of the gold edition ones (grab them from moddb and add to new FMVsOld folder)
 	DisableSkeeterPistols: cannot pickup skeeter or pistol weapons, specialists of this type disabled in multiplayer
+-The original Avp 99 shotgun sound has also been restored for NPCs that use shotguns. In Avp Gold / Classic they reused the pistol sound effect.
 
 Bug fixes
--Starry sky now correctly renders behind the scenery and can be seen through windows
--ogg music correctly loops through the 5 tracks for your species + CD player console commands work
 -Partially fixed NPC heavy weapons drop sound repeating bug (needs 60fps or less)
 -Work around bad bilinear filtering by slightly altering a couple of textures (thanks Olde)
--Fixed incorrect sound playing if the correct sound file is missing
+-Fixed incorrect sound playing in custom maps if correct sound is missing (also fixes broken skirmish pickup sound)
 -Single player AI alien triggers now work in skirmish (aliens don't stay dormant)
 -Fudged hud scaling to look better at 1920x1080 (still broken on ultrawide / UHD resolutions)
-
+-Starry sky now correctly renders behind the scenery and can be seen through windows
+-Particle effects / alien vision auras can now be seen through windows
+-All placed decals (blood spatter etc) are now visible
+-Background music properly cycles through tracks / cd player console commands work
 
 Extra credits
 
@@ -158,16 +166,16 @@ Known (pre-existing) avpx bugs
 * means I've applied a fix or workaround in avpx enhanced
 
 avpx only
--Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (see Stranded)*
+-Starry sky is drawn in front of the scenery if the scenery is sufficiently distant (eg Stranded)*
 -Can't see starry sky through a window (eg tyrargo, orbital)* 
--Can't see particles/coronas/auras through windows (eg temple, in the labs)
+-Can't see particles/coronas/auras through windows & in mirrors (eg derelict start, temple labs, escape)*
 -Animated lava texture in Fury 161 (& Earthbound animated tunnel lights / Vaults predalien sphere) are broken
--Vertical movement for tracking weapons is very slow (eg waterfall pred, use shoulder cannon on marine below at the start)
+-Vertical movement for tracking weapons is broken if looking too high/low (eg waterfall pred, use shoulder cannon on marine below at the start)
 -Tapping the mouse to fire multiple shots is broken (try firing single shots with marine pistol, keyboard is fine, it's just the mouse)
--Coronas are sometimes drawn in front of the HUD and very thin walls
--Some placed decals are missing (Pred waterfall, there should be a big puddle of blood at the start, not just spatter)
+-Coronas are occasionally drawn in front of the HUD and very thin walls
+-Some placed decals are missing (Pred waterfall, there should be a big puddle of blood at the start, not just spatter)*
 -Stranded cliff textures have an outline around the transparent section (bad bilinear filtering)*
--Walls seem to be a bit stickier than gold edition (easier to snag them)? May be related to high FPS?
+-Walls seem to be a bit stickier than gold edition (much easier to snag them)? May be related to high FPS?
 -In skirmish/multiplayer, the wrong sound is played when destroying armour/lighter weapon pickups*
 -Wireframe debug mode doesn't work at all
 -Motionblur and Triptastic cheat modes do not have the blurring effect
