@@ -58,6 +58,9 @@ static bool PredatorShoulderCannonStart = false;
 static bool PredatorMedicompStart = false;
 static bool PredatorPistolStart = false;
 static bool PredatorDiscStart = false;
+//bonus equipment overrides
+static bool MarineJetpackStart;
+static bool PredatorGrapplingHookStart;
 
 //pickup counters
 extern int FieldChargeCount;
@@ -641,6 +644,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 				MarineSkeeterStart = Config_GetBool("[MarineGameplay]", "MarineSkeeterStart", false);
 				MarinePistolStart = Config_GetBool("[MarineGameplay]", "MarinePistolStart", false);
 				MarineDualPistolsStart = Config_GetBool("[MarineGameplay]", "MarineDualPistolsStart", false);
+				MarineJetpackStart = Config_GetBool("[MarineGameplay]", "MarineJetpackStart", false);
 				
 				//always have Cudgel
 				a = SlotForThisWeapon(WEAPON_CUDGEL);
@@ -765,6 +769,7 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 			PredatorMedicompStart = Config_GetBool("[PredatorGameplay]", "PredatorMedicompStart", false);
 			PredatorPistolStart = Config_GetBool("[PredatorGameplay]", "PredatorPistolStart", false);
 			PredatorDiscStart = Config_GetBool("[PredatorGameplay]", "PredatorDiscStart", false);
+			PredatorGrapplingHookStart = Config_GetBool("[PredatorGameplay]", "PredatorGrapplingHookStart", false);
 			
 			//If override is set force the weapons chosen in the config
 			if (PredatorWeaponsOverride) {
@@ -913,7 +918,18 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
     }
     
 	/*check jetpack and grappling hook*/
+	if (MarineJetpackStart)
+	{
+		playerStatusPtr->JetpackEnabled = 1;
+	}
+	else
     playerStatusPtr->JetpackEnabled = StartingEquipment.marine_jetpack;
+
+	if (PredatorGrapplingHookStart)
+	{
+		playerStatusPtr->GrapplingHookEnabled = 1;
+	}
+	else
     playerStatusPtr->GrapplingHookEnabled = StartingEquipment.predator_grappling_hook;	
 
 	LoadAllWeapons(PlayerStatusPtr);

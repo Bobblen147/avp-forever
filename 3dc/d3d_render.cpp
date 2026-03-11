@@ -132,12 +132,13 @@ static uint32_t orthoVBOffset = 0;
 static uint32_t NumberOfRenderedTriangles = 0;
 
 RenderList *particleList = 0;
-RenderList *starparticleList = 0; //separate particle list for stars as they have to be rendered before the main list
+RenderList *starparticleList = 0; //separate particleList for stars as they have to be rendered before the main list
 RenderList *mainList  = 0;
 RenderList *orthoList = 0;
 RenderList *decalList  = 0;
 RenderList *weaponList = 0;
 RenderList *translucentList = 0;
+RenderList* coronaList = 0; //separate coronas from orthoList as they should render before weapons
 
 static HRESULT LastError; // remove me eventually (when no more D3D calls exist in this file)
 
@@ -151,6 +152,7 @@ void RenderListInit()
 	decalList    = new RenderList("decalList",    200, &d3d.decalVB, &d3d.decalIB, &d3d.decalDecl);
 	weaponList   = new RenderList("weaponList",   80,  &d3d.mainVB,  &d3d.mainIB,  &d3d.mainDecl);
 	translucentList = new RenderList("translucentList", 160, &d3d.mainVB, &d3d.mainIB, &d3d.mainDecl);
+	coronaList = new RenderList("coronaList", 50, &d3d.orthoVB, &d3d.orthoIB, &d3d.orthoDecl);
 }
 
 void RenderListDeInit()
@@ -175,6 +177,9 @@ void RenderListDeInit()
 
 	delete translucentList;
 	translucentList = 0;
+
+	delete coronaList;
+	coronaList = 0;
 }
 
 struct renderParticle
@@ -335,6 +340,7 @@ static bool LockExecuteBuffer()
 	decalList->Reset();
 	weaponList->Reset();
 	translucentList->Reset();
+	coronaList->Reset();
 
 	// reset counters and indexes
 	vb = 0;
@@ -461,6 +467,19 @@ static bool ExecuteBuffer()
 		translucentList->Draw();
 	}
 
+	// render any orthographic quads (coronas)
+	if (coronaList->GetSize())
+	{
+		// set orthographic projection shaders as active
+		d3d.effectSystem->SetActive(d3d.orthoEffect);
+
+		// pass the orthographic projection matrix to the vertex shader
+		d3d.effectSystem->SetVertexShaderConstant(d3d.orthoEffect, 0, CONST_MATRIX, &d3d.matOrtho);
+
+		// daw the ortho list
+		coronaList->Draw();
+	}
+
 	// draw player weapon
 	if (weaponList->GetSize())
 	{
@@ -485,7 +504,7 @@ static bool ExecuteBuffer()
 		weaponList->Draw();
 	}
 
-	// render any orthographic quads
+	// render any orthographic quads (hud)
 	if (orthoList->GetSize())
 	{
 		// set orthographic projection shaders as active
@@ -1262,7 +1281,7 @@ void DrawCoronas()
 	float RecipH = 1.0f / (float) texHeight;
 
 	// set a command to disable z-writes
-	orthoList->AddCommand(kCommandZWriteDisable);
+	coronaList->AddCommand(kCommandZWriteDisable);
 
 	for (size_t i = 0; i < coronaArray.size(); i++)
 	{
@@ -1333,7 +1352,7 @@ void DrawCoronas()
 		uint32_t sizeX = (ScreenDescriptorBlock.SDB_Width / 100) * 10;
 		uint32_t sizeY = sizeX;//(ScreenDescriptorBlock.SDB_Height / 100) * 11;
 
-		orthoList->AddItem(4, SpecialFXImageNumber, (enum TRANSLUCENCY_TYPE)particleDescPtr->TranslucencyType, FILTERING_BILINEAR_ON, TEXTURE_CLAMP);
+		coronaList->AddItem(4, SpecialFXImageNumber, (enum TRANSLUCENCY_TYPE)particleDescPtr->TranslucencyType, FILTERING_BILINEAR_ON, TEXTURE_CLAMP);
 
 		// bottom left
 		orthoVertex[orthoVBOffset].x = WPos2DC(transformedPoint.x - sizeX);
@@ -1377,7 +1396,7 @@ void DrawCoronas()
 	coronaArray.clear();
 
 	// set a command to enable z-writes
-	orthoList->AddCommand(kCommandZWriteEnable);
+	coronaList->AddCommand(kCommandZWriteEnable);
 
 	// restore RenderPolygon.NumberOfVertices value...
 	RenderPolygon.NumberOfVertices = numVertsBackup;

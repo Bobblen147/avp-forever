@@ -1096,7 +1096,7 @@ static void SetupNewMenu(enum AVPMENU_ID menuID)
 			KeyConfigSelectionColumn = 0;
 			break;
 		}
-		case AVPMENU_CONTROLS:
+		case AVPMENU_MOUSECONTROLS:
 		{
 			PlayerControlMethods = ControlMethods;
 			break;
@@ -3656,7 +3656,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 						AlienInputSecondaryConfig = PlayerInputSecondaryConfig;
 						break;
 					}
-					case AVPMENU_CONTROLS:
+					case AVPMENU_MOUSECONTROLS:
 					{
 						ControlMethods = PlayerControlMethods;
 						break;
@@ -3676,7 +3676,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 				}
 				else
 				{
-					SetupNewMenu(AVPMENU_OPTIONS);
+					SetupNewMenu(AVPMENU_CONTROLOPTIONS);
 				}
 			}
 			break;
@@ -3705,7 +3705,7 @@ static void InteractWithMenuElement(enum AVPMENU_ELEMENT_INTERACTION_ID interact
 						PlayerInputSecondaryConfig = DefaultAlienInputSecondaryConfig;
 						break;
 					}
-					case AVPMENU_CONTROLS:
+					case AVPMENU_MOUSECONTROLS:
 					{
 						PlayerControlMethods = DefaultControlMethods;
 						break;
