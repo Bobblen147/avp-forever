@@ -1494,7 +1494,11 @@ void D3D_ZBufferedGouraudTexturedPolygon_Output(POLYHEADER *inputPolyPtr, RENDER
 
 	if (gunLayer) {
 		weaponList->CreateIndices(mainIndex, RenderPolygon.NumberOfVertices);
-	} else {
+	} 
+	else if (translucentLayer) {
+		translucentList->CreateIndices(mainIndex, RenderPolygon.NumberOfVertices);
+	}
+	else {
 		mainList->CreateIndices(mainIndex, RenderPolygon.NumberOfVertices);
 	}
 }
