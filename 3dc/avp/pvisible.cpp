@@ -36,6 +36,7 @@
 #include "pfarlocs.h"
 #define UseLocalAssert TRUE
 #include "ourasert.h"
+#include "ConfigFile.h"
 
 #define HMODEL_HACK 0
 
@@ -83,6 +84,9 @@ extern int GrenadeLauncherAmmoCount;
 extern int MinigunAmmoCount;
 extern int PulseGrenadeAmmoCount;
 extern int SpeargunAmmoCount;
+
+//avp 99 mode
+static bool DisableSkeeterPistols = false;
 
 extern void ActivateSelfDestructSequence(int seconds);
 
@@ -1422,6 +1426,32 @@ void InitInanimateObject(void* bhdata, STRATEGYBLOCK *sbPtr)
 				}	
 			}
 		}
+
+        //don't load skeeter and pistols if using avp 99 mode
+        DisableSkeeterPistols = Config_GetBool("[AvP99Features]", "DisableSkeeterPistols", false);
+
+        if (DisableSkeeterPistols) {
+            if (objectstatusptr->typeId == IOT_Weapon)
+            {
+                if ((objectstatusptr->subType == WEAPON_MARINE_PISTOL) ||
+                    (objectstatusptr->subType == WEAPON_FRISBEE_LAUNCHER))
+                {
+                    RemoveBehaviourStrategy(sbPtr);
+                    return;
+                }
+            }
+            if (objectstatusptr->typeId == IOT_Ammo)
+            {
+                if ((objectstatusptr->subType == AMMO_MARINE_PISTOL_PC) ||
+                    (objectstatusptr->subType == AMMO_FRISBEE))
+                {
+                    RemoveBehaviourStrategy(sbPtr);
+                    return;
+                }
+            }
+        }
+
+
 
         //pickup counters
         if (objectstatusptr->typeId == IOT_FieldCharge)

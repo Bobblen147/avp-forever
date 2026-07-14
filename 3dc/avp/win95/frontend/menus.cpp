@@ -5384,7 +5384,7 @@ static void SetBriefingTextForMultiplayer()
 
 	int num_not_available = 0;
 
-	if (netGameData.customLevelName[0] != 0)
+	if (IsCustomLevel(netGameData.levelNumber, netGameData.gameType))
 	{
 		//custom level
 		BriefingTextString[0] = netGameData.customLevelName;

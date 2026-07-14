@@ -691,21 +691,21 @@ void InitialisePlayersInventory(PLAYER_STATUS *playerStatusPtr)
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
 					}
 				}
-				if (MarineSkeeterStart) {
+				if (MarineSkeeterStart && !DisableSkeeterPistols) {
 					a = SlotForThisWeapon(WEAPON_FRISBEE_LAUNCHER);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
 					}
 				}
-				if (MarinePistolStart) {
+				if (MarinePistolStart && !DisableSkeeterPistols) {
 					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].PrimaryMagazinesRemaining = 4;
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
 					}
 				}
-				if (MarineDualPistolsStart) {
+				if (MarineDualPistolsStart && !DisableSkeeterPistols) {
 					a = SlotForThisWeapon(WEAPON_MARINE_PISTOL);
 					if (a != -1) {
 						playerStatusPtr->WeaponSlot[a].Possessed = 1;
@@ -1419,16 +1419,6 @@ static int AbleToPickupWeapon(enum WEAPON_ID weaponID)
 			
 			if (GRENADE_MODE) {
 				if(weaponID!=WEAPON_PULSERIFLE) {
-					return(0);
-				}
-			}
-
-			DisableSkeeterPistols = Config_GetBool("[AvP99Features]", "DisableSkeeterPistols", false);
-			if (DisableSkeeterPistols) {
-				if (weaponID == WEAPON_MARINE_PISTOL) {
-					return(0);
-				}
-				if (weaponID == WEAPON_FRISBEE_LAUNCHER) {
 					return(0);
 				}
 			}
